@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamriel Toolbox</title>
+    <style>
+        /* Dark Theme Styling */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #121212; color: #e0e0e0; padding: 20px; margin: 0; }
+        h1 { color: #bb86fc; text-align: center; margin-bottom: 10px; }
+        
+        /* Navigation Tabs */
+        .nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .nav button { background: #1e1e1e; border: 1px solid #333; color: #a0a0a0; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .nav button.active { background: #03dac6; color: #000; font-weight: bold; border-color: #03dac6; }
+
+        /* Forms & Inputs */
+        .container { max-width: 600px; margin: 0 auto; }
+        .search-box { width: 100%; display: flex; gap: 10px; margin-bottom: 15px; }
+        input[type="text"] { flex-grow: 1; padding: 12px; background: #1e1e1e; border: 1px solid #333; color: #fff; border-radius: 5px; }
+        button.action-btn { padding: 10px 20px; background-color: #bb86fc; border: none; border-radius: 5px; color: #000; font-weight: bold; cursor: pointer; }
+        
+        .options { margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #a0a0a0; }
+        
+        /* Recipe Cards */
+        .recipe-card { background-color: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 5px solid #333; }
+        .recipe-card.potent { border-left-color: #bb86fc; box-shadow: 0 0 8px rgba(187, 134, 252, 0.2); }
+        .ingredients { font-size: 1.1em; font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .effects { color: #b0b0b0; font-size: 0.9em; }
+        .tag { display: inline-block; background: #3700b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-right: 5px; vertical-align: middle; }
+        .tag.potion { background: #03dac6; color: #000; }
+        .tag.poison { background: #cf6679; color: #000; }
+        select { padding: 10px; background: #1e1e1e; border: 1px solid #333; color: #fff; border-radius: 5px; }
+
+        /* Inventory Grid */
+        .inventory-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; display: none; }
+        .inventory-grid.show { display: grid; }
+        .inv-item { background: #1e1e1e; padding: 10px; border-radius: 5px; display: flex; align-items: center; cursor: pointer; }
+        .inv-item input { margin-right: 10px; transform: scale(1.2); }
+        
+        /* Utilities */
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Tamriel Toolbox</h1>
+
+    <div class="nav">
+        <button id="tab-search" class="active" onclick="switchTab('search')">Brew Helper</button>
+        <button id="tab-inventory" onclick="switchTab('inventory')">My Inventory</button>
+    </div>
+
+    <div id="view-search">
+        <div class="search-box">
+            <input type="text" id="effectInput" list="effectList" placeholder="e.g. Restore Health, Speed..." onkeypress="handleEnter(event)">
+            <datalist id="effectList">
+                <option value="Breach">
+                <option value="Cowardice">
+                <option value="Critical">
+                <option value="Damage Shield">
+                <option value="Defile">
+                <option value="Detection">
+                <option value="Enervation">
+                <option value="Entrapment">
+                <option value="Force">
+                <option value="Fracture">
+                <option value="Gradual Ravage Health">
+                <option value="Heal Absorption">
+                <option value="Heroism">
+                <option value="Hindrance">
+                <option value="Increase Armor">
+                <option value="Increase Power">
+                <option value="Increase Spell Resist">
+                <option value="Invisible">
+                <option value="Lingering Health">
+                <option value="Mending">
+                <option value="Protection">
+                <option value="Ravage Health">
+                <option value="Ravage Magicka">
+                <option value="Ravage Stamina">
+                <option value="Restore Health">
+                <option value="Restore Magicka">
+                <option value="Restore Stamina">
+                <option value="Speed">
+                <option value="Timidity">
+                <option value="Uncertainty">
+                <option value="Unstoppable">
+                <option value="Vexation">
+                <option value="Vitality">
+                <option value="Vulnerability">
+            </datalist>
+            <button class="action-btn" onclick="findRecipes()">Brew</button>
+        </div>
+        
+        <div class="options">
+            <label>
+                <input type="checkbox" id="useInventoryCheck"> Only use ingredients I have
+            </label>
+            <div style="margin-top:10px;">
+                <label for="solventSelect">Solvent: </label>
+                <select id="solventSelect" onchange="onSolventChange()">
+                    <optgroup label="Potion — Water">
+                            <option value="potion_water:Natural Water">Natural Water — Lv 3</option>
+                            <option value="potion_water:Clear Water">Clear Water — Lv 10</option>
+                            <option value="potion_water:Pristine Water">Pristine Water — Lv 20</option>
+                            <option value="potion_water:Cleansed Water">Cleansed Water — Lv 30</option>
+                            <option value="potion_water:Filtered Water">Filtered Water — Lv 40</option>
+                            <option value="potion_water:Purified Water">Purified Water — Lv CP10</option>
+                            <option value="potion_water:Cloud Mist">Cloud Mist — Lv CP50</option>
+                            <option value="potion_water:Star Dew">Star Dew — Lv CP100</option>
+                            <option value="potion_water:Lorkhan's Tears">Lorkhan's Tears — Lv CP150</option>
+                    </optgroup>
+                    <optgroup label="Poison — Oil">
+                            <option value="poison_oil:Grease">Grease — Lv 3</option>
+                            <option value="poison_oil:Ichor">Ichor — Lv 10</option>
+                            <option value="poison_oil:Slime">Slime — Lv 20</option>
+                            <option value="poison_oil:Gall">Gall — Lv 30</option>
+                            <option value="poison_oil:Terebinthine">Terebinthine — Lv 40</option>
+                            <option value="poison_oil:Pitch-Bile">Pitch-Bile — Lv CP10</option>
+                            <option value="poison_oil:Tarblack">Tarblack — Lv CP50</option>
+                            <option value="poison_oil:Night-Oil">Night-Oil — Lv CP100</option>
+                            <option value="poison_oil:Alkahest">Alkahest — Lv CP150</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div style="margin-top:5px; font-size:0.85em;">Water = potion &middot; Oil = poison. Solvent sets the level, not the effects.</div>
+        </div>
+
+        <div id="resultsArea"></div>
+    </div>
+
+    <div id="view-inventory" class="hidden">
+        <p style="text-align: center; color: #a0a0a0;">Uncheck items you don't have. Changes save automatically.</p>
+        <div class="inventory-grid show" id="inventoryList">
+            </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="action-btn" onclick="selectAll(true)">Select All</button>
+            <button class="action-btn" style="background:#333; color:#fff;" onclick="selectAll(false)">Clear All</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. THE DATABASE ---
+    const reagentsDB = {
+        "Beetle Scuttle": [
+            "Breach",
+            "Increase Armor",
+            "Protection",
+            "Vitality"
+        ],
+        "Blessed Thistle": [
+            "Restore Stamina",
+            "Increase Power",
+            "Heal Absorption",
+            "Speed"
+        ],
+        "Blue Entoloma": [
+            "Ravage Magicka",
+            "Heal Absorption",
+            "Restore Health",
+            "Invisible"
+        ],
+        "Bugloss": [
+            "Increase Spell Resist",
+            "Restore Health",
+            "Mending",
+            "Restore Magicka"
+        ],
+        "Butterfly Wing": [
+            "Restore Health",
+            "Damage Shield",
+            "Lingering Health",
+            "Vitality"
+        ],
+        "Chaurus Egg": [
+            "Timidity",
+            "Ravage Magicka",
+            "Vexation",
+            "Detection"
+        ],
+        "Clam Gall": [
+            "Increase Spell Resist",
+            "Hindrance",
+            "Vulnerability",
+            "Defile"
+        ],
+        "Columbine": [
+            "Restore Health",
+            "Restore Magicka",
+            "Restore Stamina",
+            "Unstoppable"
+        ],
+        "Corn Flower": [
+            "Restore Magicka",
+            "Increase Power",
+            "Ravage Health",
+            "Detection"
+        ],
+        "Crimson Nirnroot": [
+            "Timidity",
+            "Force",
+            "Gradual Ravage Health",
+            "Restore Health"
+        ],
+        "Cultivated Cryptpods": [
+            "Heroism",
+            "Increase Power",
+            "Mending",
+            "Damage Shield"
+        ],
+        "Daedra-Blood Maggots": [
+            "Defile",
+            "Heal Absorption",
+            "Cowardice",
+            "Entrapment"
+        ],
+        "Dragon Rheum": [
+            "Restore Magicka",
+            "Uncertainty",
+            "Heroism",
+            "Speed"
+        ],
+        "Dragon's Bile": [
+            "Heroism",
+            "Vulnerability",
+            "Invisible",
+            "Vitality"
+        ],
+        "Dragon's Blood": [
+            "Lingering Health",
+            "Restore Stamina",
+            "Heroism",
+            "Defile"
+        ],
+        "Dragonthorn": [
+            "Increase Power",
+            "Restore Stamina",
+            "Fracture",
+            "Critical"
+        ],
+        "Emetic Russula": [
+            "Ravage Health",
+            "Ravage Magicka",
+            "Ravage Stamina",
+            "Entrapment"
+        ],
+        "Fleshfly Larva": [
+            "Ravage Stamina",
+            "Vulnerability",
+            "Gradual Ravage Health",
+            "Vitality"
+        ],
+        "Fossilized Verminous Bones": [
+            "Heroism",
+            "Restore Stamina",
+            "Force",
+            "Detection"
+        ],
+        "Imp Stool": [
+            "Cowardice",
+            "Ravage Stamina",
+            "Increase Armor",
+            "Enervation"
+        ],
+        "Lady's Smock": [
+            "Force",
+            "Restore Magicka",
+            "Breach",
+            "Critical"
+        ],
+        "Luminous Russula": [
+            "Ravage Stamina",
+            "Restore Health",
+            "Hindrance",
+            "Cowardice"
+        ],
+        "Mountain Flower": [
+            "Increase Armor",
+            "Restore Health",
+            "Cowardice",
+            "Restore Stamina"
+        ],
+        "Mudcrab Chitin": [
+            "Increase Spell Resist",
+            "Increase Armor",
+            "Protection",
+            "Defile"
+        ],
+        "Namira's Rot": [
+            "Enervation",
+            "Speed",
+            "Invisible",
+            "Unstoppable"
+        ],
+        "Nightshade": [
+            "Ravage Health",
+            "Protection",
+            "Gradual Ravage Health",
+            "Defile"
+        ],
+        "Nirnroot": [
+            "Ravage Health",
+            "Uncertainty",
+            "Invisible",
+            "Heal Absorption"
+        ],
+        "Powdered Mother of Pearl": [
+            "Mending",
+            "Speed",
+            "Vitality",
+            "Protection"
+        ],
+        "Scrib Jelly": [
+            "Vexation",
+            "Speed",
+            "Vulnerability",
+            "Lingering Health"
+        ],
+        "Spider Egg": [
+            "Hindrance",
+            "Invisible",
+            "Damage Shield",
+            "Defile"
+        ],
+        "Stinkhorn": [
+            "Fracture",
+            "Ravage Health",
+            "Force",
+            "Ravage Stamina"
+        ],
+        "Torchbug Thorax": [
+            "Fracture",
+            "Uncertainty",
+            "Detection",
+            "Mending"
+        ],
+        "Vile Coagulant": [
+            "Timidity",
+            "Ravage Health",
+            "Restore Magicka",
+            "Protection"
+        ],
+        "Violet Coprinus": [
+            "Breach",
+            "Ravage Health",
+            "Increase Power",
+            "Ravage Magicka"
+        ],
+        "Water Hyacinth": [
+            "Restore Health",
+            "Critical",
+            "Entrapment",
+            "Damage Shield"
+        ],
+        "White Cap": [
+            "Enervation",
+            "Ravage Magicka",
+            "Increase Spell Resist",
+            "Detection"
+        ],
+        "Winter's Grave Tongue": [
+            "Vexation",
+            "Heal Absorption",
+            "Defile",
+            "Breach"
+        ],
+        "Wormwood": [
+            "Critical",
+            "Hindrance",
+            "Detection",
+            "Unstoppable"
+        ]
+    };
+    // --- SOLVENTS (UESP-verified) ---
+    // Water = potion, Oil = poison. The solvent sets the crafted level, not the effects.
+    const SOLVENTS = {
+        potion: [
+            { name: "Natural Water", level: 3 },
+            { name: "Clear Water", level: 10 },
+            { name: "Pristine Water", level: 20 },
+            { name: "Cleansed Water", level: 30 },
+            { name: "Filtered Water", level: 40 },
+            { name: "Purified Water", level: "CP10" },
+            { name: "Cloud Mist", level: "CP50" },
+            { name: "Star Dew", level: "CP100" },
+            { name: "Lorkhan's Tears", level: "CP150" }
+        ],
+        poison: [
+            { name: "Grease", level: 3 },
+            { name: "Ichor", level: 10 },
+            { name: "Slime", level: 20 },
+            { name: "Gall", level: 30 },
+            { name: "Terebinthine", level: 40 },
+            { name: "Pitch-Bile", level: "CP10" },
+            { name: "Tarblack", level: "CP50" },
+            { name: "Night-Oil", level: "CP100" },
+            { name: "Alkahest", level: "CP150" }
+        ]
+    };
+
+    // --- PAGINATION STATE ---
+    const PAGE_SIZE = 25;
+    let currentResults = [];
+    let currentPage = 1;
+
+    // --- 2. INVENTORY SYSTEM ---
+    // Load from LocalStorage or default to all.
+    // Drop names no longer in the database (old saves may hold pre-Update 51
+    // or renamed reagents); the brew() guard below also skips them.
+    let savedInv = null;
+    try { savedInv = JSON.parse(localStorage.getItem('eso_inventory')); } catch (e) { savedInv = null; }
+    let userInventory = Array.isArray(savedInv)
+        ? savedInv.filter(n => n in reagentsDB)
+        : Object.keys(reagentsDB);
+    if (Array.isArray(savedInv)) saveInventory();
+
+    function saveInventory() {
+        localStorage.setItem('eso_inventory', JSON.stringify(userInventory));
+    }
+
+    function initInventoryUI() {
+        const grid = document.getElementById('inventoryList');
+        grid.innerHTML = '';
+        const allReagents = Object.keys(reagentsDB).sort();
+
+        allReagents.forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'inv-item';
+            const label = document.createElement('label');
+            label.style.width = '100%';
+            label.style.cursor = 'pointer';
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = userInventory.includes(r);
+            // No inline onchange handler: names like Namira's Rot contain an
+            // apostrophe, which broke the old inline-handler approach.
+            cb.addEventListener('change', () => toggleReagent(r));
+            label.appendChild(cb);
+            label.appendChild(document.createTextNode(' ' + r));
+            div.appendChild(label);
+            grid.appendChild(div);
+        });
+    }
+
+    function toggleReagent(name) {
+        if (userInventory.includes(name)) {
+            userInventory = userInventory.filter(i => i !== name);
+        } else {
+            userInventory.push(name);
+        }
+        saveInventory();
+    }
+
+    function selectAll(enable) {
+        userInventory = enable ? Object.keys(reagentsDB) : [];
+        saveInventory();
+        initInventoryUI();
+    }
+
+    // --- 3. ALCHEMY LOGIC ---
+    function getCombinations(arr, k) {
+        let i, subI, ret = [], sub, next;
+        for (i = 0; i < arr.length; i++) {
+            if (k === 1) {
+                ret.push([arr[i]]);
+            } else {
+                sub = getCombinations(arr.slice(i + 1), k - 1);
+                for (subI = 0; subI < sub.length; subI++) {
+                    next = sub[subI];
+                    next.unshift(arr[i]);
+                    ret.push(next);
+                }
+            }
+        }
+        return ret;
+    }
+
+    function brew(ingredients) {
+        let allTraits = [];
+        // Skip any name not in the database (e.g. stale saved-inventory entries)
+        ingredients.forEach(ing => { if (reagentsDB[ing]) allTraits.push(...reagentsDB[ing]); });
+
+        let counts = {};
+        allTraits.forEach(t => counts[t] = (counts[t] || 0) + 1);
+
+        return Object.keys(counts).filter(t => counts[t] >= 2).sort();
+    }
+
+    function findRecipes() {
+        const query = document.getElementById('effectInput').value.trim().toLowerCase();
+        const useInv = document.getElementById('useInventoryCheck').checked;
+        const resultsArea = document.getElementById('resultsArea');
+        
+        resultsArea.innerHTML = '<p style="text-align:center; color:#666;">Searching...</p>';
+        
+        if (!query) {
+            resultsArea.innerHTML = '<p style="text-align:center;">Please enter an effect.</p>';
+            return;
+        }
+
+        // Delay slightly to let UI update
+        setTimeout(() => {
+            const sourceList = useInv ? userInventory : Object.keys(reagentsDB);
+            let validRecipes = [];
+
+            // 2 Reagents
+            const combos2 = getCombinations(sourceList, 2);
+            // 3 Reagents
+            const combos3 = getCombinations(sourceList, 3);
+            
+            const allCombos = [...combos2, ...combos3];
+
+            allCombos.forEach(combo => {
+                const effects = brew(combo);
+                // Check if our query matches any of the resulting effects
+                const match = effects.some(e => e.toLowerCase().includes(query));
+                
+                if (match) {
+                    validRecipes.push({
+                        ingredients: combo,
+                        effects: effects,
+                        potent: effects.length >= 3,
+                        count: combo.length
+                    });
+                }
+            });
+
+            // Sort: Potent first, then fewer ingredients
+            validRecipes.sort((a, b) => {
+                if (a.potent !== b.potent) return b.potent - a.potent;
+                return a.count - b.count;
+            });
+
+            currentResults = validRecipes; currentPage = 1; displayResults();
+        }, 10);
+    }
+
+    function displayResults() {
+        const area = document.getElementById('resultsArea');
+        area.innerHTML = '';
+        const recipes = currentResults;
+
+        if (recipes.length === 0) {
+            area.innerHTML = '<p style="text-align:center;">No recipes found for that effect.</p>';
+            return;
+        }
+
+        const totalPages = Math.ceil(recipes.length / PAGE_SIZE);
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const pageItems = recipes.slice(start, start + PAGE_SIZE);
+        const solvent = getSelectedSolvent();
+
+        const countLine = document.createElement('p');
+        countLine.style.textAlign = 'center';
+        countLine.style.color = '#a0a0a0';
+        countLine.textContent = `Showing ${start + 1}–${start + pageItems.length} of ${recipes.length} recipes`;
+        area.appendChild(countLine);
+
+        pageItems.forEach(r => {
+            const card = document.createElement('div');
+            card.className = `recipe-card ${r.potent ? 'potent' : ''}`;
+
+            const badge = r.potent ? '<span class="tag">POTENT</span>' : '';
+            const kindTag = `<span class="tag ${solvent.type}">${solvent.type === 'potion' ? 'POTION' : 'POISON'} &middot; ${solvent.name} (Lv ${solvent.level})</span>`;
+
+            card.innerHTML = `
+                <div class="ingredients">
+                    ${badge}${r.ingredients.join(' + ')}
+                </div>
+                <div class="effects">
+                    Effects: ${r.effects.join(', ')}
+                </div>
+                <div class="effects" style="margin-top:5px;">
+                    ${kindTag}
+                </div>
+            `;
+            area.appendChild(card);
+        });
+
+        if (totalPages > 1) {
+            const pager = document.createElement('div');
+            pager.style.textAlign = 'center';
+            pager.style.margin = '15px 0';
+            pager.innerHTML = `
+                <button class="action-btn" id="prevPage" ${currentPage === 1 ? 'disabled style="opacity:0.4;"' : ''}>&laquo; Prev</button>
+                <span style="margin:0 12px; color:#a0a0a0;">Page ${currentPage} of ${totalPages}</span>
+                <button class="action-btn" id="nextPage" ${currentPage === totalPages ? 'disabled style="opacity:0.4;"' : ''}>Next &raquo;</button>
+            `;
+            area.appendChild(pager);
+            const prev = pager.querySelector('#prevPage');
+            const next = pager.querySelector('#nextPage');
+            if (prev) prev.addEventListener('click', () => { if (currentPage > 1) { currentPage--; displayResults(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+            if (next) next.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; displayResults(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+        }
+    }
+
+    function getSelectedSolvent() {
+        const sel = document.getElementById('solventSelect');
+        const val = sel ? sel.value : 'potion:Natural Water';
+        const parts = val.split(':');
+        const type = parts[0];
+        const name = parts.slice(1).join(':');
+        const list = SOLVENTS[type] || SOLVENTS.potion;
+        const found = list.find(s => s.name === name) || list[0];
+        return { type, name: found.name, level: found.level };
+    }
+
+    function onSolventChange() {
+        if (currentResults.length) displayResults();
+    }
+
+    // --- 4. UI HANDLING ---
+    function switchTab(tab) {
+        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        
+        document.getElementById('view-search').classList.add('hidden');
+        document.getElementById('view-inventory').classList.add('hidden');
+        document.getElementById(`view-${tab}`).classList.remove('hidden');
+    }
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') findRecipes();
+    }
+
+    // Initialize
+    initInventoryUI();
+</script>
+
+</body>
+</html>

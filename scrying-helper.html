@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrying Helper — Advanced & Master Leads</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #f0d080;
+  --gold-dark: #7a5a14;
+  --gold-deep: #4a3208;
+  --parchment: #f2e4c0;
+  --bg-deep: #080604;
+  --bg-dark: #110c04;
+  --bg-panel: #191208;
+  --bg-panel-gold: #1f1608;
+  --bg-panel-purple: #16101c;
+  --text-main: #e4d09e;
+  --text-dim: #8a7040;
+  --text-bright: #f2e4c0;
+  --border-gold: #4a3510;
+  --border-mid: #7a5a20;
+  --border-bright: #c9a84c;
+  --purple: #9b59cc;
+  --purple-light: #bf82f0;
+  --purple-dim: #5a2a8a;
+  --purple-border: #4a2070;
+  --gold-lead: #d4960e;
+  --gold-lead-light: #f0c040;
+  --gold-lead-dim: #7a5010;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'EB Garamond', serif;
+  background: var(--bg-deep);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 40% at 50% 0%, rgba(160,100,20,0.09) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 60% at 0% 60%, rgba(80,20,140,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 60% at 100% 40%, rgba(180,120,10,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ───────────────────────────────────────────── */
+header {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,6,4,0.97);
+  border-bottom: 1px solid var(--border-gold);
+  backdrop-filter: blur(12px);
+}
+
+.header-inner {
+  max-width: 1500px; margin: 0 auto;
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 18px;
+}
+
+.logo-eye {
+  width: 42px; height: 42px; flex-shrink: 0;
+  filter: drop-shadow(0 0 12px rgba(201,168,76,0.55));
+}
+
+.brand-text h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.2rem; color: var(--gold-light);
+  letter-spacing: 0.05em; line-height: 1;
+  text-shadow: 0 0 30px rgba(201,168,76,0.4);
+}
+
+.brand-text p {
+  font-family: 'Cinzel', serif; font-size: 0.56rem;
+  color: var(--text-dim); letter-spacing: 0.24em;
+  text-transform: uppercase; margin-top: 5px;
+}
+
+.header-rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-gold), transparent); }
+
+.header-pills {
+  display: flex; gap: 8px;
+}
+
+.hpill {
+  font-family: 'Cinzel', serif; font-size: 0.55rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 1px; border: 1px solid;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.hpill.purple { color: var(--purple-light); border-color: var(--purple-border); background: rgba(155,89,204,0.1); }
+.hpill.gold   { color: var(--gold-lead-light); border-color: var(--gold-lead-dim); background: rgba(212,150,14,0.1); }
+.hpill .dot   { width: 6px; height: 6px; border-radius: 50%; }
+.hpill.purple .dot { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+.hpill.gold   .dot { background: var(--gold-lead); box-shadow: 0 0 6px var(--gold-lead); }
+
+/* ── TOOLBAR ──────────────────────────────────────────── */
+.toolbar {
+  position: relative; z-index: 1;
+  max-width: 1500px; margin: 0 auto;
+  padding: 18px 24px 0;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+
+.search-wrap {
+  position: relative; flex: 1; min-width: 220px;
+}
+
+.search-wrap svg {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 13px; height: 13px; fill: var(--text-dim); pointer-events: none;
+}
+
+#searchInput {
+  width: 100%;
+  background: rgba(17,12,4,0.95);
+  border: 1px solid var(--border-gold); border-radius: 2px;
+  color: var(--text-bright);
+  font-family: 'EB Garamond', serif; font-size: 1rem;
+  padding: 9px 12px 9px 34px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#searchInput:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(201,168,76,0.1), inset 0 0 14px rgba(201,168,76,0.03);
+}
+
+#searchInput::placeholder { color: var(--text-dim); }
+
+.ctl-select {
+  font-family: 'Cinzel', serif; font-size: 0.63rem;
+  letter-spacing: 0.07em;
+  background: rgba(17,12,4,0.95);
+  border: 1px solid var(--border-gold); border-radius: 2px;
+  color: var(--text-main);
+  padding: 9px 28px 9px 11px;
+  outline: none; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%234a3510'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 9px center;
+  background-color: rgba(17,12,4,0.95);
+  transition: border-color 0.2s; min-width: 150px;
+}
+
+.ctl-select:focus { border-color: var(--gold); }
+.ctl-select option { background: #110c04; }
+
+/* Tab filter */
+.tab-group {
+  display: flex; gap: 0;
+}
+
+.tab-btn {
+  font-family: 'Cinzel', serif; font-size: 0.6rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 8px 16px; border: 1px solid var(--border-gold);
+  background: rgba(17,12,4,0.95); cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; gap: 7px;
+  color: var(--text-dim); margin-left: -1px; position: relative;
+}
+
+.tab-btn:first-child { border-radius: 2px 0 0 2px; margin-left: 0; }
+.tab-btn:last-child  { border-radius: 0 2px 2px 0; }
+
+.tab-btn .pip { width: 7px; height: 7px; border-radius: 50%; }
+.tab-btn[data-tab="all"]    .pip { background: linear-gradient(135deg, var(--purple) 50%, var(--gold-lead) 50%); }
+.tab-btn[data-tab="purple"] .pip { background: var(--purple); }
+.tab-btn[data-tab="gold"]   .pip { background: var(--gold-lead); }
+
+.tab-btn.active, .tab-btn:hover { z-index: 1; }
+.tab-btn[data-tab="all"].active    { color: var(--gold-light); border-color: var(--border-mid); background: rgba(201,168,76,0.07); }
+.tab-btn[data-tab="purple"].active { color: var(--purple-light); border-color: var(--purple-dim); background: rgba(155,89,204,0.1); box-shadow: 0 0 10px rgba(155,89,204,0.1); }
+.tab-btn[data-tab="gold"].active   { color: var(--gold-lead-light); border-color: var(--gold-lead-dim); background: rgba(212,150,14,0.1); box-shadow: 0 0 10px rgba(212,150,14,0.1); }
+
+/* ── STATUS BAR ───────────────────────────────────────── */
+.status-bar {
+  position: relative; z-index: 1;
+  max-width: 1500px; margin: 0 auto;
+  padding: 10px 24px 14px;
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-gold);
+}
+
+.status-txt {
+  font-family: 'Cinzel', serif; font-size: 0.6rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim);
+}
+
+.status-txt strong { color: var(--gold-light); font-weight: 700; }
+
+.status-split {
+  display: flex; gap: 20px;
+}
+
+.ss-item {
+  font-family: 'Cinzel', serif; font-size: 0.58rem;
+  letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; color: var(--text-dim);
+}
+
+.ss-item .pip { width: 6px; height: 6px; border-radius: 50%; }
+.ss-item strong { font-weight: 700; }
+
+/* ── MYTHIC GROUPING BANNER ──────────────────────────── */
+.mythic-group-header {
+  position: relative; z-index: 1;
+  max-width: 1500px; margin: 20px auto 0;
+  padding: 0 24px;
+}
+
+.mghead-inner {
+  display: flex; align-items: center; gap: 14px;
+  border: 1px solid var(--border-mid);
+  background: linear-gradient(90deg, rgba(212,150,14,0.06), rgba(212,150,14,0.02));
+  padding: 10px 16px;
+  border-radius: 2px;
+}
+
+.mghead-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+.mghead-name {
+  font-family: 'Cinzel', serif; font-size: 0.82rem;
+  font-weight: 700; color: var(--gold-lead-light);
+  letter-spacing: 0.05em; flex: 1;
+}
+
+.mghead-slot {
+  font-family: 'EB Garamond', serif; font-size: 0.82rem;
+  font-style: italic; color: var(--text-dim);
+}
+
+.mghead-count {
+  font-family: 'Cinzel', serif; font-size: 0.55rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold-lead); background: rgba(212,150,14,0.1);
+  border: 1px solid var(--gold-lead-dim); padding: 3px 9px;
+  border-radius: 1px;
+}
+
+.mghead-effect {
+  font-family: 'EB Garamond', serif; font-size: 0.78rem;
+  font-style: italic; color: var(--text-dim);
+  padding: 6px 16px 10px;
+  border-left: 2px solid rgba(212,150,14,0.3);
+  margin-left: 24px;
+  margin-top: 6px;
+}
+
+/* ── SECTION DIVIDER ──────────────────────────────────── */
+.section-divider {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 14px;
+  max-width: 1500px; margin: 18px auto 14px; padding: 0 24px;
+}
+
+.sdiv-line { flex: 1; height: 1px; background: var(--border-gold); }
+.sdiv-gem  { width: 5px; height: 5px; transform: rotate(45deg); flex-shrink: 0; }
+.sdiv-gem.purple { background: var(--purple-dim); }
+.sdiv-gem.gold   { background: var(--gold-dark); }
+.sdiv-txt {
+  font-family: 'Cinzel', serif; font-size: 0.57rem;
+  letter-spacing: 0.24em; text-transform: uppercase;
+}
+.sdiv-txt.purple { color: var(--purple); }
+.sdiv-txt.gold   { color: var(--gold-lead); }
+
+/* ── GRID ─────────────────────────────────────────────── */
+.leads-grid {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+  max-width: 1500px; margin: 0 auto; padding: 0 24px;
+}
+
+.leads-grid.gold-grid { padding-bottom: 8px; }
+.leads-grid.purple-grid { padding-bottom: 8px; }
+
+/* ── CARD ─────────────────────────────────────────────── */
+.lead-card {
+  border-radius: 2px; position: relative; overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.25s, border-color 0.25s;
+  animation: cardIn 0.28s ease both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lead-card.purple-card {
+  background: var(--bg-panel-purple);
+  border: 1px solid var(--purple-border);
+}
+
+.lead-card.gold-card {
+  background: var(--bg-panel-gold);
+  border: 1px solid var(--border-gold);
+}
+
+.lead-card.purple-card:hover {
+  transform: translateY(-3px); border-color: var(--purple-dim);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(155,89,204,0.14);
+}
+
+.lead-card.gold-card:hover {
+  transform: translateY(-3px); border-color: var(--border-mid);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(212,150,14,0.15);
+}
+
+/* Part-of-mythic highlight */
+.lead-card.mythic-part {
+  border-color: var(--gold-lead-dim);
+  background: linear-gradient(135deg, var(--bg-panel-gold) 80%, rgba(212,150,14,0.04));
+}
+
+.lead-card.mythic-part:hover {
+  border-color: var(--gold-lead);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 24px rgba(212,150,14,0.2);
+}
+
+/* Left stripe */
+.lead-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+}
+
+.lead-card.purple-card::before { background: linear-gradient(180deg, transparent, var(--purple) 50%, transparent); }
+.lead-card.gold-card::before   { background: linear-gradient(180deg, transparent, var(--gold-lead) 50%, transparent); }
+.lead-card.mythic-part::before { background: linear-gradient(180deg, transparent, var(--gold-lead-light) 50%, transparent); }
+
+/* Corner ornaments */
+.cc { position: absolute; width: 11px; height: 11px; border-style: solid; transition: border-color 0.2s; }
+.lead-card.purple-card .cc { border-color: var(--purple-border); }
+.lead-card.gold-card   .cc { border-color: var(--border-gold); }
+.lead-card.purple-card:hover .cc { border-color: var(--purple-dim); }
+.lead-card.gold-card:hover   .cc { border-color: var(--border-mid); }
+.tl { top:4px; left:4px; border-width:1px 0 0 1px; }
+.tr { top:4px; right:4px; border-width:1px 1px 0 0; }
+.bl { bottom:4px; left:4px; border-width:0 0 1px 1px; }
+.br { bottom:4px; right:4px; border-width:0 1px 1px 0; }
+
+.card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 14px 15px 7px 19px; gap: 10px;
+}
+
+.card-name {
+  font-family: 'Cinzel', serif; font-size: 0.86rem; font-weight: 600;
+  letter-spacing: 0.02em; line-height: 1.35; flex: 1;
+}
+
+.lead-card.purple-card .card-name { color: #d8b8f8; }
+.lead-card.gold-card   .card-name { color: var(--parchment); }
+
+.rbadge {
+  font-family: 'Cinzel', serif; font-size: 0.48rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 3px 7px; border: 1px solid; border-radius: 1px;
+  flex-shrink: 0; font-weight: 600;
+}
+
+.rbadge.purple { color: var(--purple-light); border-color: rgba(155,89,204,0.5); background: rgba(155,89,204,0.1); }
+.rbadge.gold   { color: var(--gold-lead-light); border-color: rgba(212,150,14,0.5); background: rgba(212,150,14,0.1); }
+.rbadge.mythic { color: #f0c860; border-color: rgba(240,200,96,0.5); background: rgba(240,200,96,0.08);
+  text-shadow: 0 0 8px rgba(240,200,96,0.3); }
+
+.card-body { padding: 2px 15px 13px 19px; display: flex; flex-direction: column; gap: 4px; }
+
+.meta-row { display: flex; align-items: baseline; gap: 8px; font-size: 0.82rem; }
+
+.meta-lbl {
+  font-family: 'Cinzel', serif; font-size: 0.52rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  min-width: 54px; flex-shrink: 0;
+}
+
+.lead-card.purple-card .meta-lbl { color: rgba(155,89,204,0.7); }
+.lead-card.gold-card   .meta-lbl { color: var(--gold-dark); }
+
+.meta-val { color: var(--text-main); }
+.meta-val em { font-style: italic; color: var(--text-dim); }
+
+.mythic-parent {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'Cinzel', serif; font-size: 0.5rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold-lead); padding: 2px 8px;
+  border: 1px solid rgba(212,150,14,0.35);
+  background: rgba(212,150,14,0.07);
+  border-radius: 1px; margin-top: 2px; width: fit-content;
+}
+
+.card-hr {
+  height: 1px; margin: 5px 0;
+}
+
+.lead-card.purple-card .card-hr { background: linear-gradient(90deg, var(--purple-border) 60%, transparent); }
+.lead-card.gold-card   .card-hr { background: linear-gradient(90deg, var(--border-gold) 60%, transparent); }
+
+.card-desc { font-size: 0.79rem; color: var(--text-dim); font-style: italic; line-height: 1.55; }
+
+.card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
+
+.ctag {
+  font-family: 'Cinzel', serif; font-size: 0.48rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 1px;
+}
+
+.ctag.furnishing { color: #6ecece; border: 1px solid rgba(80,180,180,0.4); background: rgba(80,180,180,0.06); }
+.ctag.outfit     { color: #d4b870; border: 1px solid rgba(210,180,100,0.4); background: rgba(210,180,100,0.06); }
+.ctag.jewelry    { color: #d0c890; border: 1px solid rgba(210,200,130,0.4); background: rgba(210,200,130,0.05); }
+.ctag.armor      { color: #a0b8c8; border: 1px solid rgba(140,180,200,0.4); background: rgba(140,180,200,0.05); }
+.ctag.mount      { color: #80c880; border: 1px solid rgba(100,190,100,0.4); background: rgba(100,190,100,0.05); }
+.ctag.cosmetic   { color: #c890d4; border: 1px solid rgba(190,130,210,0.4); background: rgba(190,130,210,0.05); }
+.ctag.motif      { color: #b8a0d8; border: 1px solid rgba(170,150,215,0.4); background: rgba(170,150,215,0.05); }
+.ctag.emote      { color: #f0b870; border: 1px solid rgba(240,180,100,0.4); background: rgba(240,180,100,0.05); }
+.ctag.pet        { color: #90d890; border: 1px solid rgba(120,210,120,0.4); background: rgba(120,210,120,0.05); }
+.ctag.repeatable { color: #6ed488; border: 1px solid rgba(80,200,110,0.4); background: rgba(80,200,110,0.05); }
+
+/* ── MYTHIC GROUP SECTION ─────────────────────────────── */
+.mythic-section {
+  position: relative; z-index: 1;
+  max-width: 1500px; margin: 0 auto;
+  padding-bottom: 6px;
+}
+
+/* ── EMPTY STATE ──────────────────────────────────────── */
+.empty-state {
+  grid-column: 1 / -1; text-align: center; padding: 70px 20px;
+}
+
+.empty-state p {
+  font-family: 'Cinzel', serif; font-size: 0.7rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim); margin-top: 14px;
+}
+
+.empty-eye { width: 46px; height: 46px; margin: 0 auto; opacity: 0.18; }
+
+/* ── FOOTER ───────────────────────────────────────────── */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border-gold);
+  background: rgba(8,6,4,0.7);
+  padding: 14px 24px; margin-top: 30px;
+}
+
+.legend {
+  max-width: 1500px; margin: 0 auto;
+  display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+}
+
+.leg-item { display: flex; align-items: center; gap: 7px; font-size: 0.77rem; color: var(--text-dim); }
+.leg-pip  { width: 8px; height: 8px; border-radius: 50%; }
+.leg-pip.purple { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+.leg-pip.gold   { background: var(--gold-lead); box-shadow: 0 0 6px var(--gold-lead); }
+
+.leg-note {
+  font-family: 'Cinzel', serif; font-size: 0.54rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-dim); margin-left: auto;
+}
+
+/* ── SPACER ───────────────────────────────────────────── */
+.section-spacer { height: 24px; }
+
+@media (max-width: 700px) {
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .leads-grid { grid-template-columns: 1fr; padding: 0 12px; }
+  .toolbar, .status-bar, .section-divider, .mythic-group-header, .mythic-section { padding-left: 12px; padding-right: 12px; }
+  .header-pills { display: none; }
+}
+
+/* ── V2 ADDITIONS: found tracking, expiry, zone progress ───────────── */
+.toolbar2 {
+  position: relative; z-index: 1;
+  max-width: 1500px; margin: 0 auto;
+  padding: 10px 24px 0;
+  display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+}
+.ctl-check {
+  font-family: 'Cinzel', serif; font-size: 0.6rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-dim); display: flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+}
+.ctl-check input { accent-color: var(--gold); width: 14px; height: 14px; cursor: pointer; }
+.ctl-check input:checked { accent-color: var(--gold-lead); }
+.found-txt { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
+.found-txt strong { color: #8fd48f; font-weight: 700; }
+.zone-btn {
+  font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 7px 14px; border: 1px solid var(--border-gold); border-radius: 2px;
+  background: rgba(17,12,4,0.95); color: var(--text-main); cursor: pointer;
+}
+.zone-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+.zone-panel {
+  position: relative; z-index: 1;
+  max-width: 1500px; margin: 12px auto 0; padding: 0 24px;
+}
+.zone-panel-inner {
+  border: 1px solid var(--border-mid); border-radius: 2px;
+  background: rgba(17,12,4,0.9); padding: 14px 18px;
+}
+.zone-panel h3 {
+  font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gold-light); margin-bottom: 10px;
+}
+.zp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 22px; }
+.zp-row { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+.zp-name { min-width: 130px; color: var(--text-main); }
+.zp-bar { flex: 1; height: 6px; background: rgba(201,168,76,0.12); border-radius: 3px; overflow: hidden; }
+.zp-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--gold-lead)); }
+.zp-count { font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--text-dim); min-width: 52px; text-align: right; }
+.zp-count.done { color: #8fd48f; }
+.lead-card.found { opacity: 0.62; }
+.lead-card.found .card-name { text-decoration: line-through; text-decoration-color: rgba(143,212,143,0.6); }
+.found-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.found-check {
+  font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-dim); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;
+}
+.found-check input { accent-color: #6fae6f; width: 15px; height: 15px; cursor: pointer; }
+.found-check.done { color: #8fd48f; }
+.exp-line { font-size: 0.8rem; margin-top: 4px; }
+.exp-line .exp-ok { color: #8fd48f; }
+.exp-line .exp-warn { color: #f0b860; font-weight: 600; }
+.exp-line .exp-bad { color: #e07070; font-weight: 600; }
+.exp-line input[type="date"] {
+  background: rgba(17,12,4,0.95); border: 1px solid var(--border-gold); border-radius: 2px;
+  color: var(--text-bright); font-family: 'EB Garamond', serif; font-size: 0.78rem;
+  padding: 2px 5px; margin-left: 6px; color-scheme: dark;
+}
+.ctag.mythic_fragment { color: #f0c860; border: 1px solid rgba(240,200,96,0.45); background: rgba(240,200,96,0.08); }
+.ctag.treasure { color: #e8c860; border: 1px solid rgba(230,190,90,0.4); background: rgba(230,190,90,0.06); }
+.ctag.furniture { color: #7ec8c8; border: 1px solid rgba(90,180,180,0.4); background: rgba(90,180,180,0.06); }
+.ctag.music_box { color: #d8a0e8; border: 1px solid rgba(200,150,230,0.4); background: rgba(200,150,230,0.06); }
+.ctag.furnishing_plan { color: #a0c8e8; border: 1px solid rgba(140,190,230,0.4); background: rgba(140,190,230,0.06); }
+.ctag.ultimate { color: #f0d080; border: 1px solid rgba(240,208,128,0.5); background: rgba(240,208,128,0.08); }
+.mghead-found { color: #8fd48f; }
+.prowler-note { font-size: 0.85rem; color: var(--text-dim); font-style: italic; padding: 4px 16px 12px; margin-left: 24px; border-left: 2px solid rgba(212,150,14,0.3); }
+.data-stamp { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); }
+@media (max-width: 700px) {
+  .toolbar2, .zone-panel { padding-left: 12px; padding-right: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <svg class="logo-eye" viewBox="0 0 44 44" fill="none">
+      <circle cx="22" cy="22" r="19" stroke="#c9a84c" stroke-width="0.8" opacity="0.25"/>
+      <circle cx="22" cy="22" r="13" stroke="#c9a84c" stroke-width="0.6" opacity="0.35"/>
+      <path d="M22 9 L32 16 L32 30 L22 37 L12 30 L12 16 Z" stroke="#c9a84c" stroke-width="0.8" fill="none" opacity="0.5"/>
+      <path d="M6 22 Q12 13 22 13 Q32 13 38 22 Q32 31 22 31 Q12 31 6 22Z" stroke="#f0d080" stroke-width="1.4" fill="none" opacity="0.9"/>
+      <circle cx="22" cy="22" r="5.5" stroke="#c9a84c" stroke-width="1" fill="rgba(201,168,76,0.1)"/>
+      <circle cx="22" cy="22" r="2.2" fill="#c9a84c"/>
+      <line x1="22" y1="2"  x2="22" y2="7"  stroke="#c9a84c" stroke-width="0.8" opacity="0.4"/>
+      <line x1="22" y1="37" x2="22" y2="42" stroke="#c9a84c" stroke-width="0.8" opacity="0.4"/>
+      <line x1="2"  y1="22" x2="7"  y2="22" stroke="#c9a84c" stroke-width="0.8" opacity="0.4"/>
+      <line x1="37" y1="22" x2="42" y2="22" stroke="#c9a84c" stroke-width="0.8" opacity="0.4"/>
+    </svg>
+    <div class="brand-text">
+      <h1>Scrying Helper</h1>
+      <p>ESO — Advanced &amp; Master Leads Reference</p>
+    </div>
+    <div class="header-rule"></div>
+    <div class="header-pills">
+      <div class="hpill purple"><span class="dot"></span>Advanced (Purple) — Lvl 5 Scrying</div>
+      <div class="hpill gold"><span class="dot"></span>Master (Gold) — Lvl 7 Scrying</div>
+    </div>
+  </div>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/></svg>
+    <input type="text" id="searchInput" placeholder="Search name, zone, reward, mythic item, or source…">
+  </div>
+  <select class="ctl-select" id="zoneFilter"><option value="all">All Zones</option></select>
+  <select class="ctl-select" id="typeFilter">
+    <option value="all">All Rewards</option>
+    <option value="mythic_fragment">Mythic Fragments</option>
+    <option value="treasure">Treasures</option>
+    <option value="furnishing">Furnishings</option>
+    <option value="furniture">Furniture</option>
+    <option value="cosmetic">Cosmetics</option>
+    <option value="motif">Motifs</option>
+    <option value="music_box">Music Boxes</option>
+    <option value="furnishing_plan">Furnishing Plans</option>
+  </select>
+  <select class="ctl-select" id="sortSelect">
+    <option value="name-asc">Name A → Z</option>
+    <option value="name-desc">Name Z → A</option>
+    <option value="zone-asc">Zone A → Z</option>
+    <option value="zone-desc">Zone Z → A</option>
+    <option value="rarity-asc">Advanced first</option>
+    <option value="rarity-desc">Master first</option>
+    <option value="expiry-asc">Expiring soonest</option>
+  </select>
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="all"><span class="pip"></span>All</button>
+    <button class="tab-btn" data-tab="purple"><span class="pip"></span>Advanced</button>
+    <button class="tab-btn" data-tab="gold"><span class="pip"></span>Master</button>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="status-txt">Showing <strong id="visCount">0</strong> of <strong id="totCount">0</strong> leads</div>
+  <div class="status-split">
+    <div class="ss-item"><span class="pip" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></span>Advanced (Purple): <strong id="cPurple" style="color:var(--purple-light)">0</strong></div>
+    <div class="ss-item"><span class="pip" style="background:var(--gold-lead);box-shadow:0 0 5px var(--gold-lead)"></span>Master (Gold): <strong id="cGold" style="color:var(--gold-lead-light)">0</strong></div>
+  </div>
+</div>
+
+<div class="toolbar2">
+  <label class="ctl-check"><input type="checkbox" id="esoPlusCheck"> ESO Plus (doubles lead timers)</label>
+  <label class="ctl-check"><input type="checkbox" id="hideFoundCheck"> Hide found leads</label>
+  <button class="zone-btn" id="zoneBtn" type="button">Zone progress</button>
+  <span class="found-txt">Found: <strong id="foundCount">0 / 259</strong> &nbsp;·&nbsp; Mythics complete: <strong id="mythicCount">0 / 35</strong></span>
+</div>
+<div class="zone-panel" id="zonePanel" style="display:none">
+  <div class="zone-panel-inner">
+    <h3>Zone completion — leads found per dig zone</h3>
+    <div class="zp-grid" id="zoneGrid"></div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="mainContent"></div>
+
+<div class="section-spacer"></div>
+
+<footer>
+  <div class="legend">
+    <div class="leg-item"><span class="leg-pip purple"></span>Advanced (Purple) — Level 5 Scrying required — Epic furnishings, motifs, cosmetics, mount parts</div>
+    <div class="leg-item"><span class="leg-pip gold"></span>Master (Gold) — Level 7 Scrying required — Mythic item fragments (5 pieces per mythic), legendary furnishings, mounts</div>
+    <div class="leg-note">Lead expiry: Advanced 120 days (240 with ESO Plus) · Master 180 days (360 with ESO Plus)</div>
+    <div class="data-stamp">Data: UESP-verified through Update 51 · Nov 2026 · 259 leads · 36 mythics</div>
+  </div>
+</footer>
+
+<script>
+
+const MYTHICS = [{"id": "belharza", "name": "Belharza's Band", "slot": "Ring", "effect": "Increase Light Attack damage by 900; consecutive melee Light Attacks build Belharza's Temper (max 5); at 5 stacks, after 1s deal 1471 Physical Damage in a line and stun 3s, once per 10s."}, {"id": "bloodlord", "name": "Bloodlord's Embrace", "slot": "Chest", "effect": "Dealing damage with a Bash attack places a persistent, un-cleansable Blood Curse on an enemy (one at a time; additional Bash damage moves the curse). When you Block a Blood Cursed enemy, restore 1605 Magicka (once every 1s)."}, {"id": "cryptcanon", "name": "Cryptcanon Vestments", "slot": "Chest", "effect": "Cannot cast Ultimate abilities; casting an Ultimate transfers the resource to living group members, divided equally; gain Minor Heroism in combat."}, {"id": "death-dealer", "name": "Death Dealer's Fete", "slot": "Ring", "effect": "Gain a stack of Escalating Fete every 2s in combat (max 30); each stack +88 Max Stamina, Health and Magicka; lose a stack every 4s out of combat."}, {"id": "dov-rha", "name": "Dov-rha Sabatons", "slot": "Feet", "effect": "While Sprinting gain Draconic Scales every 0.5s (+660 Armor, max 20); on stopping, deal Physical damage per stack in 8m shockwave, gain damage shield equal to damage dealt, retain scales 10s; at 20 stacks also stuns 3s."}, {"id": "esoteric", "name": "Esoteric Environment Greaves", "slot": "Legs", "effect": "While above 50% Stamina, reduce direct damage taken by 50% and lose 968 Stamina whenever you take direct damage, up to once every 0.3s."}, {"id": "faun", "name": "Faun's Lark Cladding", "slot": "Chest", "effect": "If you continuously Sprint for 1s, gain the ability to pass through enemies; enemies passed through become Charmed for 4s, restoring 678 Stamina and Magicka and healing 678 Health; charming removes you from Stealth."}, {"id": "gaze", "name": "Gaze of Sithis", "slot": "Head", "effect": "Adds 3276 Max Health; adds 1025 Health Recovery; adds 4000 Armor; reduces Block Mitigation to 0."}, {"id": "harpooner", "name": "Harpooner's Wading Kilt", "slot": "Legs", "effect": "Dealing direct damage grants a stack of Hunter's Focus for 20 seconds, up to 10 stacks max (max 1 stack per second). Each stack increases Critical Chance by 110 and Critical Damage by 1%. Taking direct damage removes 5 stacks, up to once per second."}, {"id": "huntsman", "name": "Huntsman's Warmask", "slot": "Helmet", "effect": "Dealing damage with a Bash or fully-charged Heavy Attack places the Mark of Hircine on your target for 1 minute. While active, you gain Minor Berserk (5% more damage) and deal 15% more damage to the target and 50% less damage to all other enemies. If the enemy dies while marked, you gain 2418 Stamina or Magicka, based off your highest maximum resource. This effect can trigger up to every 10 seconds."}, {"id": "lefthander", "name": "Lefthander's Aegis Belt", "slot": "Waist", "effect": "Roll Dodge no longer evades attack and instead grants a damage shield absorbing up to 20990 damage over 1 second; unaffected by Battle Spirit."}, {"id": "mad-god", "name": "Mad God's Dancing Shoes", "slot": "Feet", "effect": "While in combat, roll dodging creates a random effect (once every 3 seconds): a cheese wheel under an enemy within 15m dealing 1249 Magic damage to enemies in 3m after 1s; 1000 Physical damage to enemies facing you after 1.5s; 1394 Magic damage to the nearest enemy; Major Expedition for 4.5s; restore 1172 Stamina; reduce the cost of your next non-Ultimate ability by 14%; gain 7 Ultimate."}, {"id": "malacath", "name": "Malacath's Band of Brutality", "slot": "Ring", "effect": "Increases damage done by 16% but decreases Critical Damage done by 50%."}, {"id": "markyn", "name": "Markyn Ring of Majesty", "slot": "Ring", "effect": "Gain 100 Weapon and Spell Damage and 1157 Armor for every set you are wearing 3 or more pieces of."}, {"id": "monomyth", "name": "Monomyth Reforged", "slot": "Ring", "effect": "While in combat and on your Primary Weapon gain Major Force, Minor Berserk, and Minor Vulnerability. While in combat and on your Secondary Weapon gain Major Protection, Minor Vitality, and Minor Timidity."}, {"id": "mora", "name": "Mora's Whispers", "slot": "Shoulder", "effect": "Gain up to 1528 Critical Chance and 10% increased Inspiration, Alliance Rank, and Alliance skill, and 15% monster kill experience based on how many books of Shalidor's Library have been collected."}, {"id": "oakensoul", "name": "Oakensoul Ring", "slot": "Ring", "effect": "While equipped, you are unable to swap between your Primary and Backup Weapon Sets and gain Minor Berserk, Minor Courage, Major Brutality, Major Savagery, Minor Force, Minor Protection, Major Resolve, Minor Mending, Minor Fortitude, Minor Intellect, Minor Endurance, Minor Heroism, Minor Slayer, Minor Aegis, and Major Empower."}, {"id": "pearls", "name": "Pearls of Ehlnofey", "slot": "Necklace", "effect": "When you attempt to use resources to cast a healing ability while in combat and your dominant resource is under 50%, gain Major Heroism for 1.5s, granting 3 Ultimate every 1.5s."}, {"id": "prowler", "name": "Prowler's Talisman", "slot": "Necklace", "effect": "While Battle Spirit is inactive, bracing while crouching turns you invisible for 10s (once per 45s); +5% pickpocket success; on Critical Damage, +Max Magicka/Stamina up to 1900 at 10 stacks; on non-Critical Damage, +Health/Magicka/Stamina Recovery up to 160 at 10 stacks.", "notes": "No antiquity fragments: obtained from The Codex Caper quest (Season One, Update 50); upgraded with 4 Phynaster's Gems via Mylen Dechery in the Daggerfall Outlaws Refuge."}, {"id": "rakkhat", "name": "Rakkhat's Voidmantle", "slot": "Shoulder", "effect": "Increases your damage done with non-Ultimate Heavy Attacks and decreases your damage done with Light Attacks by 50% each. Dealing damage with a Light Attack restores 431 Magicka or Stamina, depending on your equipped weapon type. This resource restore is treated as a Heavy Attack resource restore for bonuses and penalties. Your Heavy Attacks no longer restore resources."}, {"id": "pale-order", "name": "Ring of the Pale Order", "slot": "Ring", "effect": "Restore 20% of the damage you deal as Health. This value is decreased by 4% per ally you are grouped with. You cannot be healed by anyone but yourself, your pets, or your Companions."}, {"id": "wild-hunt", "name": "Ring of the Wild Hunt", "slot": "Ring", "effect": "Increases movement speed by 15% while in combat; increases movement speed by 45% while out of combat."}, {"id": "rourken", "name": "Rourken Steamguards", "slot": "Feet", "effect": "While you have a Damage Shield, you take 90% less damage; blocking while Steam Guardian is active reduces its cooldown by 5s."}, {"id": "sea-serpent", "name": "Sea-Serpent's Coil", "slot": "Necklace", "effect": "While at full Health, gain 40% damage reduction. After taking damage while at full Health in combat, gain Serpent's Rebuke for 10 seconds, snaring yourself by 40% and gaining Major Berserk and Major Courage, increasing damage done by 10% and Weapon and Spell Damage by 430. Damage reduction does not apply while Serpent's Rebuke is active."}, {"id": "shapeshifter", "name": "Shapeshifter's Chain", "slot": "Necklace", "effect": "Reduce the cost of Transformation Ultimate and Werewolf abilities by 15%; while transformed, +1707 Max Health, Stamina and Magicka."}, {"id": "shattered-paths", "name": "Shattered Paths Signet", "slot": "Ring", "effect": "Increase damage to monsters with status effects by 1% per 1 Ultimate (max 133%); cap halved if Feral Guardian active; at 133+ Ultimate, Light/Heavy Attacks apply a random status effect (once per 2s); applies Minor Timidity, consuming 1 Ultimate every 1.5s in combat."}, {"id": "snow-treaders", "name": "Snow Treaders", "slot": "Feet", "effect": "While in combat, immune to snares and immobilizations that can be cleansed, but cannot Sprint."}, {"id": "spaulder", "name": "Spaulder of Ruin", "slot": "Shoulder", "effect": "Activating crouch or Prowl activates and deactivates a 12m Aura of Pride. Up to 6 group members in the aura gain 260 Weapon and Spell Damage. Reduce your Health, Magicka, and Stamina Recovery by 70 for every target benefiting from your Aura of Pride."}, {"id": "stormweaver", "name": "Stormweaver's Cavort", "slot": "Legs", "effect": "Adds 300 Magicka Recovery; Sprint, Roll Dodge, Bash, Break Free, Sneak and Block consume Magicka instead of Stamina; Magicka Recovery drops to 0 while Blocking, Sneaking or Sprinting; Stamina Recovery no longer drops to 0 while doing so."}, {"id": "syrabane", "name": "Syrabane's Ward", "slot": "Belt", "effect": "While Bracing, create a 12m protection zone; group members in the zone gain 30% block amount and 950 Health Recovery."}, {"id": "saint", "name": "The Saint and the Seducer", "slot": "Necklace", "effect": "While in combat, you gain one of five random Major buffs which changes every 10 seconds. Enemies within 12 meters of you gain one of five random Minor debuffs depending on which buff you have. Pairs: Major Berserk/Minor Maim, Major Resolve/Minor Breach, Major Force/Minor Brittle, Major Evasion/Minor Vulnerability, Major Courage/Minor Cowardice."}, {"id": "shadow-queen", "name": "The Shadow Queen's Cowl", "slot": "Head", "effect": "While crouched, see Witnesses and Guards through walls; successfully pickpocketing a Witness or Guard applies Distracted for 10s, stunning them and decreasing their Stealth detection radius by 30m."}, {"id": "thrassian", "name": "Thrassian Stranglers", "slot": "Hands", "effect": "Killing an enemy grants a stack of Sload's Call for 1 hour (max 50); each stack +23 Weapon and Spell Damage, -120 Max Health, -1% damage shield effectiveness; lost if you remove the gloves, go invisible, or crouch."}, {"id": "torc-last-ayleid", "name": "Torc of the Last Ayleid King", "slot": "Necklace", "effect": "Reduce damage taken by 15%; adds 1337 Weapon and Spell Damage; adds 500 Magicka and Stamina Recovery; disable all other item set bonuses."}, {"id": "torc", "name": "Torc of Tonal Constancy", "slot": "Necklace", "effect": "While your Stamina is less than 50%, increase your Magicka Recovery by 450. While your Magicka is less than 50%, increase your Stamina Recovery by 450."}, {"id": "velothi", "name": "Velothi Ur-Mage's Amulet", "slot": "Necklace", "effect": "Increases the damage of your most powerful direct damage abilities by up to 15%."}];
+const LEADS = [{"name": "Alessian Sacramental Oil", "rarity": "gold", "zone": "Gold Coast", "source": "Limenauruus at Tribune's Folly", "reward": "Belharza's Band \u2014 fragment", "type": "mythic_fragment", "mythicId": "belharza"}, {"name": "Etched Silver Horns", "rarity": "gold", "zone": "Gold Coast", "source": "Treasure Chests in Gold Coast", "reward": "Belharza's Band \u2014 fragment", "type": "mythic_fragment", "mythicId": "belharza"}, {"name": "Stainless Imperial Band", "rarity": "gold", "zone": "N/A (Black Drake Villa dungeon)", "source": "Mobs in Black Drake Villa Group Dungeon", "reward": "Belharza's Band \u2014 fragment", "type": "mythic_fragment", "mythicId": "belharza"}, {"name": "Crimson Diamond", "rarity": "gold", "zone": "N/A (Falkreath Hold dungeon)", "source": "Treasure Chests in Falkreath Hold Group Dungeon", "reward": "Belharza's Band \u2014 fragment", "type": "mythic_fragment", "mythicId": "belharza"}, {"name": "Bull's Head Gallery Rail", "rarity": "gold", "zone": "The Deadlands", "source": "Daily Quest reward coffers in The Deadlands", "reward": "Belharza's Band \u2014 fragment", "type": "mythic_fragment", "mythicId": "belharza"}, {"name": "Ancestor Samite Undershirt", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Bal Sunnar final boss", "reward": "Cryptcanon Vestments \u2014 fragment", "type": "mythic_fragment", "mythicId": "cryptcanon"}, {"name": "Scrib Chitin Padding", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Corlys the Chainmaker world boss", "reward": "Cryptcanon Vestments \u2014 fragment", "type": "mythic_fragment", "mythicId": "cryptcanon"}, {"name": "Ancestor Samite Stole", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Uzur the All-Seeing delve boss", "reward": "Cryptcanon Vestments \u2014 fragment", "type": "mythic_fragment", "mythicId": "cryptcanon"}, {"name": "Netchbeak Clasps", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Treasure chests", "reward": "Cryptcanon Vestments \u2014 fragment", "type": "mythic_fragment", "mythicId": "cryptcanon"}, {"name": "Ancestor Samite Sash", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Delve or World Boss daily reward", "reward": "Cryptcanon Vestments \u2014 fragment", "type": "mythic_fragment", "mythicId": "cryptcanon"}, {"name": "Warm Asymmetrical Ruby", "rarity": "gold", "zone": "Blackwood", "source": "Oblivion Portals final chest", "reward": "Death Dealer's Fete \u2014 fragment", "type": "mythic_fragment", "mythicId": "death-dealer"}, {"name": "Carved Signet Base", "rarity": "gold", "zone": "Imperial City", "source": "Patrolling Horrors in the Imperial City Districts", "reward": "Death Dealer's Fete \u2014 fragment", "type": "mythic_fragment", "mythicId": "death-dealer"}, {"name": "Weighted Spiked Bridge", "rarity": "gold", "zone": "Any", "source": "Rewards for the Worthy mail", "reward": "Death Dealer's Fete \u2014 fragment", "type": "mythic_fragment", "mythicId": "death-dealer"}, {"name": "Sturdy Silver Prongs", "rarity": "gold", "zone": "Craglorn", "source": "Dragonstar Arena final reward chest", "reward": "Death Dealer's Fete \u2014 fragment", "type": "mythic_fragment", "mythicId": "death-dealer"}, {"name": "Wide Barbed Shank", "rarity": "gold", "zone": "Craglorn", "source": "Magical Anomalies reward chest; Iron Orc Nirncrux Mine reward chest", "reward": "Death Dealer's Fete \u2014 fragment", "type": "mythic_fragment", "mythicId": "death-dealer"}, {"name": "Dov-rha Sabaton Toe Cap", "rarity": "gold", "zone": "High Isle", "source": "Psijic Portals in Southern Elsweyr", "reward": "Dov-rha Sabatons \u2014 fragment", "type": "mythic_fragment", "mythicId": "dov-rha"}, {"name": "Dov-rha Sabaton Lames", "rarity": "gold", "zone": "High Isle", "source": "Safeboxes in Northern Elsweyr", "reward": "Dov-rha Sabatons \u2014 fragment", "type": "mythic_fragment", "mythicId": "dov-rha"}, {"name": "Dov-rha Sabaton Heel", "rarity": "gold", "zone": "High Isle", "source": "Dragon bosses in Sunspire", "reward": "Dov-rha Sabatons \u2014 fragment", "type": "mythic_fragment", "mythicId": "dov-rha"}, {"name": "Dov-rha Sabaton Poleyn", "rarity": "gold", "zone": "High Isle", "source": "Regular enemies in Moongrave Fane", "reward": "Dov-rha Sabatons \u2014 fragment", "type": "mythic_fragment", "mythicId": "dov-rha"}, {"name": "Dov-rha Sabaton Guard", "rarity": "gold", "zone": "High Isle", "source": "Maarselok in Lair of Maarselok", "reward": "Dov-rha Sabatons \u2014 fragment", "type": "mythic_fragment", "mythicId": "dov-rha"}, {"name": "Biome-Proof Plating", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Nchuleft delve boss", "reward": "Esoteric Environment Greaves \u2014 fragment", "type": "mythic_fragment", "mythicId": "esoteric"}, {"name": "Nonreactive Cincture", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Graven Deep side bosses", "reward": "Esoteric Environment Greaves \u2014 fragment", "type": "mythic_fragment", "mythicId": "esoteric"}, {"name": "Thras-Crafted Breeches", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Coral Aerie secret boss", "reward": "Esoteric Environment Greaves \u2014 fragment", "type": "mythic_fragment", "mythicId": "esoteric"}, {"name": "Tonal Pivot Joints", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Forgotten Wastes group event boss", "reward": "Esoteric Environment Greaves \u2014 fragment", "type": "mythic_fragment", "mythicId": "esoteric"}, {"name": "Harvester-Scale Plating", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Zygiite in Gorne", "reward": "Esoteric Environment Greaves \u2014 fragment", "type": "mythic_fragment", "mythicId": "esoteric"}, {"name": "Hartlord Hide Singlet", "rarity": "gold", "zone": "Galen", "source": "Faun Falls World Boss in High Isle", "reward": "Faun's Lark Cladding \u2014 fragment", "type": "mythic_fragment", "mythicId": "faun"}, {"name": "Lustrous Prong Clasps", "rarity": "gold", "zone": "Galen", "source": "Woodcutting Surveys and Wood Nodes (High Isle & Galen)", "reward": "Faun's Lark Cladding \u2014 fragment", "type": "mythic_fragment", "mythicId": "faun"}, {"name": "Mark of the Faun Lord", "rarity": "gold", "zone": "Galen", "source": "Thieves Troves in Galen; Safeboxes in Galen", "reward": "Faun's Lark Cladding \u2014 fragment", "type": "mythic_fragment", "mythicId": "faun"}, {"name": "Winter's Pelt Lining", "rarity": "gold", "zone": "Galen", "source": "Hunter NPCs in Whalefall delve", "reward": "Faun's Lark Cladding \u2014 fragment", "type": "mythic_fragment", "mythicId": "faun"}, {"name": "Withered Garlic Gorget", "rarity": "gold", "zone": "Galen", "source": "Bosses in Obsidian Scar public dungeon", "reward": "Faun's Lark Cladding \u2014 fragment", "type": "mythic_fragment", "mythicId": "faun"}, {"name": "Glass Skeletal Visage", "rarity": "gold", "zone": "Blackwood", "source": "Public Dungeon bosses in Zenithar's Abbey", "reward": "Gaze of Sithis \u2014 fragment", "type": "mythic_fragment", "mythicId": "gaze"}, {"name": "Preserved Wraxu Feathers", "rarity": "gold", "zone": "Multiple", "source": "Random reward from Remains-Silent in any Outlaws Refuge or the Thieves Den in Hew's Bane ('Have any equipment today?' option; Shadowy Supplier passive required)", "reward": "Gaze of Sithis \u2014 fragment", "type": "mythic_fragment", "mythicId": "gaze"}, {"name": "Ritual Circlet", "rarity": "gold", "zone": "Shadowfen", "source": "Group Dungeon boss Velidreth in Cradle of Shadows", "reward": "Gaze of Sithis \u2014 fragment", "type": "mythic_fragment", "mythicId": "gaze"}, {"name": "Pad-Sa Shark Teeth", "rarity": "gold", "zone": "Shadowfen", "source": "Delve bosses", "reward": "Gaze of Sithis \u2014 fragment", "type": "mythic_fragment", "mythicId": "gaze"}, {"name": "Niss'wo Sacramental Wraps", "rarity": "gold", "zone": "Deshaan", "source": "Public Dungeon bosses in Forgotten Crypts", "reward": "Gaze of Sithis \u2014 fragment", "type": "mythic_fragment", "mythicId": "gaze"}, {"name": "Asp-Leather Strap", "rarity": "gold", "zone": "High Isle", "source": "Lesser Sea Adders in Summerset; Sep Adders in Hew's Bane and in the Abode of Ignominy in Northern Elsweyr", "reward": "Lefthander's Aegis Belt \u2014 fragment", "type": "mythic_fragment", "mythicId": "lefthander"}, {"name": "Gilded Disk", "rarity": "gold", "zone": "High Isle", "source": "Mornard Falls World Boss in High Isle, on the Amenos island", "reward": "Lefthander's Aegis Belt \u2014 fragment", "type": "mythic_fragment", "mythicId": "lefthander"}, {"name": "Grand Hattu Onyx", "rarity": "gold", "zone": "High Isle", "source": "Jewelry Crafting Writs", "reward": "Lefthander's Aegis Belt \u2014 fragment", "type": "mythic_fragment", "mythicId": "lefthander"}, {"name": "Singersteel Clasp", "rarity": "gold", "zone": "High Isle", "source": "Treasure chests in Alik'r Desert", "reward": "Lefthander's Aegis Belt \u2014 fragment", "type": "mythic_fragment", "mythicId": "lefthander"}, {"name": "Totambu Chrysocollas", "rarity": "gold", "zone": "High Isle", "source": "Abyssal Geyser shell trove (Summerset)", "reward": "Lefthander's Aegis Belt \u2014 fragment", "type": "mythic_fragment", "mythicId": "lefthander"}, {"name": "Chain of the Bone Goliath", "rarity": "gold", "zone": "Coldharbour", "source": "Mad Architect in Vaults of Madness", "reward": "Shapeshifter's Chain \u2014 fragment", "type": "mythic_fragment", "mythicId": "shapeshifter"}, {"name": "Chain of the Vampire", "rarity": "gold", "zone": "Western Skyrim / The Reach", "source": "Harrowstorms", "reward": "Shapeshifter's Chain \u2014 fragment", "type": "mythic_fragment", "mythicId": "shapeshifter"}, {"name": "Chain of the Werewolf", "rarity": "gold", "zone": "Craglorn", "source": "Group Delve bosses in Hircine's Haunt", "reward": "Shapeshifter's Chain \u2014 fragment", "type": "mythic_fragment", "mythicId": "shapeshifter"}, {"name": "Length of Sharpened Spikes", "rarity": "gold", "zone": "Blackwood", "source": "Vorenor Winterbourne in Spindleclutch II", "reward": "Shapeshifter's Chain \u2014 fragment", "type": "mythic_fragment", "mythicId": "shapeshifter"}, {"name": "Reinforced Clasp Anchor", "rarity": "gold", "zone": "Blackwood", "source": "Public Dungeon bosses in The Silent Halls", "reward": "Shapeshifter's Chain \u2014 fragment", "type": "mythic_fragment", "mythicId": "shapeshifter"}, {"name": "Ossein Ring Mold", "rarity": "gold", "zone": "Coldharbour", "source": "Valkyn Skoria Chest in City of Ash II; Night Market: Skittering Precinct Bosses / Night Market Reward Coffers", "reward": "Shattered Paths Signet \u2014 fragment", "type": "mythic_fragment", "mythicId": "shattered-paths"}, {"name": "Fractured Prismatic Gem", "rarity": "gold", "zone": "Coldharbour", "source": "Cynhamoth at Cynhamoth's Grove; Glorious Night Market Reward Coffer", "reward": "Shattered Paths Signet \u2014 fragment", "type": "mythic_fragment", "mythicId": "shattered-paths"}, {"name": "Nugget of Aetheric Gold", "rarity": "gold", "zone": "Coldharbour", "source": "Cirterisse in Aba-Loria; Fatelines Knell - Mournful Catacomb", "reward": "Shattered Paths Signet \u2014 fragment", "type": "mythic_fragment", "mythicId": "shattered-paths"}, {"name": "Flickering Charcoal Rubbings", "rarity": "gold", "zone": "Coldharbour", "source": "Daedroth Trio at Daedroth Larder; Skittering Precinct Bosses", "reward": "Shattered Paths Signet \u2014 fragment", "type": "mythic_fragment", "mythicId": "shattered-paths"}, {"name": "Starlight Oil", "rarity": "gold", "zone": "Coldharbour", "source": "Marwoleath in The Wailing Maw; Glorious Night Market Reward Coffer (Starlit Plaza Daily Quest)", "reward": "Shattered Paths Signet \u2014 fragment", "type": "mythic_fragment", "mythicId": "shattered-paths"}, {"name": "Braided Blessed Brambles", "rarity": "gold", "zone": "Galen", "source": "Group Event Boss Bloodroot in Toothmaul Gully, Auridon", "reward": "Stormweaver's Cavort \u2014 fragment", "type": "mythic_fragment", "mythicId": "stormweaver"}, {"name": "Panels of the Earthbones", "rarity": "gold", "zone": "Galen", "source": "Drops from Preserver of Galen or Timbershade", "reward": "Stormweaver's Cavort \u2014 fragment", "type": "mythic_fragment", "mythicId": "stormweaver"}, {"name": "Promise of the Circles Leather", "rarity": "gold", "zone": "Galen", "source": "Reward box for Delve quests given by Juline Courcelles", "reward": "Stormweaver's Cavort \u2014 fragment", "type": "mythic_fragment", "mythicId": "stormweaver"}, {"name": "True Way Clay Dials", "rarity": "gold", "zone": "Galen", "source": "Volcanic Vents in Galen", "reward": "Stormweaver's Cavort \u2014 fragment", "type": "mythic_fragment", "mythicId": "stormweaver"}, {"name": "Twice-Harvested Knot Rope", "rarity": "gold", "zone": "Galen", "source": "Clothier Surveys and Clothing Nodes in High Isle or Galen", "reward": "Stormweaver's Cavort \u2014 fragment", "type": "mythic_fragment", "mythicId": "stormweaver"}, {"name": "Shadowy Creatia Stitching", "rarity": "gold", "zone": "West Weald", "source": "Aggression of Root in Haldain Lumber Camp, West Weald", "reward": "The Shadow Queen's Cowl \u2014 fragment", "type": "mythic_fragment", "mythicId": "shadow-queen"}, {"name": "Huntlands-Blessed Leather", "rarity": "gold", "zone": "West Weald", "source": "World Bosses in West Weald", "reward": "The Shadow Queen's Cowl \u2014 fragment", "type": "mythic_fragment", "mythicId": "shadow-queen"}, {"name": "Gloamium Rivets", "rarity": "gold", "zone": "West Weald", "source": "Shell Trove from Abyssal Geysers in Summerset", "reward": "The Shadow Queen's Cowl \u2014 fragment", "type": "mythic_fragment", "mythicId": "shadow-queen"}, {"name": "Penumbral Oil", "rarity": "gold", "zone": "West Weald", "source": "Moongrave Fane bosses", "reward": "The Shadow Queen's Cowl \u2014 fragment", "type": "mythic_fragment", "mythicId": "shadow-queen"}, {"name": "Crowcaller's Chapbook", "rarity": "gold", "zone": "West Weald", "source": "Plague of Crows in Orcrest", "reward": "The Shadow Queen's Cowl \u2014 fragment", "type": "mythic_fragment", "mythicId": "shadow-queen"}, {"name": "Ancestor Silk Ribbon", "rarity": "gold", "zone": "Apocrypha", "source": "Infinite Archive chests (Tho'at Replicanum, Portals of the Unknown); loot from Gw the Pilferer and Marauders", "reward": "Torc of the Last Ayleid King \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc-last-ayleid"}, {"name": "Feathered Palladium Cradle", "rarity": "gold", "zone": "Apocrypha", "source": "Infinite Archive chests (Tho'at Replicanum, Portals of the Unknown); loot from Gw the Pilferer and Marauders", "reward": "Torc of the Last Ayleid King \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc-last-ayleid"}, {"name": "Meteoric Iron Triquetra", "rarity": "gold", "zone": "Apocrypha", "source": "Infinite Archive chests (Tho'at Replicanum, Portals of the Unknown); loot from Gw the Pilferer and Marauders", "reward": "Torc of the Last Ayleid King \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc-last-ayleid"}, {"name": "Palladium Talon", "rarity": "gold", "zone": "Apocrypha", "source": "Infinite Archive chests (Tho'at Replicanum, Portals of the Unknown); loot from Gw the Pilferer and Marauders", "reward": "Torc of the Last Ayleid King \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc-last-ayleid"}, {"name": "Welkynd Jewel", "rarity": "gold", "zone": "Apocrypha", "source": "Infinite Archive chests (Tho'at Replicanum, Portals of the Unknown); loot from Gw the Pilferer and Marauders", "reward": "Torc of the Last Ayleid King \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc-last-ayleid"}, {"name": "Band of Water", "rarity": "gold", "zone": "Glenumbra", "source": "Public Dungeon bosses in Bad Man's Hallows", "reward": "Ring of the Wild Hunt \u2014 fragment", "type": "mythic_fragment", "mythicId": "wild-hunt"}, {"name": "Charm of the Shapeless", "rarity": "gold", "zone": "Murkmire", "source": "World Bosses; Delve bosses", "reward": "Ring of the Wild Hunt \u2014 fragment", "type": "mythic_fragment", "mythicId": "wild-hunt"}, {"name": "Face of the Serpent", "rarity": "gold", "zone": "Grahtwood", "source": "Canonreeve Oraneth in Elden Hollow I", "reward": "Ring of the Wild Hunt \u2014 fragment", "type": "mythic_fragment", "mythicId": "wild-hunt"}, {"name": "Face of the Wolf Beast", "rarity": "gold", "zone": "Malabal Tor", "source": "World Bosses in Malabal Tor", "reward": "Ring of the Wild Hunt \u2014 fragment", "type": "mythic_fragment", "mythicId": "wild-hunt"}, {"name": "Symbol of Y'ffre", "rarity": "gold", "zone": "Greenshade", "source": "World Bosses in Greenshade", "reward": "Ring of the Wild Hunt \u2014 fragment", "type": "mythic_fragment", "mythicId": "wild-hunt"}, {"name": "Auri-El Metal Carvings", "rarity": "gold", "zone": "Bleakrock Isle", "source": "Overland mobs", "reward": "Snow Treaders \u2014 fragment", "type": "mythic_fragment", "mythicId": "snow-treaders"}, {"name": "Glacial Metal Rivets", "rarity": "gold", "zone": "Western Skyrim", "source": "Public Dungeon bosses in Labyrinthian", "reward": "Snow Treaders \u2014 fragment", "type": "mythic_fragment", "mythicId": "snow-treaders"}, {"name": "Magicka-Imbued Metal Plates", "rarity": "gold", "zone": "Cyrodiil", "source": "Underpall Cave Delve bosses (dig site in Coldharbour)", "reward": "Snow Treaders \u2014 fragment", "type": "mythic_fragment", "mythicId": "snow-treaders"}, {"name": "Petrified Snow-Cedar", "rarity": "gold", "zone": "The Rift", "source": "World Bosses", "reward": "Snow Treaders \u2014 fragment", "type": "mythic_fragment", "mythicId": "snow-treaders"}, {"name": "Snowy Sabre Cat Fur Strip", "rarity": "gold", "zone": "Eastmarch", "source": "Drodda of Icereach in Direfrost Keep", "reward": "Snow Treaders \u2014 fragment", "type": "mythic_fragment", "mythicId": "snow-treaders"}, {"name": "Malacath's Brutal Might Loop", "rarity": "gold", "zone": "Wrothgar", "source": "Public Dungeon bosses in Old Orsinium", "reward": "Malacath's Band of Brutality \u2014 fragment", "type": "mythic_fragment", "mythicId": "malacath"}, {"name": "Malacath's Brutal Ritual Dust", "rarity": "gold", "zone": "Reaper's March", "source": "World Bosses", "reward": "Malacath's Band of Brutality \u2014 fragment", "type": "mythic_fragment", "mythicId": "malacath"}, {"name": "Malacath's Brutal Ritual Oil", "rarity": "gold", "zone": "Stormhaven", "source": "Public Dungeon bosses in Bonesnap Ruins", "reward": "Malacath's Band of Brutality \u2014 fragment", "type": "mythic_fragment", "mythicId": "malacath"}, {"name": "Malacath's Brutal Rune Core", "rarity": "gold", "zone": "Bal Foyen", "source": "Patrolling Horrors in the Imperial City Districts (dig site in Bal Foyen; lead found in Imperial City)", "reward": "Malacath's Band of Brutality \u2014 fragment", "type": "mythic_fragment", "mythicId": "malacath"}, {"name": "Malacath's Brutal Scourge Hoop", "rarity": "gold", "zone": "Betnikh", "source": "Overland mobs", "reward": "Malacath's Band of Brutality \u2014 fragment", "type": "mythic_fragment", "mythicId": "malacath"}, {"name": "Buoyant Steel", "rarity": "gold", "zone": "Stros M'Kai", "source": "Fishing in saltwater", "reward": "Thrassian Stranglers \u2014 fragment", "type": "mythic_fragment", "mythicId": "thrassian"}, {"name": "Coral Plating", "rarity": "gold", "zone": "Artaeum", "source": "Fishing in any Mystic fishing hole", "reward": "Thrassian Stranglers \u2014 fragment", "type": "mythic_fragment", "mythicId": "thrassian"}, {"name": "Inert Anemone Inlay", "rarity": "gold", "zone": "Auridon", "source": "World Bosses", "reward": "Thrassian Stranglers \u2014 fragment", "type": "mythic_fragment", "mythicId": "thrassian"}, {"name": "Nautilus Shell Guards", "rarity": "gold", "zone": "Summerset", "source": "Public Dungeon bosses in Karnwasten", "reward": "Thrassian Stranglers \u2014 fragment", "type": "mythic_fragment", "mythicId": "thrassian"}, {"name": "Sticky Integument Leather", "rarity": "gold", "zone": "Artaeum / Summerset", "source": "Psijic Portals (dig site in Eyevea, accessible only via portals in Mages Guild guildhalls after the Mages Guild questline)", "reward": "Thrassian Stranglers \u2014 fragment", "type": "mythic_fragment", "mythicId": "thrassian"}, {"name": "Aetherquartz Prayer Beads", "rarity": "gold", "zone": "Auridon", "source": "Delve Bosses", "reward": "Pearls of Ehlnofey \u2014 fragment", "type": "mythic_fragment", "mythicId": "pearls"}, {"name": "Coral Clasp", "rarity": "gold", "zone": "Grahtwood", "source": "Public Dungeon bosses in Root Sunder Ruins", "reward": "Pearls of Ehlnofey \u2014 fragment", "type": "mythic_fragment", "mythicId": "pearls"}, {"name": "Great Eltheric Pearl", "rarity": "gold", "zone": "Rivenspire", "source": "Nerien'eth in Crypt of Hearts II", "reward": "Pearls of Ehlnofey \u2014 fragment", "type": "mythic_fragment", "mythicId": "pearls"}, {"name": "Nilumin River Pearls", "rarity": "gold", "zone": "Auridon", "source": "High Kinlord Rilis in The Banished Cells I", "reward": "Pearls of Ehlnofey \u2014 fragment", "type": "mythic_fragment", "mythicId": "pearls"}, {"name": "Silver Strand of Syrabane", "rarity": "gold", "zone": "The Reach", "source": "Safeboxes in The Reach", "reward": "Pearls of Ehlnofey \u2014 fragment", "type": "mythic_fragment", "mythicId": "pearls"}, {"name": "Petrified Daedroth Horn", "rarity": "gold", "zone": "The Deadlands", "source": "The Abomination Cradle world boss", "reward": "Spaulder of Ruin \u2014 fragment", "type": "mythic_fragment", "mythicId": "spaulder"}, {"name": "Void Alloy Rivets", "rarity": "gold", "zone": "The Deadlands", "source": "Dremora in any zone", "reward": "Spaulder of Ruin \u2014 fragment", "type": "mythic_fragment", "mythicId": "spaulder"}, {"name": "Void Alloy Lame Plates", "rarity": "gold", "zone": "The Deadlands", "source": "Safeboxes in Leyawiin", "reward": "Spaulder of Ruin \u2014 fragment", "type": "mythic_fragment", "mythicId": "spaulder"}, {"name": "Aureal Armor Glaze", "rarity": "gold", "zone": "The Deadlands", "source": "Shivering Shrine world boss", "reward": "Spaulder of Ruin \u2014 fragment", "type": "mythic_fragment", "mythicId": "spaulder"}, {"name": "Clannfear Leather Strapping", "rarity": "gold", "zone": "The Deadlands", "source": "Clannfear in any zone", "reward": "Spaulder of Ruin \u2014 fragment", "type": "mythic_fragment", "mythicId": "spaulder"}, {"name": "Fanged Cuirass", "rarity": "gold", "zone": "Shadowfen", "source": "Public Dungeon bosses in Sanguine's Demesne", "reward": "Bloodlord's Embrace \u2014 fragment", "type": "mythic_fragment", "mythicId": "bloodlord"}, {"name": "Goblet Gorget", "rarity": "gold", "zone": "Glenumbra", "source": "The Whisperer in Spindleclutch I", "reward": "Bloodlord's Embrace \u2014 fragment", "type": "mythic_fragment", "mythicId": "bloodlord"}, {"name": "Hecatomb Tassets", "rarity": "gold", "zone": "Khenarthi's Roost", "source": "Bosses in Imperial City Sewers (dig site in Khenarthi's Roost)", "reward": "Bloodlord's Embrace \u2014 fragment", "type": "mythic_fragment", "mythicId": "bloodlord"}, {"name": "Sanguine Doublet", "rarity": "gold", "zone": "Coldharbour", "source": "Public Dungeon bosses in Village of the Lost", "reward": "Bloodlord's Embrace \u2014 fragment", "type": "mythic_fragment", "mythicId": "bloodlord"}, {"name": "Thirsting Girdle", "rarity": "gold", "zone": "Rivenspire", "source": "Ilambris-Athor in Crypt of Hearts I", "reward": "Bloodlord's Embrace \u2014 fragment", "type": "mythic_fragment", "mythicId": "bloodlord"}, {"name": "Torc Strand of Lore", "rarity": "gold", "zone": "Alik'r Desert", "source": "World Bosses in Alik'r Desert", "reward": "Torc of Tonal Constancy \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc"}, {"name": "Torc Strand of Power", "rarity": "gold", "zone": "Deshaan", "source": "World Bosses in Deshaan", "reward": "Torc of Tonal Constancy \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc"}, {"name": "Torc Strand of Song", "rarity": "gold", "zone": "Bangkorai", "source": "Captain Blackheart in Blackheart Haven", "reward": "Torc of Tonal Constancy \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc"}, {"name": "Torc Throat Guards", "rarity": "gold", "zone": "Craglorn", "source": "Anka-Ra Burial Site, Iron Orc Nirncrux Mine, or Magical Anomalies", "reward": "Torc of Tonal Constancy \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc"}, {"name": "Torc Tonal Focus", "rarity": "gold", "zone": "Stonefalls", "source": "Public Dungeon bosses in Crow's Wood", "reward": "Torc of Tonal Constancy \u2014 fragment", "type": "mythic_fragment", "mythicId": "torc"}, {"name": "Aurmine Ancestral Signet", "rarity": "gold", "zone": "Bangkorai", "source": "Treasure Chests in Bangkorai", "reward": "Ring of the Pale Order \u2014 fragment", "type": "mythic_fragment", "mythicId": "pale-order"}, {"name": "Direnni Elegy Loop", "rarity": "gold", "zone": "Alik'r Desert", "source": "Delve boss in Coldrock Diggings", "reward": "Ring of the Pale Order \u2014 fragment", "type": "mythic_fragment", "mythicId": "pale-order"}, {"name": "Onyx Accent Stones", "rarity": "gold", "zone": "Wrothgar", "source": "World Bosses in Wrothgar", "reward": "Ring of the Pale Order \u2014 fragment", "type": "mythic_fragment", "mythicId": "pale-order"}, {"name": "Order-Etched Gallery Rail", "rarity": "gold", "zone": "Glenumbra", "source": "Mobs in Bad Man's Hallows Public Dungeon (including Skitterflame and Bloodcraw)", "reward": "Ring of the Pale Order \u2014 fragment", "type": "mythic_fragment", "mythicId": "pale-order"}, {"name": "Pale Order's Golden Band", "rarity": "gold", "zone": "The Reach", "source": "Nighthollow Keep, 'Ancient Text' letter on a table (lead found in Blackreach: Arkthzand Cavern; dig site in The Reach)", "reward": "Ring of the Pale Order \u2014 fragment", "type": "mythic_fragment", "mythicId": "pale-order"}, {"name": "Bloodshot Oculus", "rarity": "gold", "zone": "High Isle", "source": "Watcher mobs in The Deadlands, Atoll of Immolation, or The Cauldron", "reward": "Mora's Whispers \u2014 fragment", "type": "mythic_fragment", "mythicId": "mora"}, {"name": "Lurker-skin Sheath", "rarity": "gold", "zone": "High Isle", "source": "Treasure Chests in The Vile Manse Public Dungeon; Favor for Battlereeve Urcelmo", "reward": "Mora's Whispers \u2014 fragment", "type": "mythic_fragment", "mythicId": "mora"}, {"name": "Sclerotic Tentacle", "rarity": "gold", "zone": "High Isle", "source": "Watchlings in The Deadlands or Atoll of Immolation", "reward": "Mora's Whispers \u2014 fragment", "type": "mythic_fragment", "mythicId": "mora"}, {"name": "Seeker-sinew Thread", "rarity": "gold", "zone": "High Isle", "source": "Clothing nodes in The Deadlands", "reward": "Mora's Whispers \u2014 fragment", "type": "mythic_fragment", "mythicId": "mora"}, {"name": "Twitching Eyeball", "rarity": "gold", "zone": "High Isle", "source": "Gravelight Sentry in Imperial City Prison (lead drops from the last dead Xivkyn Necromancer in the encounter)", "reward": "Mora's Whispers \u2014 fragment", "type": "mythic_fragment", "mythicId": "mora"}, {"name": "Igneous Inlays", "rarity": "gold", "zone": "High Isle", "source": "Volcanic Vents in High Isle and Galen", "reward": "Oakensoul Ring \u2014 fragment", "type": "mythic_fragment", "mythicId": "oakensoul"}, {"name": "Larimar Gems", "rarity": "gold", "zone": "High Isle", "source": "Titanclaw World Boss in Stormhaven", "reward": "Oakensoul Ring \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Stormhaven", "mythicId": "oakensoul"}, {"name": "Petrified Oak Loop", "rarity": "gold", "zone": "High Isle", "source": "Safeboxes and Thieves Troves in Murkmire", "reward": "Oakensoul Ring \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Murkmire", "mythicId": "oakensoul"}, {"name": "Sacred Resin", "rarity": "gold", "zone": "High Isle", "source": "Any enemy creature in Malabal Tor", "reward": "Oakensoul Ring \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Malabal Tor", "mythicId": "oakensoul"}, {"name": "Stone Shank Frame", "rarity": "gold", "zone": "High Isle", "source": "Ore veins in Glenumbra", "reward": "Oakensoul Ring \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Glenumbra", "mythicId": "oakensoul"}, {"name": "Cylarne-crafted Yoke", "rarity": "gold", "zone": "West Weald", "source": "Maelstrom Arena Reward Chests", "reward": "The Saint and the Seducer \u2014 fragment", "type": "mythic_fragment", "mythicId": "saint"}, {"name": "Dark Seducer Cameo", "rarity": "gold", "zone": "West Weald", "source": "Bosses in The Vile Manse, Reaper's March", "reward": "The Saint and the Seducer \u2014 fragment", "type": "mythic_fragment", "mythicId": "saint"}, {"name": "Enjaen Saltchain Links", "rarity": "gold", "zone": "West Weald", "source": "Bosses Dezanu and Calls-to-Nature in Sheogorath's Tongue, Stonefalls", "reward": "The Saint and the Seducer \u2014 fragment", "type": "mythic_fragment", "mythicId": "saint"}, {"name": "Golden Saint Cameo", "rarity": "gold", "zone": "West Weald", "source": "Staada World Boss at Lesser Circle", "reward": "The Saint and the Seducer \u2014 fragment", "type": "mythic_fragment", "mythicId": "saint"}, {"name": "Vitharn-crafted Bail", "rarity": "gold", "zone": "West Weald", "source": "Chests from Dark Anchors around Tamriel", "reward": "The Saint and the Seducer \u2014 fragment", "type": "mythic_fragment", "mythicId": "saint"}, {"name": "Dark Stag Oil", "rarity": "gold", "zone": "Solstice", "source": "Hordrek's Hunting Grounds world boss, Western Skyrim", "reward": "Huntsman's Warmask \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Western Skyrim", "mythicId": "huntsman"}, {"name": "Fangs of Bitter Mercy", "rarity": "gold", "zone": "Solstice", "source": "Vykosa the Ascendant, final boss of Moon Hunter Keep (Reaper's March)", "reward": "Huntsman's Warmask \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Reaper's March (Moon Hunter Keep)", "mythicId": "huntsman"}, {"name": "Foxshadow Headwrap", "rarity": "gold", "zone": "Solstice", "source": "Voidmother Elgroalif, Four Skull Lookout world boss, The Reach", "reward": "Huntsman's Warmask \u2014 fragment", "type": "mythic_fragment", "lead_zone": "The Reach", "mythicId": "huntsman"}, {"name": "Mighty Bear's Snarl", "rarity": "gold", "zone": "Solstice", "source": "Balorgh, final boss of March of Sacrifices (Greenshade)", "reward": "Huntsman's Warmask \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Greenshade (March of Sacrifices)", "mythicId": "huntsman"}, {"name": "Skinshifter's Cowl", "rarity": "gold", "zone": "Solstice", "source": "Magnar Child-Eater, Argent Mine delve boss, Wrothgar", "reward": "Huntsman's Warmask \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Wrothgar", "mythicId": "huntsman"}, {"name": "Baliwog Pearl Eyelets", "rarity": "gold", "zone": "Solstice", "source": "Headcracker in Carapace Cavern", "reward": "Mad God's Dancing Shoes \u2014 fragment", "type": "mythic_fragment", "mythicId": "mad-god"}, {"name": "Gnarl-fiber Laces", "rarity": "gold", "zone": "Solstice", "source": "Any Boss in Deetra Grotto", "reward": "Mad God's Dancing Shoes \u2014 fragment", "type": "mythic_fragment", "mythicId": "mad-god"}, {"name": "Grummite Flesh Sole", "rarity": "gold", "zone": "Solstice", "source": "Gaulm in Ruins of Tuniria", "reward": "Mad God's Dancing Shoes \u2014 fragment", "type": "mythic_fragment", "mythicId": "mad-god"}, {"name": "Comically Curled Toecap", "rarity": "gold", "zone": "Solstice", "source": "The Wine Sommelier in the Vale of Revelry", "reward": "Mad God's Dancing Shoes \u2014 fragment", "type": "mythic_fragment", "mythicId": "mad-god"}, {"name": "Hunger-leather Heel", "rarity": "gold", "zone": "Solstice", "source": "The Scavenging Maw in the Depths of Malatar", "reward": "Mad God's Dancing Shoes \u2014 fragment", "type": "mythic_fragment", "mythicId": "mad-god"}, {"name": "Double-Moon Leather Cop", "rarity": "gold", "zone": "Solstice", "source": "Orcrest Bosses", "reward": "Rakkhat's Voidmantle \u2014 fragment", "type": "mythic_fragment", "mythicId": "rakkhat"}, {"name": "Nightwing Besagew", "rarity": "gold", "zone": "Solstice", "source": "Maw of Lorkhaj \u2014 Zhaj'hassa the Forgotten", "reward": "Rakkhat's Voidmantle \u2014 fragment", "type": "mythic_fragment", "mythicId": "rakkhat"}, {"name": "Blackened Moonstone Rivets", "rarity": "gold", "zone": "Solstice", "source": "Rimmen Necropolis Bosses", "reward": "Rakkhat's Voidmantle \u2014 fragment", "type": "mythic_fragment", "mythicId": "rakkhat"}, {"name": "Darkheart Leather Cop", "rarity": "gold", "zone": "Solstice", "source": "Maw of Lorkhaj \u2014 Rakkhat", "reward": "Rakkhat's Voidmantle \u2014 fragment", "type": "mythic_fragment", "mythicId": "rakkhat"}, {"name": "Darkheart Armor Glaze", "rarity": "gold", "zone": "Solstice", "source": "Nightmare Plateau \u2014 Zalsheem", "reward": "Rakkhat's Voidmantle \u2014 fragment", "type": "mythic_fragment", "mythicId": "rakkhat"}, {"name": "Duotone Engraved Band", "rarity": "gold", "zone": "Gold Coast", "source": "The Weeping Woman in Depths of Malatar", "reward": "Monomyth Reforged \u2014 fragment", "type": "mythic_fragment", "mythicId": "monomyth"}, {"name": "Gloamium Ring Bearing", "rarity": "gold", "zone": "Coldharbour", "source": "Sthorha the Crazed at Aba-Darre", "reward": "Monomyth Reforged \u2014 fragment", "type": "mythic_fragment", "mythicId": "monomyth"}, {"name": "Anu Crest", "rarity": "gold", "zone": "Greenshade", "source": "Hergor the Fallen in Rulanyil's Fall", "reward": "Monomyth Reforged \u2014 fragment", "type": "mythic_fragment", "mythicId": "monomyth"}, {"name": "Padomay Sigil", "rarity": "gold", "zone": "Solstice", "source": "Nardirin Death-Hand in Tainted Leel", "reward": "Monomyth Reforged \u2014 fragment", "type": "mythic_fragment", "mythicId": "monomyth"}, {"name": "Moonstone Ring Bearing", "rarity": "gold", "zone": "Reaper's March", "source": "Yenadar in Jode's Light", "reward": "Monomyth Reforged \u2014 fragment", "type": "mythic_fragment", "mythicId": "monomyth"}, {"name": "Heartland-Leather Gloves", "rarity": "gold", "zone": "West Weald", "source": "West Weald", "reward": "Rourken Steamguards \u2014 fragment", "type": "mythic_fragment", "mythicId": "rourken"}, {"name": "Tonal Resonation Chamber", "rarity": "gold", "zone": "West Weald", "source": "West Weald", "reward": "Rourken Steamguards \u2014 fragment", "type": "mythic_fragment", "mythicId": "rourken"}, {"name": "Volenfell Etching Tools", "rarity": "gold", "zone": "West Weald", "source": "West Weald", "reward": "Rourken Steamguards \u2014 fragment", "type": "mythic_fragment", "mythicId": "rourken"}, {"name": "Santakian Construct Plating", "rarity": "gold", "zone": "West Weald", "source": "West Weald", "reward": "Rourken Steamguards \u2014 fragment", "type": "mythic_fragment", "mythicId": "rourken"}, {"name": "Bthzarki Tonal Pipes", "rarity": "gold", "zone": "West Weald", "source": "West Weald", "reward": "Rourken Steamguards \u2014 fragment", "type": "mythic_fragment", "mythicId": "rourken"}, {"name": "Kothringi-Cut Leather", "rarity": "gold", "zone": "Blackwood", "source": "World bosses, Blackwood", "reward": "Harpooner's Wading Kilt \u2014 fragment", "type": "mythic_fragment", "mythicId": "harpooner"}, {"name": "Bog-Blue Jasper Fetish", "rarity": "gold", "zone": "Blackwood", "source": "Tree-Minder Na-Kesh, final boss of Ruins of Mazzatun (Shadowfen)", "reward": "Harpooner's Wading Kilt \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Shadowfen", "mythicId": "harpooner"}, {"name": "Tide-Glass Beads", "rarity": "gold", "zone": "Blackwood", "source": "Any alchemy harvesting node incl. pure water, Shadowfen", "reward": "Harpooner's Wading Kilt \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Shadowfen", "mythicId": "harpooner"}, {"name": "Wolf-Tail Sash", "rarity": "gold", "zone": "Blackwood", "source": "Foul fishing holes, Murkmire", "reward": "Harpooner's Wading Kilt \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Murkmire", "mythicId": "harpooner"}, {"name": "Silverweave Cord", "rarity": "gold", "zone": "Blackwood", "source": "Daggerfall Covenant enemies, Bal Foyen", "reward": "Harpooner's Wading Kilt \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Bal Foyen", "mythicId": "harpooner"}, {"name": "Morpholith Shank", "rarity": "gold", "zone": "Deadlands", "source": "Treasure chests, Coldharbour", "reward": "Markyn Ring of Majesty \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Coldharbour", "mythicId": "markyn"}, {"name": "Searing Gem", "rarity": "gold", "zone": "Deadlands", "source": "Daedrats in Deadlands, Apocrypha & White Gold Tower", "reward": "Markyn Ring of Majesty \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Deadlands / Apocrypha / White Gold Tower", "mythicId": "markyn"}, {"name": "Firescourge Band", "rarity": "gold", "zone": "Deadlands", "source": "Deadlands Daily Reward Coffer in Fargrave", "reward": "Markyn Ring of Majesty \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Fargrave", "mythicId": "markyn"}, {"name": "Ruinblood Coil", "rarity": "gold", "zone": "Deadlands", "source": "Mobs in Banished Cells I & II (Auridon)", "reward": "Markyn Ring of Majesty \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Auridon (Banished Cells I & II)", "mythicId": "markyn"}, {"name": "Mindcleaver Loop", "rarity": "gold", "zone": "Deadlands", "source": "Den of the Unmaker world boss, Deadlands", "reward": "Markyn Ring of Majesty \u2014 fragment", "type": "mythic_fragment", "mythicId": "markyn"}, {"name": "Black Eltheric Pearls", "rarity": "gold", "zone": "High Isle", "source": "Giant Clams, High Isle", "reward": "Sea-Serpent's Coil \u2014 fragment", "type": "mythic_fragment", "mythicId": "sea-serpent"}, {"name": "Frigid Sapphire", "rarity": "gold", "zone": "High Isle", "source": "Nomeg Rine, Frozen Ruins world boss, The Rift", "reward": "Sea-Serpent's Coil \u2014 fragment", "type": "mythic_fragment", "lead_zone": "The Rift", "mythicId": "sea-serpent"}, {"name": "Meteoric Beads", "rarity": "gold", "zone": "High Isle", "source": "Mages Guild daily quest reward coffers (Grahtwood / Deshaan / Wayrest)", "reward": "Sea-Serpent's Coil \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Grahtwood / Deshaan / Wayrest", "mythicId": "sea-serpent"}, {"name": "Sea Silver Chain", "rarity": "gold", "zone": "High Isle", "source": "Jewelry surveys (rich jewelry seams), any zone", "reward": "Sea-Serpent's Coil \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Any zone", "mythicId": "sea-serpent"}, {"name": "Steel Serpent Fangs", "rarity": "gold", "zone": "High Isle", "source": "Serpent Caller Vinsha, Serpent Bog world boss, High Isle", "reward": "Sea-Serpent's Coil \u2014 fragment", "type": "mythic_fragment", "mythicId": "sea-serpent"}, {"name": "Frog Metal Buckle", "rarity": "gold", "zone": "Galen", "source": "Blacksmithing writ reward crates (any zone)", "reward": "Syrabane's Ward \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Any zone (blacksmithing writs)", "mythicId": "syrabane"}, {"name": "Rune-Scribed Braces", "rarity": "gold", "zone": "Galen", "source": "Captain Numirril, final boss of Shipwright's Regret", "reward": "Syrabane's Ward \u2014 fragment", "type": "mythic_fragment", "mythicId": "syrabane"}, {"name": "Iridescent Pearlwater Wash", "rarity": "gold", "zone": "Galen", "source": "Fishing holes in Galen and High Isle", "reward": "Syrabane's Ward \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Galen / High Isle", "mythicId": "syrabane"}, {"name": "Indrik-Hide Strap", "rarity": "gold", "zone": "Galen", "source": "Caanerin, Indrik Frolic world boss, Summerset", "reward": "Syrabane's Ward \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Summerset", "mythicId": "syrabane"}, {"name": "Silverthread Stitching", "rarity": "gold", "zone": "Galen", "source": "High Kinlord Rillis, final boss of Banished Cells 2 (Auridon)", "reward": "Syrabane's Ward \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Auridon (Banished Cells 2)", "mythicId": "syrabane"}, {"name": "Ebony Crossed-Sword Chain", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "World Boss daily coffers in Vvardenfell", "reward": "Velothi Ur-Mage's Amulet \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Vvardenfell", "mythicId": "velothi"}, {"name": "Gold Mandibular Cradle", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Camonnaruhn delve boss, Telvanni Peninsula", "reward": "Velothi Ur-Mage's Amulet \u2014 fragment", "type": "mythic_fragment", "mythicId": "velothi"}, {"name": "Gold Shalk Clasp", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Scrivener's Hall trophy room chests (The Rift)", "reward": "Velothi Ur-Mage's Amulet \u2014 fragment", "type": "mythic_fragment", "lead_zone": "The Rift (Scrivener's Hall)", "mythicId": "velothi"}, {"name": "Ebony Shalk Mounting", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Runemaster Xiomara world boss, Runemaster's Acropolis, Apocrypha", "reward": "Velothi Ur-Mage's Amulet \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Apocrypha", "mythicId": "velothi"}, {"name": "Lucent Cabochon", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "The Underweave public dungeon bosses, Apocrypha", "reward": "Velothi Ur-Mage's Amulet \u2014 fragment", "type": "mythic_fragment", "lead_zone": "Apocrypha", "mythicId": "velothi"}, {"name": "Pilazjo Training Blade", "rarity": "purple", "zone": "Khenarthi's Roost", "source": "Treasure chests in Khenarthi's Roost", "reward": "Pilazjo Training Blade (treasure)", "type": "treasure"}, {"name": "Aquiline Calian Sphere", "rarity": "purple", "zone": "Auridon", "source": "Treasure chests in Auridon", "reward": "Aquiline Calian Sphere (treasure)", "type": "treasure"}, {"name": "Shatter Camoran Antler Crown", "rarity": "purple", "zone": "Grahtwood", "source": "Treasure chests in Grahtwood", "reward": "Shatter Camoran Antler Crown (treasure)", "type": "treasure"}, {"name": "Den of the Eldest Shoe", "rarity": "purple", "zone": "Greenshade", "source": "Treasure chests in Greenshade", "reward": "Den of the Eldest Shoe (treasure)", "type": "treasure"}, {"name": "Silvenar's Scepter", "rarity": "purple", "zone": "Malabal Tor", "source": "Treasure chests in Malabal Tor", "reward": "Silvenar's Scepter (treasure)", "type": "treasure"}, {"name": "Mane's Frayed Crown", "rarity": "purple", "zone": "Reaper's March", "source": "Treasure chests in Reaper's March", "reward": "Mane's Frayed Crown (treasure)", "type": "treasure"}, {"name": "Dwemer Astrological Charts", "rarity": "purple", "zone": "Stros M'Kai", "source": "Treasure chests in Stros M'Kai", "reward": "Dwemer Astrological Charts (treasure)", "type": "treasure"}, {"name": "Cornerstone of Reman II", "rarity": "purple", "zone": "Betnikh", "source": "Treasure chests in Betnikh", "reward": "Cornerstone of Reman II (treasure)", "type": "treasure"}, {"name": "Phynastic Scroll Case", "rarity": "purple", "zone": "Glenumbra", "source": "Treasure chests in Glenumbra", "reward": "Phynastic Scroll Case (treasure)", "type": "treasure"}, {"name": "Direnni Palatial Art", "rarity": "purple", "zone": "Stormhaven", "source": "Treasure chests in Stormhaven", "reward": "Direnni Palatial Art (treasure)", "type": "treasure"}, {"name": "Spire of Erokii Frieze", "rarity": "purple", "zone": "Rivenspire", "source": "Treasure chests in Rivenspire", "reward": "Spire of Erokii Frieze (treasure)", "type": "treasure"}, {"name": "Hegathe Divining Rod", "rarity": "purple", "zone": "Alik'r Desert", "source": "Treasure chests in Alik'r Desert", "reward": "Hegathe Divining Rod (treasure)", "type": "treasure"}, {"name": "Dwemer Trade Bar", "rarity": "purple", "zone": "Bangkorai", "source": "Treasure chests in Bangkorai", "reward": "Dwemer Trade Bar (treasure)", "type": "treasure"}, {"name": "High King Sunstone", "rarity": "purple", "zone": "Bleakrock Isle", "source": "Treasure chests in Bleakrock Isle", "reward": "High King Sunstone (treasure)", "type": "treasure"}, {"name": "Resdayni Signet Ring", "rarity": "purple", "zone": "Bal Foyen", "source": "Treasure chests in Bal Foyen", "reward": "Resdayni Signet Ring (treasure)", "type": "treasure"}, {"name": "Chimer Military Insignia", "rarity": "purple", "zone": "Stonefalls", "source": "Treasure chests in Stonefalls", "reward": "Chimer Military Insignia (treasure)", "type": "treasure"}, {"name": "Brittle Linen Pilgrimage Map", "rarity": "purple", "zone": "Deshaan", "source": "Treasure chests in Deshaan", "reward": "Brittle Linen Pilgrimage Map (treasure)", "type": "treasure"}, {"name": "Onyx Shadowscale Scroll Case", "rarity": "purple", "zone": "Shadowfen", "source": "Treasure chests in Shadowfen", "reward": "Onyx Shadowscale Scroll Case (treasure)", "type": "treasure"}, {"name": "Royal Ivory Hilt", "rarity": "purple", "zone": "Eastmarch", "source": "Treasure chests in Eastmarch", "reward": "Royal Ivory Hilt (treasure)", "type": "treasure"}, {"name": "Giant Chieftain's Crown", "rarity": "purple", "zone": "The Rift", "source": "Treasure chests in The Rift", "reward": "Giant Chieftain's Crown (treasure)", "type": "treasure"}, {"name": "Shattered Iron Maiden", "rarity": "purple", "zone": "Coldharbour", "source": "Treasure chests in Coldharbour", "reward": "Shattered Iron Maiden (treasure)", "type": "treasure"}, {"name": "Sacrificed Weapon of the Four", "rarity": "purple", "zone": "Craglorn", "source": "Treasure chests in Craglorn", "reward": "Sacrificed Weapon of the Four (treasure)", "type": "treasure"}, {"name": "Inert Daedric Spellstone", "rarity": "purple", "zone": "Eyevea", "source": "Treasure chests in Eyevea", "reward": "Inert Daedric Spellstone (treasure)", "type": "treasure"}, {"name": "Orsinium Cracked Iron Bell", "rarity": "purple", "zone": "Wrothgar", "source": "Treasure chests in Wrothgar", "reward": "Orsinium Cracked Iron Bell (treasure)", "type": "treasure"}, {"name": "Portrait of Lady Vadaya", "rarity": "purple", "zone": "Hew's Bane", "source": "Treasure chests in Hew's Bane", "reward": "Portrait of Lady Vadaya (treasure)", "type": "treasure"}, {"name": "Louse-Whisperer Ritual Totem", "rarity": "purple", "zone": "Hew's Bane", "source": "Treasure chests in Hew's Bane", "reward": "Louse-Whisperer Ritual Totem (treasure)", "type": "treasure"}, {"name": "Shattered Animunculi Schematic", "rarity": "purple", "zone": "Hew's Bane", "source": "Treasure chests in Hew's Bane", "reward": "Shattered Animunculi Schematic (treasure)", "type": "treasure"}, {"name": "Bleeding Beetle Door Lock", "rarity": "purple", "zone": "Vvardenfell", "source": "Treasure chests in Vvardenfell", "reward": "Bleeding Beetle Door Lock (treasure)", "type": "treasure"}, {"name": "Eligiac Vessel", "rarity": "purple", "zone": "Clockwork City", "source": "Treasure chests in Clockwork City", "reward": "Eligiac Vessel (treasure)", "type": "treasure"}, {"name": "Kinlord's Tree of Aldmeris", "rarity": "purple", "zone": "Summerset", "source": "Treasure chests in Summerset", "reward": "Kinlord's Tree of Aldmeris (treasure)", "type": "treasure"}, {"name": "Ritemaster's Slate", "rarity": "purple", "zone": "Artaeum", "source": "Treasure chests in Artaeum", "reward": "Ritemaster's Slate (treasure)", "type": "treasure"}, {"name": "Vakka Bok Sun Bowl", "rarity": "purple", "zone": "Murkmire", "source": "Treasure chests in Murkmire", "reward": "Vakka Bok Sun Bowl (treasure)", "type": "treasure"}, {"name": "Khajiit Prayer Cloth", "rarity": "purple", "zone": "Northern Elsweyr", "source": "Treasure chests in Northern Elsweyr", "reward": "Khajiit Prayer Cloth (treasure)", "type": "treasure"}, {"name": "Ancient Dragonguard Lure", "rarity": "purple", "zone": "Southern Elsweyr", "source": "Treasure chests in Southern Elsweyr", "reward": "Ancient Dragonguard Lure (treasure)", "type": "treasure"}, {"name": "King's Belt Plate", "rarity": "purple", "zone": "Western Skyrim", "source": "Treasure chests in Western Skyrim", "reward": "King's Belt Plate (treasure)", "type": "treasure"}, {"name": "Spear Tip of the Reach King", "rarity": "purple", "zone": "The Reach", "source": "Treasure chests in The Reach", "reward": "Spear Tip of the Reach King (treasure)", "type": "treasure"}, {"name": "Saint Kaladas's Plumb Bob", "rarity": "purple", "zone": "Blackwood", "source": "Treasure chests in Blackwood", "reward": "Saint Kaladas's Plumb Bob (treasure)", "type": "treasure"}, {"name": "Ancient Morpholith Chisel", "rarity": "purple", "zone": "The Deadlands", "source": "Treasure chests in The Deadlands", "reward": "Ancient Morpholith Chisel (treasure)", "type": "treasure"}, {"name": "Orichalcum Burial Urn", "rarity": "purple", "zone": "High Isle", "source": "Treasure chests in High Isle", "reward": "Orichalcum Burial Urn (treasure)", "type": "treasure"}, {"name": "All Flags Armada Scabbard", "rarity": "purple", "zone": "Galen", "source": "Treasure chests in Galen", "reward": "All Flags Armada Scabbard (treasure)", "type": "treasure"}, {"name": "Holy Velothi Chausable", "rarity": "purple", "zone": "Telvanni Peninsula", "source": "Treasure chests in Telvanni Peninsula", "reward": "Holy Velothi Chausable (treasure)", "type": "treasure"}, {"name": "Antique Cipher Vestments", "rarity": "purple", "zone": "Apocrypha", "source": "Treasure chests in Apocrypha", "reward": "Antique Cipher Vestments (treasure)", "type": "treasure"}, {"name": "Gilded Legionary Scabbard", "rarity": "purple", "zone": "West Weald", "source": "Treasure chests in West Weald", "reward": "Gilded Legionary Scabbard (treasure)", "type": "treasure"}, {"name": "Cracked Chukka-Sei Token", "rarity": "purple", "zone": "Western Solstice", "source": "Treasure chests in Western Solstice", "reward": "Cracked Chukka-Sei Token (treasure)", "type": "treasure"}, {"name": "Defaced Molag Bal Effigy", "rarity": "purple", "zone": "Eastern Solstice", "source": "Treasure chests in Eastern Solstice", "reward": "Defaced Molag Bal Effigy (treasure)", "type": "treasure"}, {"name": "Book of Dark Rites", "rarity": "purple", "zone": "Gold Coast", "source": "Successfully excavating Water-worn Anvil Bust (Intermediate treasure)", "reward": "Book of Dark Rites (treasure, 5,000g)", "type": "treasure"}, {"name": "Mixed-Era Coin Cache", "rarity": "purple", "zone": "Gold Coast", "source": "Antiquity Lead: Mixed-Era Coin Cache (High Seas of Tamriel event, tradable)", "reward": "Mixed-Era Coin Cache (treasure, 5,000g)", "type": "treasure"}, {"name": "Ancestral High Elf motif lead", "rarity": "purple", "zone": "Various", "source": "Treasure chests marked on Treasure Maps", "reward": "Ancestral High Elf motif chapter", "type": "motif", "notes": "One lead per motif; chapter varies. Zone is wherever the Treasure Map chest is."}, {"name": "Ancestral Orc motif lead", "rarity": "purple", "zone": "Various", "source": "Treasure chests marked on Treasure Maps", "reward": "Ancestral Orc motif chapter", "type": "motif", "notes": "One lead per motif; chapter varies. Zone is wherever the Treasure Map chest is."}, {"name": "Ancestral Nord motif lead", "rarity": "purple", "zone": "Various", "source": "Treasure chests marked on Treasure Maps", "reward": "Ancestral Nord motif chapter", "type": "motif", "notes": "One lead per motif; chapter varies. Zone is wherever the Treasure Map chest is."}, {"name": "Ancestral Reach motif lead", "rarity": "purple", "zone": "Various", "source": "Treasure chests marked on Treasure Maps", "reward": "Ancestral Reach motif chapter", "type": "motif", "notes": "One lead per motif; chapter varies. Zone is wherever the Treasure Map chest is."}, {"name": "Ancestral Akaviri motif lead", "rarity": "purple", "zone": "Various", "source": "Treasure chests marked on Treasure Maps", "reward": "Ancestral Akaviri motif chapter", "type": "motif", "notes": "One lead per motif; chapter varies. Zone is wherever the Treasure Map chest is."}, {"name": "Ancestral Breton motif lead", "rarity": "purple", "zone": "Various", "source": "Treasure chests marked on Treasure Maps", "reward": "Ancestral Breton motif chapter", "type": "motif", "notes": "One lead per motif; chapter varies. Zone is wherever the Treasure Map chest is."}, {"name": "Ancient Daedric motif lead", "rarity": "purple", "zone": "Various", "source": "Treasure chests marked on Treasure Maps", "reward": "Ancient Daedric motif chapter", "type": "motif", "notes": "One lead per motif; chapter varies. Zone is wherever the Treasure Map chest is."}, {"name": "Maormeri Serpent Shrine", "rarity": "purple", "zone": "Auridon", "source": "Safeboxes in Auridon", "reward": "Maormeri Serpent Shrine", "type": "furnishing"}, {"name": "Ruby Dragon Skull", "rarity": "purple", "zone": "Grahtwood", "source": "Treasure chests, wood nodes, thieves troves in Grahtwood", "reward": "Ruby Dragon Skull", "type": "furnishing"}, {"name": "Tri-Angled Truth Altar", "rarity": "purple", "zone": "Bal Foyen", "source": "Safeboxes / treasure chests in Bal Foyen", "reward": "Tri-Angled Truth Altar", "type": "furnishing"}, {"name": "The Dutiful Guar", "rarity": "purple", "zone": "Bal Foyen", "source": "Treasure chests, thieves troves, wood nodes in Bal Foyen", "reward": "The Dutiful Guar", "type": "furnishing"}, {"name": "Greensong Gathering Circle", "rarity": "purple", "zone": "Greenshade", "source": "Safeboxes, treasure chests, thieves troves in Greenshade; Rulanyil's Fall bosses; Tarcyr in March of Sacrifices", "reward": "Greensong Gathering Circle", "type": "furnishing"}, {"name": "Riven King's Throne", "rarity": "purple", "zone": "Rivenspire", "source": "Safeboxes, treasure chests, thieves troves in Rivenspire; Obsidian Scar bosses; clothing and woodworking nodes; Psijic portals", "reward": "Riven King's Throne", "type": "furnishing"}, {"name": "Ayleid Lightwell", "rarity": "purple", "zone": "Betnikh", "source": "Betnikh loot tables (safeboxes, treasure chests, thieves troves)", "reward": "Ayleid Lightwell", "type": "furnishing"}, {"name": "Aldmeri Golden Embellishments", "rarity": "purple", "zone": "Auridon", "source": "Thieves troves in multiple zones", "reward": "Music Box, Dreams and Memories \u2014 fragment", "type": "music_box"}, {"name": "Shrine to Dibella", "rarity": "purple", "zone": "Gold Coast", "source": "All loot tables in the Gold Coast", "reward": "Shrine to Dibella", "type": "furnishing"}, {"name": "Fossil, Mudcrab", "rarity": "purple", "zone": "Gold Coast", "source": "High Seas of Tamriel event", "reward": "Fossil, Mudcrab", "type": "furniture"}, {"name": "Fossil, Slaughterfish", "rarity": "purple", "zone": "Gold Coast", "source": "High Seas of Tamriel event", "reward": "Fossil, Slaughterfish", "type": "furniture"}, {"name": "Ship in a Bottle, Yokudan", "rarity": "purple", "zone": "Gold Coast", "source": "High Seas of Tamriel ship battle reward", "reward": "Ship in a Bottle, Yokudan", "type": "furnishing"}, {"name": "Nighthunter's Cowl", "rarity": "purple", "zone": "High Isle", "source": "Pile of Druidic Arrows at a striking locale NE of Banished Refuge, High Isle", "reward": "Nighthunter's Cowl", "type": "cosmetic"}, {"name": "All Flags Navy Astrolabe", "rarity": "gold", "zone": "Gold Coast", "source": "Antiquity Lead: All Flags Navy Astrolabe (High Seas of Tamriel event, tradable)", "reward": "All Flags Navy Astrolabe (treasure, 10,000g)", "type": "treasure"}, {"name": "Fossil, Giant Fish Tail", "rarity": "gold", "zone": "Gold Coast", "source": "High Seas of Tamriel event", "reward": "Fossil, Giant Fish Tail", "type": "furniture"}, {"name": "Sketch: Ancient Dwarven Mechanism", "rarity": "gold", "zone": "Gold Coast", "source": "High Seas of Tamriel event", "reward": "Sketch: Ancient Dwarven Mechanism (furnishing plan)", "type": "furnishing_plan"}, {"name": "Golden Idol of Morihaus", "rarity": "gold", "zone": "Gold Coast", "source": "World boss Limenauruus in Tribune's Folly (overland Minotaurs)", "reward": "Golden Idol of Morihaus", "type": "furniture"}, {"name": "Meridian Sconce", "rarity": "gold", "zone": "Gold Coast", "source": "Group dungeon boss Symphony of Blades in Depths of Malatar", "reward": "Meridian Sconce", "type": "furniture"}, {"name": "Preserved Music Box Mechanism", "rarity": "gold", "zone": "Grahtwood", "source": "Safeboxes in multiple zones", "reward": "Music Box, Dreams and Memories \u2014 fragment", "type": "music_box"}, {"name": "Branch of Falinesti", "rarity": "gold", "zone": "Greenshade", "source": "Resource nodes in Greenshade", "reward": "Branch of Falinesti", "type": "furnishing"}, {"name": "Remnant of the False Tower", "rarity": "gold", "zone": "Rivenspire", "source": "Ore nodes in Rivenspire", "reward": "Remnant of the False Tower", "type": "furnishing"}, {"name": "Rust Funnelcap Paint", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Bastion Nymic world event chests (Apocrypha and Telvanni Peninsula)", "reward": "Spore Savant Body Marks \u2014 fragment", "type": "cosmetic"}, {"name": "Beetleback Pigment", "rarity": "gold", "zone": "Apocrypha", "source": "Foul and lake fishing spots in Apocrypha", "reward": "Spore Savant Body Marks \u2014 fragment", "type": "cosmetic"}, {"name": "Sporecrafter's Mushroom Stamp", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Runestones and alchemy nodes in the Telvanni Peninsula", "reward": "Spore Savant Body Marks \u2014 fragment", "type": "cosmetic"}, {"name": "Annotated Sporecrafter Design", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Crafting writs", "reward": "Spore Savant Body Marks \u2014 fragment", "type": "cosmetic"}, {"name": "Ensorceled Drying Twine", "rarity": "gold", "zone": "Apocrypha", "source": "World boss Valkynaz Dek at Chthon Plaza, Apocrypha", "reward": "Spore Savant Face Marks \u2014 fragment", "type": "cosmetic"}, {"name": "Dried Puspockets", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Anchre Egg Mine delve boss, Telvanni Peninsula", "reward": "Spore Savant Face Marks \u2014 fragment", "type": "cosmetic"}, {"name": "Setting Sap", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Wood nodes in the Telvanni Peninsula", "reward": "Spore Savant Face Marks \u2014 fragment", "type": "cosmetic"}, {"name": "Sporecrafter's Grinding Stone", "rarity": "gold", "zone": "Apocrypha", "source": "Bastion Nymic world event chests (Apocrypha and Telvanni Peninsula)", "reward": "Spore Savant Face Marks \u2014 fragment", "type": "cosmetic"}, {"name": "Sporecrafter's Purse", "rarity": "gold", "zone": "Telvanni Peninsula", "source": "Daily reward coffer in the Telvanni Peninsula", "reward": "Spore Savant Face Marks \u2014 fragment", "type": "cosmetic"}];
+const ULTIMATE_LEADS = [{"name": "Al-Esh Ascension Coin", "zone": "Western Skyrim"}, {"name": "Anvil of Old Orsinium", "zone": "Wrothgar"}, {"name": "Blessed Dais of Almalexia", "zone": "Deshaan"}, {"name": "Brazier of Frozen Flame", "zone": "Western Skyrim"}, {"name": "Coil of Satakal", "zone": "Alik'r Desert"}, {"name": "Echoes of Aldmeris", "zone": "Summerset"}, {"name": "Moons-Blessed Ceremonial Pool", "zone": "Northern Elsweyr"}, {"name": "Moonlight Mirror", "zone": "The Rift"}, {"name": "Shrine of Boethra", "zone": "Southern Elsweyr"}, {"name": "St. Alessia Paravant", "zone": "Cyrodiil"}, {"name": "Stained Glass of Lunar Phases", "zone": "Reaper's March"}, {"name": "Warcaller's Painted Drum", "zone": "Betnikh"}];
+const EXPIRY = {"Simple": {"days": 60, "plus": 120}, "Intermediate": {"days": 90, "plus": 180}, "Advanced": {"days": 120, "plus": 240}, "Master": {"days": 180, "plus": 360}, "Ultimate": {"days": 180, "plus": 360}, "note": "Per UESP Online:Antiquity Leads: 'Leads earned throughout the world will expire at least 30 days after you obtain them... The expiry time depends on the difficulty level of the lead.' Prior to Update 49, ALL leads expired after 30 days \u2014 the app's '30 days' note was only correct before Update 49."}; // { Advanced: {days, plus}, Master: {...}, Ultimate: {...} }
+
+const MYTHIC_MAP = {};
+MYTHICS.forEach(m => { MYTHIC_MAP[m.id] = m; });
+const rarityOrder = { purple: 1, gold: 2 };
+const TYPE_LABELS = {
+  mythic_fragment: 'Mythic Fragment', treasure: 'Treasure', furnishing: 'Furnishing',
+  furniture: 'Furniture', cosmetic: 'Cosmetic', motif: 'Motif',
+  music_box: 'Music Box', furnishing_plan: 'Furnishing Plan'
+};
+
+// ── FOUND TRACKING (localStorage) ────────────────────────────────────────
+const LS_KEY = 'scrying_found_v2';
+let foundMap = {};
+try { foundMap = JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch (e) { foundMap = {}; }
+function saveFound() { try { localStorage.setItem(LS_KEY, JSON.stringify(foundMap)); } catch (e) {} }
+function isFound(name) { return !!foundMap[name]; }
+function foundDate(name) { return foundMap[name] || null; }
+function setFound(name, dateStr) {
+  if (dateStr) { foundMap[name] = dateStr; } else { delete foundMap[name]; }
+  saveFound();
+}
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function parseDay(s) { const p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function fmtDay(d) { return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
+
+// ── EXPIRY ───────────────────────────────────────────────────────────────
+let esoPlus = false;
+function rarityName(l) { return l.rarity === 'purple' ? 'Advanced' : 'Master'; }
+function expiryDays(l) {
+  const e = EXPIRY[rarityName(l)] || EXPIRY.Master;
+  return esoPlus ? e.plus : e.days;
+}
+function daysLeft(l) {
+  const fd = foundDate(l.name);
+  if (!fd) return null;
+  const exp = new Date(parseDay(fd).getTime() + expiryDays(l) * 86400000);
+  return { days: Math.floor((exp - new Date()) / 86400000), date: exp };
+}
+function expiryLine(l) {
+  const dl = daysLeft(l);
+  if (!dl) return '';
+  const fd = foundDate(l.name);
+  let cls = 'exp-ok', txt;
+  if (dl.days < 0)      { cls = 'exp-bad';  txt = 'Expired ' + (-dl.days) + ' day' + (-dl.days === 1 ? '' : 's') + ' ago — re-farm the lead'; }
+  else if (dl.days <= 14) { cls = 'exp-warn'; txt = 'Expires in ' + dl.days + ' day' + (dl.days === 1 ? '' : 's') + ' — ' + fmtDay(dl.date); }
+  else                   { cls = 'exp-ok';  txt = 'Expires in ' + dl.days + ' days — ' + fmtDay(dl.date); }
+  return `<div class="exp-line"><span class="${cls}">&#9203; ${txt}</span><br><span style="color:var(--text-dim)">Found:</span> <input type="date" class="found-date" data-name="${escAttr(l.name)}" value="${fd}"></div>`;
+}
+
+// ── DATA VALIDATION AT LOAD ──────────────────────────────────────────────
+(function validateData() {
+  const seen = new Set();
+  LEADS.forEach(l => {
+    if (seen.has(l.name.toLowerCase())) console.warn('[Scrying Helper] duplicate lead name:', l.name);
+    seen.add(l.name.toLowerCase());
+    if (l.mythicId && !MYTHIC_MAP[l.mythicId]) console.warn('[Scrying Helper] unresolved mythicId:', l.name, l.mythicId);
+  });
+  MYTHICS.forEach(m => {
+    if (m.id === 'prowler') return;
+    const n = LEADS.filter(l => l.mythicId === m.id).length;
+    if (n !== 5) console.warn('[Scrying Helper] mythic ' + m.name + ' has ' + n + ' fragment leads (expected 5)');
+  });
+})();
+
+// ── STATE ────────────────────────────────────────────────────────────────
+let activeTab = 'all';
+let activeZone = 'all';
+let activeType = 'all';
+let searchQuery = '';
+let sortMode = 'name-asc';
+let hideFound = false;
+let zonePanelOpen = false;
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function escAttr(s) { return esc(s); }
+
+function init() {
+  const zones = [...new Set(LEADS.map(l => l.zone))].sort((a, b) => a.localeCompare(b));
+  const zSel = document.getElementById('zoneFilter');
+  zones.forEach(z => {
+    const o = document.createElement('option');
+    o.value = z; o.textContent = z;
+    zSel.appendChild(o);
+  });
+
+  document.getElementById('totCount').textContent = LEADS.length;
+
+  document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value.toLowerCase(); render(); });
+  document.getElementById('zoneFilter').addEventListener('change', e => { activeZone = e.target.value; render(); });
+  document.getElementById('typeFilter').addEventListener('change', e => { activeType = e.target.value; render(); });
+  document.getElementById('sortSelect').addEventListener('change', e => { sortMode = e.target.value; render(); });
+  document.getElementById('esoPlusCheck').addEventListener('change', e => { esoPlus = e.target.checked; render(); });
+  document.getElementById('hideFoundCheck').addEventListener('change', e => { hideFound = e.target.checked; render(); });
+  document.getElementById('zoneBtn').addEventListener('click', () => {
+    zonePanelOpen = !zonePanelOpen;
+    document.getElementById('zonePanel').style.display = zonePanelOpen ? 'block' : 'none';
+    if (zonePanelOpen) renderZonePanel();
+  });
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTab = btn.dataset.tab;
+      render();
+    });
+  });
+
+  // Found checkboxes + found-date edits (event delegation on the grid)
+  document.getElementById('mainContent').addEventListener('change', e => {
+    const t = e.target;
+    if (t.classList.contains('found-check-box')) {
+      const name = t.dataset.name;
+      if (t.checked) setFound(name, todayStr()); else setFound(name, null);
+      render();
+    } else if (t.classList.contains('found-date')) {
+      const name = t.dataset.name;
+      if (t.value) setFound(name, t.value);
+      render();
+    } else if (t.classList.contains('prowler-check-box')) {
+      if (t.checked) setFound('MYTHIC:prowler', todayStr()); else setFound('MYTHIC:prowler', null);
+      render();
+    }
+  });
+
+  render();
+}
+
+function getFiltered() {
+  return LEADS.filter(l => {
+    if (activeTab !== 'all' && l.rarity !== activeTab) return false;
+    if (activeZone !== 'all' && l.zone !== activeZone) return false;
+    if (activeType !== 'all' && l.type !== activeType) return false;
+    if (hideFound && isFound(l.name)) return false;
+    if (searchQuery) {
+      const mythic = l.mythicId ? (MYTHIC_MAP[l.mythicId] ? MYTHIC_MAP[l.mythicId].name : '') : '';
+      const hay = [l.name, l.zone, l.lead_zone || '', l.reward, l.source, l.notes || '', mythic, TYPE_LABELS[l.type] || l.type].join(' ').toLowerCase();
+      if (!hay.includes(searchQuery)) return false;
+    }
+    return true;
+  }).sort((a, b) => {
+    switch (sortMode) {
+      case 'name-asc':    return a.name.localeCompare(b.name);
+      case 'name-desc':   return b.name.localeCompare(a.name);
+      case 'zone-asc':    return a.zone.localeCompare(b.zone) || a.name.localeCompare(b.name);
+      case 'zone-desc':   return b.zone.localeCompare(a.zone) || a.name.localeCompare(b.name);
+      case 'rarity-asc':  return rarityOrder[a.rarity] - rarityOrder[b.rarity] || a.name.localeCompare(b.name);
+      case 'rarity-desc': return rarityOrder[b.rarity] - rarityOrder[a.rarity] || a.name.localeCompare(b.name);
+      case 'expiry-asc': {
+        const da = daysLeft(a), db = daysLeft(b);
+        if (da && !db) return -1;
+        if (!da && db) return 1;
+        if (da && db) return da.days - db.days;
+        return a.name.localeCompare(b.name);
+      }
+    }
+    return 0;
+  });
+}
+function cardHTML(l, i) {
+  const delay = Math.min(i * 0.02, 0.35).toFixed(3);
+  const isPurp = l.rarity === 'purple';
+  const found = isFound(l.name);
+  const mythic = l.mythicId ? MYTHIC_MAP[l.mythicId] : null;
+  const badge = mythic ? 'mythic' : l.rarity;
+  const badgeTxt = mythic ? 'Mythic Fragment' : (l.rarity === 'purple' ? 'Advanced' : 'Master');
+  const cardClass = (isPurp ? 'purple-card' : (mythic ? 'gold-card mythic-part' : 'gold-card')) + (found ? ' found' : '');
+  const tagCls = l.type === 'mythic_fragment' ? 'mythic_fragment' : l.type;
+  const typeLbl = TYPE_LABELS[l.type] || l.type;
+
+  return `
+  <div class="lead-card ${cardClass}" style="animation-delay:${delay}s">
+    <div class="cc tl"></div><div class="cc tr"></div><div class="cc bl"></div><div class="cc br"></div>
+    <div class="card-head">
+      <div class="card-name">${esc(l.name)}</div>
+      <span class="rbadge ${badge}">${badgeTxt}</span>
+    </div>
+    <div class="card-body">
+      <div class="meta-row"><span class="meta-lbl">Dig Site</span><span class="meta-val">${esc(l.zone)}</span></div>
+      ${l.lead_zone && l.lead_zone !== l.zone ? `<div class="meta-row"><span class="meta-lbl">Lead Drops</span><span class="meta-val">${esc(l.lead_zone)}</span></div>` : ''}
+      <div class="meta-row"><span class="meta-lbl">Source</span><span class="meta-val"><em>${esc(l.source)}</em></span></div>
+      <div class="meta-row"><span class="meta-lbl">Reward</span><span class="meta-val">${esc(l.reward)}</span></div>
+      ${mythic ? `<div class="mythic-parent">&#9878; Part of: ${esc(mythic.name)} (${esc(mythic.slot)})</div>` : ''}
+      ${l.notes ? `<div class="card-hr"></div><div class="card-desc">${esc(l.notes)}</div>` : ''}
+      <div class="card-tags"><span class="ctag ${tagCls}">${typeLbl}</span></div>
+      ${expiryLine(l)}
+      <div class="found-row">
+        <label class="found-check${found ? ' done' : ''}"><input type="checkbox" class="found-check-box" data-name="${escAttr(l.name)}" ${found ? 'checked' : ''}> ${found ? '&#10003; Found' : 'Mark found'}</label>
+      </div>
+    </div>
+  </div>`;
+}
+
+function mythicFoundCount(m) {
+  return LEADS.filter(l => l.mythicId === m.id && isFound(l.name)).length;
+}
+
+function renderZonePanel() {
+  const grid = document.getElementById('zoneGrid');
+  const zones = {};
+  LEADS.forEach(l => {
+    if (!zones[l.zone]) zones[l.zone] = { total: 0, found: 0 };
+    zones[l.zone].total++;
+    if (isFound(l.name)) zones[l.zone].found++;
+  });
+  const rows = Object.keys(zones).sort((a, b) => a.localeCompare(b)).map(z => {
+    const zr = zones[z];
+    const pct = Math.round(100 * zr.found / zr.total);
+    return `<div class="zp-row"><span class="zp-name">${esc(z)}</span><span class="zp-bar"><span class="zp-fill" style="display:block;width:${pct}%"></span></span><span class="zp-count${zr.found === zr.total ? ' done' : ''}">${zr.found} / ${zr.total}</span></div>`;
+  });
+  grid.innerHTML = rows.join('');
+}
+
+function render() {
+  const filtered = getFiltered();
+  const content = document.getElementById('mainContent');
+
+  const cPurple = filtered.filter(l => l.rarity === 'purple').length;
+  const cGold = filtered.filter(l => l.rarity === 'gold').length;
+  document.getElementById('visCount').textContent = filtered.length;
+  document.getElementById('cPurple').textContent = cPurple;
+  document.getElementById('cGold').textContent = cGold;
+
+  const foundTotal = Object.keys(foundMap).filter(k => k !== 'MYTHIC:prowler').length;
+  document.getElementById('foundCount').textContent = foundTotal + ' / ' + LEADS.length;
+  const mythicsDone = MYTHICS.filter(m => m.id !== 'prowler' && mythicFoundCount(m) === 5).length;
+  document.getElementById('mythicCount').textContent = mythicsDone + ' / 35';
+
+  if (zonePanelOpen) renderZonePanel();
+
+  if (filtered.length === 0 && !showProwler() && filteredUltimates().length === 0) {
+    content.innerHTML = `
+      <div class="leads-grid" style="padding-top:0;padding-bottom:40px">
+        <div class="empty-state">
+          <svg class="empty-eye" viewBox="0 0 44 44" fill="none">
+            <path d="M6 22 Q16 12 22 12 Q28 12 38 22 Q28 32 22 32 Q16 32 6 22Z" stroke="#c9a84c" stroke-width="1.5" fill="none"/>
+            <circle cx="22" cy="22" r="5" stroke="#c9a84c" stroke-width="1.2"/>
+            <line x1="4" y1="4" x2="40" y2="40" stroke="#c9a84c" stroke-width="1.5"/>
+          </svg>
+          <p>No leads found — adjust your search or filters</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const purpleLeads = filtered.filter(l => l.rarity === 'purple');
+  const goldLeads = filtered.filter(l => l.rarity === 'gold');
+
+  let html = '';
+
+  // ── PURPLE SECTION ──────────────────────────
+  if (purpleLeads.length > 0) {
+    html += `
+    <div class="section-divider">
+      <div class="sdiv-gem purple"></div>
+      <div class="sdiv-line" style="background:var(--purple-border)"></div>
+      <div class="sdiv-txt purple">Advanced Leads (Purple) — Level 5 Scrying</div>
+      <div class="sdiv-line" style="background:var(--purple-border)"></div>
+      <div class="sdiv-gem purple"></div>
+    </div>
+    <div class="leads-grid purple-grid">
+      ${purpleLeads.map((l, i) => cardHTML(l, i)).join('')}
+    </div>`;
+  }
+
+  // ── GOLD SECTION (grouped by mythic, then non-mythic) ──
+  if (goldLeads.length > 0 || showProwler()) {
+    html += `
+    <div class="section-divider" style="margin-top:${purpleLeads.length > 0 ? '28px' : '18px'}">
+      <div class="sdiv-gem gold"></div>
+      <div class="sdiv-line" style="background:var(--gold-lead-dim)"></div>
+      <div class="sdiv-txt gold">Master Leads (Gold) — Level 7 Scrying</div>
+      <div class="sdiv-line" style="background:var(--gold-lead-dim)"></div>
+      <div class="sdiv-gem gold"></div>
+    </div>`;
+
+    const mythicGroups = {};
+    const nonMythic = [];
+    goldLeads.forEach(l => {
+      if (l.mythicId) {
+        if (!mythicGroups[l.mythicId]) mythicGroups[l.mythicId] = [];
+        mythicGroups[l.mythicId].push(l);
+      } else {
+        nonMythic.push(l);
+      }
+    });
+
+    let cardIdx = 0;
+    MYTHICS.forEach(m => {
+      if (m.id === 'prowler') return; // handled below
+      const group = mythicGroups[m.id];
+      if (!group || group.length === 0) return;
+      const foundN = mythicFoundCount(m);
+      html += `
+      <div class="mythic-section">
+        <div class="mythic-group-header">
+          <div class="mghead-inner">
+            <span class="mghead-icon">&#9878;</span>
+            <span class="mghead-name">${esc(m.name)}</span>
+            <span class="mghead-slot">${esc(m.slot)}</span>
+            <span class="mghead-count${foundN === 5 ? ' mghead-found' : ''}">${foundN} / 5 found &middot; ${group.length} shown</span>
+          </div>
+          <div class="mghead-effect">${esc(m.effect)}</div>
+        </div>
+        <div class="leads-grid gold-grid" style="margin-top:10px">
+          ${group.map(l => cardHTML(l, cardIdx++)).join('')}
+        </div>
+      </div>`;
+    });
+
+    // ── Prowler's Talisman: real mythic, no fragment leads (quest reward) ──
+    if (showProwler()) {
+      const pm = MYTHIC_MAP['prowler'];
+      const obtained = isFound('MYTHIC:prowler');
+      html += `
+      <div class="mythic-section">
+        <div class="mythic-group-header">
+          <div class="mghead-inner">
+            <span class="mghead-icon">&#9878;</span>
+            <span class="mghead-name">${esc(pm.name)}</span>
+            <span class="mghead-slot">${esc(pm.slot)}</span>
+            <span class="mghead-count${obtained ? ' mghead-found' : ''}">${obtained ? '&#10003; Obtained' : 'No fragment leads'}</span>
+          </div>
+          <div class="mghead-effect">${esc(pm.effect)}</div>
+          <div class="prowler-note">${esc(pm.notes || '')}</div>
+          <div style="padding:0 16px 12px;margin-left:24px">
+            <label class="found-check${obtained ? ' done' : ''}"><input type="checkbox" class="prowler-check-box" ${obtained ? 'checked' : ''}> ${obtained ? '&#10003; Obtained (quest reward)' : 'Mark obtained'}</label>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    if (nonMythic.length > 0) {
+      html += `
+      <div class="leads-grid gold-grid" style="margin-top:14px">
+        ${nonMythic.map(l => cardHTML(l, cardIdx++)).join('')}
+      </div>`;
+    }
+  }
+
+  // ── ULTIMATE REFERENCE SECTION (not counted in totals) ──
+  const ults = filteredUltimates();
+  if (ults.length > 0) {
+    html += `
+    <div class="section-divider" style="margin-top:28px">
+      <div class="sdiv-gem gold"></div>
+      <div class="sdiv-line" style="background:var(--gold-lead-dim)"></div>
+      <div class="sdiv-txt gold">Ultimate Leads (Gold) — Level 10 Scrying — Reference Only</div>
+      <div class="sdiv-line" style="background:var(--gold-lead-dim)"></div>
+      <div class="sdiv-gem gold"></div>
+    </div>
+    <div style="max-width:1500px;margin:0 auto;padding:0 24px 8px;position:relative;z-index:1;font-size:0.82rem;color:var(--text-dim);font-style:italic">Ultimate leads need Scrying 10 + Antiquarian Insight V. They are the same gold shade as Master leads in-game — don't confuse them. ${ults.length} of 12 reference leads shown — not counted in the totals above.</div>
+    <div class="leads-grid gold-grid">
+      ${ults.map(u => `
+      <div class="lead-card gold-card">
+        <div class="cc tl"></div><div class="cc tr"></div><div class="cc bl"></div><div class="cc br"></div>
+        <div class="card-head">
+          <div class="card-name">${esc(u.name)}</div>
+          <span class="rbadge gold">Ultimate</span>
+        </div>
+        <div class="card-body">
+          <div class="meta-row"><span class="meta-lbl">Dig Site</span><span class="meta-val">${esc(u.zone)}</span></div>
+          <div class="card-tags"><span class="ctag ultimate">Ultimate &middot; Scrying 10</span></div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  content.innerHTML = html;
+}
+
+function showProwler() {
+  if (activeTab !== 'all' && activeTab !== 'gold') return false;
+  if (activeZone !== 'all') return false;
+  if (activeType !== 'all') return false;
+  if (hideFound && isFound('MYTHIC:prowler')) return false;
+  if (!searchQuery) return true;
+  const pm = MYTHIC_MAP['prowler'];
+  const hay = [pm.name, pm.slot, pm.effect, pm.notes || ''].join(' ').toLowerCase();
+  return hay.includes(searchQuery);
+}
+
+function filteredUltimates() {
+  if (activeTab !== 'all' && activeTab !== 'gold') return [];
+  if (activeType !== 'all') return [];
+  return ULTIMATE_LEADS.filter(u => {
+    if (activeZone !== 'all' && u.zone !== activeZone) return false;
+    if (searchQuery) {
+      const hay = [u.name, u.zone, 'ultimate'].join(' ').toLowerCase();
+      if (!hay.includes(searchQuery)) return false;
+    }
+    return true;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+// Test hooks (used by the verification harness, harmless in the browser)
+window.__SH = {
+  LEADS, MYTHICS, ULTIMATE_LEADS,
+  get foundMap() { return foundMap; },
+  setFound, daysLeft, isFound, render,
+  setState(s) {
+    if (s.tab !== undefined) activeTab = s.tab;
+    if (s.zone !== undefined) activeZone = s.zone;
+    if (s.type !== undefined) activeType = s.type;
+    if (s.search !== undefined) searchQuery = s.search;
+    if (s.sort !== undefined) sortMode = s.sort;
+    if (s.esoPlus !== undefined) esoPlus = s.esoPlus;
+    if (s.hideFound !== undefined) hideFound = s.hideFound;
+    render();
+  }
+};
+
+</script>
+</body>
+</html>

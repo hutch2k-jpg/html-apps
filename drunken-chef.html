@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Drunken Chef — ESO Provisioning Compendium</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c8a84b;
+    --gold-light: #e8d08a;
+    --gold-dark: #8a6a1a;
+    --parchment: #f5e8c8;
+    --parchment-dark: #d4c090;
+    --bg-deep: #0d0a06;
+    --bg-mid: #1a1308;
+    --bg-panel: #251c0e;
+    --bg-card: #1e1608;
+    --text-main: #e8d9b0;
+    --text-dim: #9a8860;
+    --text-bright: #f8eecc;
+    --red-eso: #8b1a1a;
+    --red-light: #c0392b;
+    --green-eso: #2e5a2e;
+    --green-light: #4a8a4a;
+    --blue-eso: #1a2e5a;
+    --blue-light: #3a6ab0;
+    --purple-eso: #4a2060;
+    --purple-light: #8840c0;
+    --border: #3a2e18;
+    --border-gold: #6a5020;
+    --shadow: rgba(0,0,0,0.8);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'EB Garamond', serif;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Background texture ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(200,168,75,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(139,26,26,0.08) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(200,168,75,0.01) 2px, rgba(200,168,75,0.01) 4px);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── Header ── */
+  header {
+    position: relative;
+    text-align: center;
+    padding: 40px 20px 30px;
+    border-bottom: 1px solid var(--border-gold);
+    background: linear-gradient(180deg, rgba(37,28,14,0.98) 0%, rgba(13,10,6,0.95) 100%);
+    z-index: 10;
+  }
+
+  .header-ornament {
+    font-size: 12px;
+    letter-spacing: 6px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .header-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(200,168,75,0.4), 2px 2px 8px rgba(0,0,0,0.9);
+    letter-spacing: 4px;
+    line-height: 1.1;
+  }
+
+  .header-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(11px, 1.5vw, 14px);
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .header-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 16px auto 0;
+    max-width: 500px;
+  }
+
+  .header-divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+  }
+
+  .header-divider-gem {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    box-shadow: 0 0 8px rgba(200,168,75,0.5);
+  }
+
+  /* ── Nav Tabs ── */
+  .nav-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,10,6,0.97);
+    border-bottom: 1px solid var(--border-gold);
+    backdrop-filter: blur(6px);
+  }
+
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 14px 16px;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .nav-tab:hover { color: var(--gold-light); }
+  .nav-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  .nav-search-wrap {
+    margin-left: auto;
+    padding: 8px 0 8px 16px;
+    flex-shrink: 0;
+  }
+
+  .nav-search {
+    background: rgba(37,28,14,0.8);
+    border: 1px solid var(--border-gold);
+    color: var(--text-main);
+    font-family: 'EB Garamond', serif;
+    font-size: 14px;
+    padding: 6px 12px;
+    outline: none;
+    width: 220px;
+    border-radius: 2px;
+    transition: border-color 0.2s;
+  }
+  .nav-search::placeholder { color: var(--text-dim); }
+  .nav-search:focus { border-color: var(--gold); }
+
+  /* ── Filter Bar ── */
+  .filter-bar {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    border: 1px solid var(--border-gold);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    border-radius: 2px;
+  }
+  .filter-btn:hover { color: var(--gold-light); border-color: var(--gold); }
+  .filter-btn.active {
+    background: rgba(200,168,75,0.15);
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .filter-select {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 5px 8px;
+    border: 1px solid var(--border-gold);
+    background: rgba(37,28,14,0.9);
+    color: var(--text-main);
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 2px;
+    outline: none;
+    max-width: 220px;
+  }
+  .filter-select:focus { border-color: var(--gold); }
+  .filter-select option { background: var(--bg-panel); color: var(--text-main); text-transform: none; }
+
+  .result-count {
+    margin-left: auto;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* ── Main Content ── */
+  .main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Category Header ── */
+  .category-block { margin-bottom: 36px; }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-gold);
+  }
+
+  .category-icon { font-size: 22px; }
+
+  .category-title {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  .category-desc {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-left: auto;
+  }
+
+  /* ── Recipe Grid ── */
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  /* ── Recipe Card ── */
+  .recipe-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--card-accent, var(--border-gold));
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .recipe-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--card-accent, var(--gold-dark)), transparent);
+  }
+
+  .recipe-card:hover {
+    border-color: var(--gold-dark);
+    background: rgba(37,28,14,0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .card-quality-gem {
+    width: 12px; height: 12px;
+    border-radius: 1px;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .q-standard .card-quality-gem  { background: #5a8a5a; box-shadow: 0 0 6px #5a8a5a; }
+  .q-difficult .card-quality-gem { background: #3a6ab0; box-shadow: 0 0 6px #3a6ab0; }
+  .q-complex .card-quality-gem   { background: #8840c0; box-shadow: 0 0 6px #8840c0; }
+  .q-legendary .card-quality-gem { background: #c8a84b; box-shadow: 0 0 10px #c8a84b; }
+
+  .card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .card-level {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .card-effects {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .effect-tag {
+    font-size: 10px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 1px;
+    border: 1px solid;
+  }
+
+  .effect-health   { background: rgba(139,26,26,0.25); border-color: #8b1a1a; color: #e07070; }
+  .effect-magicka  { background: rgba(26,46,90,0.35);  border-color: #1a2e5a; color: #7090e0; }
+  .effect-stamina  { background: rgba(46,90,46,0.25);  border-color: #2e5a2e; color: #70c070; }
+  .effect-xp       { background: rgba(200,168,75,0.2); border-color: #8a6a1a; color: #e8c860; }
+  .effect-special  { background: rgba(74,32,96,0.3);   border-color: #4a2060; color: #b070e0; }
+
+  .card-ingredients {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+
+  .card-ingredients span { color: var(--parchment-dark); font-style: normal; }
+
+  .card-obtain {
+    font-size: 12px;
+    color: var(--text-dim);
+    border-top: 1px solid rgba(58,46,24,0.5);
+    padding-top: 6px;
+    margin-top: 4px;
+  }
+
+  .card-obtain-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* Quality borders */
+  .q-standard  { --card-accent: #5a8a5a; }
+  .q-difficult { --card-accent: #3a6ab0; }
+  .q-complex   { --card-accent: #8840c0; }
+  .q-legendary { --card-accent: #c8a84b; }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+  }
+
+  .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+  .empty-state-text {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-gold);
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+    transform: translateY(20px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.visible .modal {
+    transform: translateY(0);
+  }
+
+  .modal-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border-gold);
+    position: relative;
+  }
+
+  .modal-quality-bar {
+    height: 3px;
+    margin-bottom: 14px;
+  }
+
+  .modal-title {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+
+  .modal-category {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none; border: 1px solid var(--border-gold);
+    color: var(--text-dim);
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { color: var(--gold); border-color: var(--gold); }
+
+  .modal-body { padding: 20px; }
+
+  .modal-section { margin-bottom: 20px; }
+
+  .modal-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(58,46,24,0.5);
+  }
+
+  .modal-effects { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .modal-ingredient-list {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+
+  .modal-ingredient {
+    background: rgba(37,28,14,0.8);
+    border: 1px solid var(--border-gold);
+    padding: 5px 10px;
+    font-size: 13px;
+    color: var(--parchment);
+  }
+
+  .modal-obtain-text {
+    font-size: 14px;
+    color: var(--text-main);
+    line-height: 1.6;
+  }
+
+  .modal-lore {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 13.5px;
+    line-height: 1.7;
+    border-left: 2px solid var(--gold-dark);
+    padding-left: 12px;
+  }
+
+  /* ── Quality Legend ── */
+  .legend {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px 20px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+  }
+
+  .legend-gem {
+    width: 10px; height: 10px;
+    transform: rotate(45deg);
+    border-radius: 1px;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+
+  /* ── Hidden ── */
+  .hidden { display: none !important; }
+
+  /* ── Section tabs visibility ── */
+  .section-panel { display: none; }
+  .section-panel.active { display: block; }
+
+  /* ── Decorative corner ── */
+  .corner-ornament {
+    position: absolute;
+    width: 40px; height: 40px;
+    border-color: var(--gold-dark);
+    border-style: solid;
+    opacity: 0.4;
+  }
+  .corner-ornament.tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+  .corner-ornament.tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+  .corner-ornament.bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+  .corner-ornament.br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+  @media (max-width: 600px) {
+    .recipe-grid { grid-template-columns: 1fr; }
+    .category-desc { display: none; }
+    .nav-search-wrap { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="corner-ornament tl"></div>
+  <div class="corner-ornament tr"></div>
+  <div class="header-ornament">⚜ Elder Scrolls Online ⚜</div>
+  <div class="header-title">The Drunken Chef</div>
+  <div class="header-subtitle">Provisioning Compendium of Tamriel</div>
+  <div class="header-divider">
+    <div class="header-divider-line"></div>
+    <div class="header-divider-gem"></div>
+    <div class="header-divider-line"></div>
+  </div>
+</header>
+
+<!-- NAV TABS -->
+<div class="nav-wrap">
+  <div class="nav-inner">
+    <div class="nav-tab active" data-tab="all">All Recipes</div>
+    <div class="nav-tab" data-tab="food">🍖 Food</div>
+    <div class="nav-tab" data-tab="drinks">🍺 Drinks</div>
+    <div class="nav-tab" data-tab="special">✨ Special & Event</div>
+    <div class="nav-search-wrap">
+      <input class="nav-search" type="text" placeholder="Search recipes…" id="searchInput">
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Effect:</span>
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="health">❤ Health</button>
+  <button class="filter-btn" data-filter="magicka">💙 Magicka</button>
+  <button class="filter-btn" data-filter="stamina">💚 Stamina</button>
+  <button class="filter-btn" data-filter="xp">⭐ XP Boost</button>
+  <button class="filter-btn" data-filter="special">✨ Special</button>
+  <span class="filter-label" style="margin-left:12px">Quality:</span>
+  <button class="filter-btn active-q" data-quality="all">All</button>
+  <button class="filter-btn" data-quality="standard">◆ Standard</button>
+  <button class="filter-btn" data-quality="difficult">◆ Difficult</button>
+  <button class="filter-btn" data-quality="complex">◆ Complex</button>
+  <button class="filter-btn" data-quality="legendary">◆ Legendary</button>
+  <span class="filter-label" style="margin-left:12px">Ingredient:</span>
+  <select class="filter-select" id="ingredientSelect" aria-label="Filter by ingredient">
+    <option value="all">All Ingredients</option>
+  </select>
+  <span class="filter-label" style="margin-left:12px">Level:</span>
+  <select class="filter-select" id="levelSelect" aria-label="Filter by level">
+    <option value="all">All Levels</option>
+    <option value="1–4">1–4</option>
+    <option value="5–9">5–9</option>
+    <option value="10–14">10–14</option>
+    <option value="15–19">15–19</option>
+    <option value="20–24">20–24</option>
+    <option value="25–29">25–29</option>
+    <option value="30–34">30–34</option>
+    <option value="35–39">35–39</option>
+    <option value="40–44">40–44</option>
+    <option value="45–49">45–49</option>
+    <option value="CP10–CP40">CP10–CP40</option>
+    <option value="CP50–CP90">CP50–CP90</option>
+    <option value="CP100–CP140">CP100–CP140</option>
+    <option value="CP150–CP160">CP150–CP160</option>
+  </select>
+  <span class="filter-label" style="margin-left:12px">Sort:</span>
+  <select class="filter-select" id="sortSelect" aria-label="Sort recipes">
+    <option value="default">Default</option>
+    <option value="name">Name A–Z</option>
+    <option value="level">Level (low → high)</option>
+    <option value="quality">Quality (Standard → Legendary)</option>
+  </select>
+  <span class="result-count" id="resultCount">Loading…</span>
+</div>
+
+<!-- QUALITY LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-gem" style="background:#5a8a5a;box-shadow:0 0 5px #5a8a5a"></div>Standard — 1 effect, 35 min</div>
+  <div class="legend-item"><div class="legend-gem" style="background:#3a6ab0;box-shadow:0 0 5px #3a6ab0"></div>Difficult — 2 effects, 1 hour</div>
+  <div class="legend-item"><div class="legend-gem" style="background:#8840c0;box-shadow:0 0 5px #8840c0"></div>Complex — 3 effects, 2 hours</div>
+  <div class="legend-item"><div class="legend-gem" style="background:#c8a84b;box-shadow:0 0 8px #c8a84b"></div>Legendary — Unique bonus</div>
+</div>
+
+<!-- MAIN -->
+<main class="main" id="mainContent">
+  <!-- Dynamically populated -->
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header" id="modalHeader">
+      <div class="modal-quality-bar" id="modalQualityBar"></div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-category" id="modalCategory"></div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">Effects</div>
+        <div class="modal-effects" id="modalEffects"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Ingredients</div>
+        <div class="modal-ingredient-list" id="modalIngredients"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">How to Obtain Recipe</div>
+        <div class="modal-obtain-text" id="modalObtain"></div>
+      </div>
+      <div class="modal-section" id="modalLoreSection">
+        <div class="modal-section-title">Lore</div>
+        <div class="modal-lore" id="modalLore"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  RECIPE DATA
+// ══════════════════════════════════════════
+const RECIPES = [
+
+  // ── ALCOHOLIC DRINKS ──
+  { name:"Golden Lager", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"1–4", quality:"standard", effects:["health"], ingredients:["Wheat"], obtain:"Found in containers (barrels, crates, cupboards) throughout Tamriel. Bought from Chefs & Brewers. Guild Trader.", lore:"A crisp, pale golden brew favored by farmers and soldiers alike. Simple but reliable." },
+  { name:"Nut Brown Ale", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"1–4", quality:"standard", effects:["health"], ingredients:["Barley"], obtain:"Random drop from containers across all zones. Chef/Brewer vendors. Guild Trader.", lore:"A malty, dark ale brewed in the traditions of the Nords." },
+  { name:"Red Rye Beer", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"1–4", quality:"standard", effects:["health"], ingredients:["Rye"], obtain:"Random drop from containers. Chef/Brewer vendors. Guild Trader.", lore:"An earthy, bittersweet beer with a reddish hue." },
+  { name:"Bog-Iron Ale", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"5–9", quality:"standard", effects:["health"], ingredients:["Yeast"], obtain:"Containers across all zones. Chef/Brewer vendors. Guild Trader.", lore:"Brewed in the bogs of Black Marsh — muddy in color, stout in character." },
+  { name:"Mazte", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"5–9", quality:"standard", effects:["health"], ingredients:["Rice"], obtain:"Containers throughout Tamriel, especially Morrowind regions. Guild Trader.", lore:"A traditional Dunmeri rice brew, sharp and fermented." },
+  { name:"Surilie Syrah Wine", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"5–9", quality:"standard", effects:["health"], ingredients:["Surilie Grapes"], obtain:"Containers in Cyrodiil and High Rock zones. Chef/Brewer vendors.", lore:"A fruity, full-bodied wine pressed from Surilie grapes, a Cyrodilic delicacy." },
+  { name:"Clarified Syrah Wine", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"10–14", quality:"standard", effects:["health"], ingredients:["Surilie Grapes","Isinglass"], obtain:"Containers across Tamriel. Guild Trader. Random provisioning drops.", lore:"Wine filtered through isinglass for a crystal-clear finish and refined taste." },
+  { name:"Four-Eye Grog", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"10–14", quality:"standard", effects:["health"], ingredients:["Wheat","Seaweed"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"A sailor's brew that'll make you see double — four eyes, as they say." },
+  { name:"Lemon Flower Mazte", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"10–14", quality:"standard", effects:["health"], ingredients:["Rice","Lemon"], obtain:"Containers across Tamriel. Guild Trader.", lore:"A citrus-infused rice spirit, tart and refreshing." },
+  { name:"Old Clear-Eye Whiskey", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"15–19", quality:"standard", effects:["health"], ingredients:["Barley","Isinglass"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"Aged barley whiskey, clarified and smooth — clears the mind, they say." },
+  { name:"Red Hippocras", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"15–19", quality:"standard", effects:["health"], ingredients:["Surilie Grapes","Ginger"], obtain:"Containers. Guild Trader.", lore:"A spiced wine steeped with ginger root, an ancient Breton recipe." },
+  { name:"Tawny Port", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"15–19", quality:"standard", effects:["health"], ingredients:["Yeast","Metheglin"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"A fortified wine, amber and sweet, popular in High Rock." },
+  { name:"Barley Nectar", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"20–24", quality:"standard", effects:["health"], ingredients:["Barley","Honey"], obtain:"Containers across Tamriel. Guild Trader.", lore:"Sweet malt and honey blend — liquid gold from field and hive." },
+  { name:"Eltheric Hooch", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"20–24", quality:"standard", effects:["health"], ingredients:["Rye","Seaweed"], obtain:"Containers. Guild Trader.", lore:"A questionable coastal spirit rumored to contain actual sea water." },
+  { name:"Gossamer Mazte", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"20–24", quality:"standard", effects:["health"], ingredients:["Rice","Isinglass"], obtain:"Containers. Chef/Brewer vendors.", lore:"Delicate rice spirit filtered until near transparent." },
+  { name:"Ginger Wheat Beer", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"25–29", quality:"standard", effects:["health"], ingredients:["Wheat","Ginger"], obtain:"Containers. Guild Trader.", lore:"A zingy, warming wheat beer with a spiced finish." },
+  { name:"Honey Rye", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"25–29", quality:"standard", effects:["health"], ingredients:["Rye","Honey"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"Sweetened rye spirit — the honey softens the burn." },
+  { name:"Mermaid Whiskey", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"25–29", quality:"standard", effects:["health"], ingredients:["Barley","Seaweed"], obtain:"Containers. Guild Trader.", lore:"Coastal barley whiskey with a briny, oceanic finish." },
+  { name:"Mulled Wine", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"30–34", quality:"standard", effects:["health"], ingredients:["Surilie Grapes","Metheglin"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"Warm spiced wine — a staple of cold winter festivals in Skyrim and Cyrodiil." },
+  { name:"Sour Mash", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"30–34", quality:"standard", effects:["health"], ingredients:["Barley","Lemon"], obtain:"Containers. Guild Trader.", lore:"A bold, tart whiskey with a sharp citrus edge." },
+  { name:"Spiced Mazte", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"30–34", quality:"standard", effects:["health"], ingredients:["Rice","Ginger"], obtain:"Containers, especially in Vvardenfell and Stonefalls. Guild Trader.", lore:"Traditional Dunmeri mazte spiced with foreign ginger — an exotic blend." },
+  { name:"Nereid Wine", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"35–39", quality:"standard", effects:["health"], ingredients:["Surilie Grapes","Seaweed"], obtain:"Containers. Guild Trader.", lore:"A coastal wine with mysterious oceanic undertones, favored by sailors." },
+  { name:"Rye-in-your-Eye", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"35–39", quality:"standard", effects:["health"], ingredients:["Rye","Metheglin"], obtain:"Containers. Guild Trader.", lore:"A potent spiced rye spirit — drink enough and you'll see stars." },
+  { name:"Sorry, Honey Lager", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"35–39", quality:"standard", effects:["health"], ingredients:["Wheat","Honey"], obtain:"Containers. Chef/Brewer vendors.", lore:"Named for the apologies that inevitably follow a night of indulgence." },
+  { name:"Cheydinhal Sherry", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"40–44", quality:"standard", effects:["health"], ingredients:["Surilie Grapes","Honey"], obtain:"Containers, especially Cyrodiil zones. Chef/Brewer vendors.", lore:"A sweet, fortified wine from the vineyards near Cheydinhal." },
+  { name:"Colovian Amber Ale", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"40–44", quality:"standard", effects:["health"], ingredients:["Wheat","Metheglin"], obtain:"Containers. Guild Trader.", lore:"A rich amber ale from Colovia, brewed with ancient Imperial recipes." },
+  { name:"Gods-Blind-Me", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"40–44", quality:"standard", effects:["health"], ingredients:["Yeast","Isinglass"], obtain:"Containers throughout Tamriel. Guild Trader.", lore:"A ferociously strong spirit — so named for its devastating effect on sobriety." },
+  { name:"Sour Gin Fizz", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"45–49", quality:"standard", effects:["health"], ingredients:["Yeast","Lemon"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"A refreshing fizzy spirit with a sharp lemon bite." },
+  { name:"Sweet Scamp Mazte", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"45–49", quality:"standard", effects:["health"], ingredients:["Rice","Honey"], obtain:"Containers. Guild Trader.", lore:"Named after the mischievous Daedra, this sweet rice brew packs a surprising punch." },
+  { name:"Whiskey Sour", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"45–49", quality:"standard", effects:["health"], ingredients:["Rye","Lemon"], obtain:"Containers. Guild Trader.", lore:"A classic cocktail in Tamriel: rye spirit sharpened with lemon." },
+  { name:"Comely Wench Whiskey", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP10–CP40", quality:"standard", effects:["health"], ingredients:["Rye","Ginger"], obtain:"Containers in CP zones. Guild Trader. Provisioning Writs.", lore:"Named for its golden color and warming character — an inn favorite." },
+  { name:"Frothy Sargassum", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP10–CP40", quality:"standard", effects:["health"], ingredients:["Yeast","Seaweed"], obtain:"Containers in CP zones. Guild Trader.", lore:"An acquired taste — this foamy coastal brew is not for the faint-hearted." },
+  { name:"Rimmen Sour Bock", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP10–CP40", quality:"standard", effects:["health"], ingredients:["Wheat","Lemon"], obtain:"Containers in CP zones. Guild Trader.", lore:"A sour-style bock from the city of Rimmen in Elsweyr." },
+  { name:"Arenthian Brandy", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP50–CP90", quality:"standard", effects:["health"], ingredients:["Surilie Grapes","Lemon"], obtain:"CP 50+ zone containers. Guild Trader. Master Provisioner writs.", lore:"A refined brandy distilled in Arenthia, Gold Coast. Complex and aromatic." },
+  { name:"Argonian Mud-Nectar", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP50–CP90", quality:"standard", effects:["health"], ingredients:["Rice","Seaweed"], obtain:"CP zone containers. Guild Trader.", lore:"A traditional Argonian brew — murky in appearance but intensely flavorful." },
+  { name:"Summer Sky Pale Ale", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP50–CP90", quality:"standard", effects:["health"], ingredients:["Wheat","Isinglass"], obtain:"CP zone containers. Guild Trader.", lore:"Light, crisp, and refreshing as a summer day on the Gold Coast." },
+  { name:"Alabaster Honey Rum", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP100–CP140", quality:"standard", effects:["health"], ingredients:["Yeast","Honey"], obtain:"CP 100+ containers. Guild Trader. Hireling mail.", lore:"Smooth white rum sweetened with golden Coldharbour honey." },
+  { name:"Crystal Tower Whiskey", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP100–CP140", quality:"standard", effects:["health"], ingredients:["Rye","Isinglass"], obtain:"CP 100+ containers. Guild Trader.", lore:"An exceptionally pure whiskey, clear as the Crystal Tower of Summerset." },
+  { name:"Palace of Kings Ginger Beer", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP100–CP140", quality:"standard", effects:["health"], ingredients:["Barley","Ginger"], obtain:"CP 100+ containers. Guild Trader.", lore:"A regal ginger-spiced brew fit for the Palace of Kings in Windhelm." },
+  { name:"Colovian Ginger Beer", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP150–CP160", quality:"standard", effects:["health"], ingredients:["Yeast","Ginger"], obtain:"CP 150+ containers. Guild Trader.", lore:"A fiery Colovian brew — best served chilled with a meal of roasted boar." },
+  { name:"Kragenmoor Zinger Mazte", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP150–CP160", quality:"standard", effects:["health"], ingredients:["Rice","Metheglin"], obtain:"CP 150+ containers. Guild Trader. High-level provisioning writs.", lore:"Named for the Dunmeri city, this mazte blends ginger and mead into something memorable." },
+  { name:"Markarth Mead", type:"drink", category:"Alcoholic Drink", subcategory:"Alcoholic Drinks", level:"CP150–CP160", quality:"standard", effects:["health"], ingredients:["Barley","Metheglin"], obtain:"CP 150+ containers. Guild Trader.", lore:"A rich, honeyed mead from the Reach, crafted in the shadow of Markarth's stone halls." },
+
+  // ── TEA ──
+  { name:"Jasmine Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"1–4", quality:"standard", effects:["magicka"], ingredients:["Jasmine"], obtain:"Containers throughout Tamriel. Chef/Brewer vendors. Guild Trader.", lore:"A delicate floral infusion beloved by Altmer healers." },
+  { name:"Mint Chai", type:"drink", category:"Tea", subcategory:"Tea", level:"1–4", quality:"standard", effects:["magicka"], ingredients:["Mint"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"A cooling, refreshing mint tea that sharpens the mind." },
+  { name:"Rose Herbal Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"1–4", quality:"standard", effects:["magicka"], ingredients:["Rose"], obtain:"Containers. Chef/Brewer vendors.", lore:"A sweet floral tea made from dried rose petals — calming and restorative." },
+  { name:"Bitter Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"5–9", quality:"standard", effects:["magicka"], ingredients:["Bittergreen"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"An astringent tea brewed from bittergreen leaves — an acquired taste." },
+  { name:"Comberry Chai", type:"drink", category:"Tea", subcategory:"Tea", level:"5–9", quality:"standard", effects:["magicka"], ingredients:["Comberry"], obtain:"Containers, especially Morrowind regions. Guild Trader.", lore:"A deep crimson chai from the comberry shrub, spicy and warming." },
+  { name:"Lotus Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"5–9", quality:"standard", effects:["magicka"], ingredients:["Lotus"], obtain:"Containers. Chef/Brewer vendors.", lore:"A meditative infusion from lotus blossoms — favored by Psijic monks." },
+  { name:"Honeyberry Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"10–14", quality:"standard", effects:["magicka"], ingredients:["Comberry","Honey"], obtain:"Containers. Guild Trader.", lore:"Sweetened comberry tea — the honey transforms bitterness into delight." },
+  { name:"Morning Reveille Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"10–14", quality:"standard", effects:["magicka"], ingredients:["Mint","Ginger"], obtain:"Containers. Chef/Brewer vendors.", lore:"A bracing morning brew to wake the mind and focus the magicka channels." },
+  { name:"Sweetsting Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"10–14", quality:"standard", effects:["magicka"], ingredients:["Lotus","Metheglin"], obtain:"Containers. Guild Trader.", lore:"Honey-spiced mint tea with a lingering sweetness." },
+  { name:"Gingerose Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"15–19", quality:"standard", effects:["magicka"], ingredients:["Rose","Ginger"], obtain:"Containers. Guild Trader.", lore:"Rose petals and ginger root — a warming, fragrant combination." },
+  { name:"Green Scourgut Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"15–19", quality:"standard", effects:["magicka"], ingredients:["Bittergreen","Seaweed"], obtain:"Containers. Guild Trader.", lore:"A briny, medicinal tea used by Maormer sea-priests." },
+  { name:"Sourflower Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"15–19", quality:"standard", effects:["magicka"], ingredients:["Lotus","Lemon"], obtain:"Containers. Guild Trader.", lore:"A bright, citrus-kissed lotus tea with a clean tartness." },
+  { name:"Bitterlemon Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"20–24", quality:"standard", effects:["magicka"], ingredients:["Bittergreen","Lemon"], obtain:"Containers. Guild Trader.", lore:"Doubly tart — bittergreen and lemon combine for a shockingly sharp brew." },
+  { name:"Seaflower Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"20–24", quality:"standard", effects:["magicka"], ingredients:["Lotus","Lemon"], obtain:"Containers. Guild Trader.", lore:"An oceanic lotus infusion with deep green color and mysterious flavor." },
+  { name:"Treacleberry Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"20–24", quality:"standard", effects:["magicka"], ingredients:["Comberry","Metheglin"], obtain:"Containers. Guild Trader.", lore:"A thick, sweet comberry tea — almost a dessert in liquid form." },
+  { name:"Enlightenment Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"25–29", quality:"standard", effects:["magicka"], ingredients:["Lotus","Isinglass"], obtain:"Containers. Guild Trader.", lore:"A clarified lotus infusion used by Psijic scholars before deep meditation." },
+  { name:"Mead de Menthe", type:"drink", category:"Tea", subcategory:"Tea", level:"25–29", quality:"standard", effects:["magicka"], ingredients:["Mint","Metheglin"], obtain:"Containers. Chef/Brewer vendors.", lore:"Honeyed mint tea — a sweet mingling of meadery and herb garden." },
+  { name:"Thrassian Chai", type:"drink", category:"Tea", subcategory:"Tea", level:"25–29", quality:"standard", effects:["magicka"], ingredients:["Jasmine","Seaweed"], obtain:"Containers. Guild Trader.", lore:"A peculiar oceanic chai rumored to originate from the Coral Tower of Thras." },
+  { name:"Maormer Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"30–34", quality:"standard", effects:["magicka"], ingredients:["Rose","Seaweed"], obtain:"Containers. Guild Trader.", lore:"A sea-elf recipe — rose and brine in strange but effective harmony." },
+  { name:"Spiceberry Chai", type:"drink", category:"Tea", subcategory:"Tea", level:"30–34", quality:"standard", effects:["magicka"], ingredients:["Comberry","Ginger"], obtain:"Containers. Guild Trader.", lore:"Intensely spiced comberry chai — warms the belly and focuses the mind." },
+  { name:"Torval Mint Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"30–34", quality:"standard", effects:["magicka"], ingredients:["Mint","Honey"], obtain:"Containers, especially Elsweyr regions. Guild Trader.", lore:"A Khajiiti mint tea sweetened with desert honey from Torval." },
+  { name:"Pink Profundity", type:"drink", category:"Tea", subcategory:"Tea", level:"35–39", quality:"standard", effects:["magicka"], ingredients:["Jasmine","Isinglass"], obtain:"Containers. Guild Trader.", lore:"A crystal-clear jasmine infusion tinted rose — deceptively powerful." },
+  { name:"Puckermint Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"35–39", quality:"standard", effects:["magicka"], ingredients:["Mint","Lemon"], obtain:"Containers. Guild Trader.", lore:"Mint and lemon — a face-scrunching brew that sharpens the senses." },
+  { name:"Winter Rose Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"35–39", quality:"standard", effects:["magicka"], ingredients:["Rose","Isinglass"], obtain:"Containers. Guild Trader.", lore:"A clarified rose tea, delicate and pale — said to calm even Daedric nightmares." },
+  { name:"Sweet Slaughterfish Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"40–44", quality:"standard", effects:["magicka"], ingredients:["Comberry","Seaweed"], obtain:"Containers. Guild Trader.", lore:"Despite the name, it contains no slaughterfish. The comberry and seaweed merely smell like it." },
+  { name:"Two-Zephyr Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"40–44", quality:"standard", effects:["magicka"], ingredients:["Rose","Lemon"], obtain:"Containers. Guild Trader. Provisioning Writs.", lore:"Named for the twin winds of Summerset, this tea is airy and citrus-bright." },
+  { name:"Vivec's Gingergreen Chai", type:"drink", category:"Tea", subcategory:"Tea", level:"40–44", quality:"standard", effects:["magicka"], ingredients:["Bittergreen","Ginger"], obtain:"Containers, especially Vvardenfell. Guild Trader.", lore:"A bold Dunmeri chai dedicated to the Living God Vivec — intensely spiced." },
+  { name:"Camlorn Mint Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"45–49", quality:"standard", effects:["magicka"], ingredients:["Mint","Isinglass"], obtain:"Containers, especially High Rock. Guild Trader.", lore:"A Breton recipe — clarified mint tea, pristine and vibrant." },
+  { name:"Jasminger Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"45–49", quality:"standard", effects:["magicka"], ingredients:["Jasmine","Ginger"], obtain:"Containers. Guild Trader.", lore:"Floral jasmine lit up with the fire of ginger — a complex and beloved combination." },
+  { name:"Sweet Dreams Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"45–49", quality:"standard", effects:["magicka"], ingredients:["Lotus","Honey"], obtain:"Containers. Chef/Brewer vendors.", lore:"A drowsy-sweet lotus and honey blend — best not sipped before battle." },
+  { name:"Aetherial Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"CP10–CP40", quality:"standard", effects:["magicka"], ingredients:["Jasmine","Metheglin"], obtain:"CP zone containers. Guild Trader. Provisioning writs.", lore:"A transcendent jasmine tea said to echo the ethereal planes of Aetherius." },
+  { name:"Clan Mother's Cordial", type:"drink", category:"Tea", subcategory:"Tea", level:"CP10–CP40", quality:"standard", effects:["magicka"], ingredients:["Comberry","Isinglass"], obtain:"CP zone containers. Guild Trader.", lore:"A Khajiiti matriarchal recipe — rich comberry filtered to crystal clarity." },
+  { name:"Mournhold Twister", type:"drink", category:"Tea", subcategory:"Tea", level:"CP10–CP40", quality:"standard", effects:["magicka"], ingredients:["Bittergreen","Honey"], obtain:"Containers, especially Deshaan. Guild Trader.", lore:"A powerful Dunmeri brew from the capital city — bitter tempered with honey." },
+  { name:"Bitter Ritual Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"CP50–CP90", quality:"standard", effects:["magicka"], ingredients:["Bittergreen","Isinglass"], obtain:"CP 50+ containers. Guild Trader.", lore:"Used in Dunmeri rituals — intensely bitter, clarified, and focused." },
+  { name:"Five-Fireball Infusion", type:"drink", category:"Tea", subcategory:"Tea", level:"CP50–CP90", quality:"standard", effects:["magicka"], ingredients:["Lotus","Ginger"], obtain:"CP zone containers. Guild Trader.", lore:"So named because drinking five of these before casting feels like being struck by a fireball." },
+  { name:"Khenarthi's Wings Chai", type:"drink", category:"Tea", subcategory:"Tea", level:"CP50–CP90", quality:"standard", effects:["magicka"], ingredients:["Jasmine","Honey"], obtain:"CP zone containers. Guild Trader. Provisioning writs.", lore:"Named for the Khajiiti goddess of wind, this chai lifts the spirit like wings." },
+  { name:"Comberry Citrus Quencher", type:"drink", category:"Tea", subcategory:"Tea", level:"CP100–CP140", quality:"standard", effects:["magicka"], ingredients:["Comberry","Lemon"], obtain:"CP 100+ containers. Guild Trader.", lore:"A bright, tart comberry tea with lemon — revitalizing and bold." },
+  { name:"Falkreath Rosy Mead", type:"drink", category:"Tea", subcategory:"Tea", level:"CP100–CP140", quality:"standard", effects:["magicka"], ingredients:["Rose","Metheglin"], obtain:"CP 100+ containers, especially Skyrim zones. Guild Trader.", lore:"A Nordic rose mead from the forests of Falkreath — floral, honeyed, and ancient." },
+  { name:"Pirate Queen Mint Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"CP100–CP140", quality:"standard", effects:["magicka"], ingredients:["Mint","Seaweed"], obtain:"CP 100+ containers. Guild Trader.", lore:"A briny mint brew favored by the pirates of the Abecean Sea." },
+  { name:"Heart's Day Rose Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"CP150–CP160", quality:"standard", effects:["magicka"], ingredients:["Rose","Honey"], obtain:"CP 150+ containers. Guild Trader. Heart's Day event (consumable, not recipe drop).", lore:"Brewed for Heart's Day celebrations — sweetly romantic and warmly magical." },
+  { name:"Muthsera's Remorse", type:"drink", category:"Tea", subcategory:"Tea", level:"CP150–CP160", quality:"standard", effects:["magicka"], ingredients:["Bittergreen","Metheglin"], obtain:"CP 150+ containers. Guild Trader.", lore:"A Dunmeri saying: after a night of excess, brew Muthsera's Remorse and carry on." },
+  { name:"Soothing Bard's-Throat Tea", type:"drink", category:"Tea", subcategory:"Tea", level:"CP150–CP160", quality:"standard", effects:["magicka"], ingredients:["Jasmine","Lemon"], obtain:"CP 150+ containers. Guild Trader.", lore:"Every bard in Tamriel knows this recipe — jasmine and lemon soothe the vocal cords." },
+
+  // ── TONICS ──
+  { name:"Acai Tonic Infusion", type:"drink", category:"Tonic", subcategory:"Tonics", level:"1–4", quality:"standard", effects:["stamina"], ingredients:["Acai Berry"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"A rich, dark berry tonic from the jungles of Valenwood." },
+  { name:"Ginkgo Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"1–4", quality:"standard", effects:["stamina"], ingredients:["Ginkgo"], obtain:"Containers. Chef/Brewer vendors.", lore:"An ancient herbal tonic brewed from ginkgo leaves to restore vitality." },
+  { name:"Guarana Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"1–4", quality:"standard", effects:["stamina"], ingredients:["Guarana"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"A stimulating tonic from South Elsweyr seeds — sharp and energizing." },
+  { name:"Black Coffee", type:"drink", category:"Tonic", subcategory:"Tonics", level:"5–9", quality:"standard", effects:["stamina"], ingredients:["Coffee"], obtain:"Containers across Tamriel. Chef/Brewer vendors.", lore:"Dark, bitter, and brutally effective. Even Daedra respect the power of black coffee." },
+  { name:"Ginseng Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"5–9", quality:"standard", effects:["stamina"], ingredients:["Ginseng"], obtain:"Containers. Chef/Brewer vendors.", lore:"A classic herbal stamina tonic — ginseng root steeped in hot water." },
+  { name:"Mate Infusion", type:"drink", category:"Tonic", subcategory:"Tonics", level:"5–9", quality:"standard", effects:["stamina"], ingredients:["Yerba Mate"], obtain:"Containers, especially Bosmer zones. Guild Trader.", lore:"A shared ritual drink among the Bosmer — sipped from a communal gourd." },
+  { name:"Meady-Matey Infusion", type:"drink", category:"Tonic", subcategory:"Tonics", level:"10–14", quality:"standard", effects:["stamina"], ingredients:["Yerba Mate","Metheglin"], obtain:"Containers. Guild Trader.", lore:"Yerba Mate sweetened with mead — a surprisingly delightful combination." },
+  { name:"Tonsil Tingle Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"10–14", quality:"standard", effects:["stamina"], ingredients:["Ginkgo","Honey"], obtain:"Containers. Guild Trader.", lore:"The honey makes the ginkgo almost pleasant. Almost." },
+  { name:"Yellow Goblin Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"10–14", quality:"standard", effects:["stamina"], ingredients:["Ginseng","Lemon"], obtain:"Containers. Guild Trader.", lore:"As yellow as a goblin and about as pleasant to deal with — but effective." },
+  { name:"Isinmate Infusion", type:"drink", category:"Tonic", subcategory:"Tonics", level:"15–19", quality:"standard", effects:["stamina"], ingredients:["Yerba Mate","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Kelp Kaveh", type:"drink", category:"Tonic", subcategory:"Tonics", level:"15–19", quality:"standard", effects:["stamina"], ingredients:["Coffee","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweetberry Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"15–19", quality:"standard", effects:["stamina"], ingredients:["Acai Berry","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ginkgo Twist Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"20–24", quality:"standard", effects:["stamina"], ingredients:["Ginkgo","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Taneth Coffee", type:"drink", category:"Tonic", subcategory:"Tonics", level:"20–24", quality:"standard", effects:["stamina"], ingredients:["Coffee","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Yerba Zinger Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"20–24", quality:"standard", effects:["stamina"], ingredients:["Yerba Mate","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Athlete's Guzzle", type:"drink", category:"Tonic", subcategory:"Tonics", level:"25–29", quality:"standard", effects:["stamina"], ingredients:["Acai Berry","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Busy Bee Brew", type:"drink", category:"Tonic", subcategory:"Tonics", level:"25–29", quality:"standard", effects:["stamina"], ingredients:["Coffee","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ginseng Sling", type:"drink", category:"Tonic", subcategory:"Tonics", level:"25–29", quality:"standard", effects:["stamina"], ingredients:["Ginseng","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Berrymead Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"30–34", quality:"standard", effects:["stamina"], ingredients:["Acai Berry","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Dancing Grandma", type:"drink", category:"Tonic", subcategory:"Tonics", level:"30–34", quality:"standard", effects:["stamina"], ingredients:["Ginkgo","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pirate's Jig Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"30–34", quality:"standard", effects:["stamina"], ingredients:["Guarana","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Crystal Clarity", type:"drink", category:"Tonic", subcategory:"Tonics", level:"35–39", quality:"standard", effects:["stamina"], ingredients:["Ginseng","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rihad Qishr", type:"drink", category:"Tonic", subcategory:"Tonics", level:"35–39", quality:"standard", effects:["stamina"], ingredients:["Coffee","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Seaberry Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"35–39", quality:"standard", effects:["stamina"], ingredients:["Acai Berry","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Blue Road Marathon", type:"drink", category:"Tonic", subcategory:"Tonics", level:"40–44", quality:"standard", effects:["stamina"], ingredients:["Guarana","Isinglass"], obtain:"Containers. Guild Trader. Provisioning writs.", lore:"Named for the Blue Road of the Niben — a long journey deserves a versatile drink." },
+  { name:"Infernal Infusion", type:"drink", category:"Tonic", subcategory:"Tonics", level:"40–44", quality:"standard", effects:["stamina"], ingredients:["Ginseng","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweet Persistence", type:"drink", category:"Tonic", subcategory:"Tonics", level:"40–44", quality:"standard", effects:["stamina"], ingredients:["Yerba Mate","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Dreugh Spit", type:"drink", category:"Tonic", subcategory:"Tonics", level:"45–49", quality:"standard", effects:["stamina"], ingredients:["Ginseng","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Lemonic Invigoration", type:"drink", category:"Tonic", subcategory:"Tonics", level:"45–49", quality:"standard", effects:["stamina"], ingredients:["Guarana","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Shimmerene Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"45–49", quality:"standard", effects:["stamina"], ingredients:["Acai Berry","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Grandpa's Bedtime Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP10–CP40", quality:"standard", effects:["stamina"], ingredients:["Guarana","Ginger"], obtain:"CP zone containers. Guild Trader. Provisioning writs.", lore:"An old Nord family recipe passed down through generations — strangely potent." },
+  { name:"Sload Slime", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP10–CP40", quality:"standard", effects:["stamina"], ingredients:["Ginkgo","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Soothing Sundas Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP10–CP40", quality:"standard", effects:["stamina"], ingredients:["Yerba Mate","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sailor's Second Wind", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP50–CP90", quality:"standard", effects:["stamina"], ingredients:["Yerba Mate","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sipping Imga Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP50–CP90", quality:"standard", effects:["stamina"], ingredients:["Ginkgo","Lemon"], obtain:"CP zone containers. Guild Trader.", lore:"Named for the ape-folk of Valenwood who craft similar tonics from jungle berries." },
+  { name:"Wamasu Spew", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP50–CP90", quality:"standard", effects:["stamina"], ingredients:["Ginseng","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Fyr's Hyperagonal Potation", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP100–CP140", quality:"standard", effects:["stamina"], ingredients:["Acai Berry","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hasphat's Sticky Guar Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP100–CP140", quality:"standard", effects:["stamina"], ingredients:["Guarana","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Nocturnal's Everblack Coffee", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP100–CP140", quality:"standard", effects:["stamina"], ingredients:["Coffee","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Fredas Night Infusion", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP150–CP160", quality:"standard", effects:["stamina"], ingredients:["Guarana","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hagraven's Tonic", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP150–CP160", quality:"standard", effects:["stamina"], ingredients:["Ginkgo","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Old Hegathe Lemon Kaveh", type:"drink", category:"Tonic", subcategory:"Tonics", level:"CP150–CP160", quality:"standard", effects:["stamina"], ingredients:["Coffee","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── LIQUEURS ──
+  { name:"Clamberskull", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"10–14", quality:"difficult", effects:["health","magicka"], ingredients:["Rice","Bittergreen"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cloudrest Golden Ale", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"10–14", quality:"difficult", effects:["health","magicka"], ingredients:["Yeast","Lotus"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Skingrad Muscat", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"10–14", quality:"difficult", effects:["health","magicka"], ingredients:["Surilie Grapes","Comberry"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Creme de Menthe", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"15–19", quality:"difficult", effects:["health","magicka"], ingredients:["Rye","Mint"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Jasmine Moonshine", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"15–19", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Jasmine"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rose Lager", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"15–19", quality:"difficult", effects:["health","magicka"], ingredients:["Wheat","Rose"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Clarified Rose Lager", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"20–24", quality:"difficult", effects:["health","magicka"], ingredients:["Wheat","Rose","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Horker's Breath", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"20–24", quality:"difficult", effects:["health","magicka"], ingredients:["Yeast","Mint","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sujamma", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"20–24", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Comberry","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Bitter Remorse Ale", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"25–29", quality:"difficult", effects:["health","magicka"], ingredients:["Wheat","Bittergreen","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Spriggan Sap", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"25–29", quality:"difficult", effects:["health","magicka"], ingredients:["Rye","Lotus","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Truth-Glimpse", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"25–29", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Mint","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Double Clarified Mazte", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"30–34", quality:"difficult", effects:["health","magicka"], ingredients:["Rice","Bittergreen","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sanguine's Temptation", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"30–34", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Lotus","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweet Lemonale", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"30–34", quality:"difficult", effects:["health","magicka"], ingredients:["Wheat","Comberry","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Night-Grog", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"35–39", quality:"difficult", effects:["health","magicka"], ingredients:["Yeast","Comberry","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Riften Rye", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"35–39", quality:"difficult", effects:["health","magicka"], ingredients:["Rye","Bittergreen","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Summer Mazte", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"35–39", quality:"difficult", effects:["health","magicka"], ingredients:["Rice","Rose","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rosy Island Ale", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"40–44", quality:"difficult", effects:["health","magicka"], ingredients:["Yeast","Rose","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweet and Sour Port", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"40–44", quality:"difficult", effects:["health","magicka"], ingredients:["Surilie Grapes","Bittergreen","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Wizard's Whiskey", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"40–44", quality:"difficult", effects:["health","magicka"], ingredients:["Wheat","Mint","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Anequina Stout", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"45–49", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Bittergreen","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Black Night Cordial", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"45–49", quality:"difficult", effects:["health","magicka"], ingredients:["Rice","Comberry","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sylph Gin", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"45–49", quality:"difficult", effects:["health","magicka"], ingredients:["Yeast","Lotus","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Comberry Bourbon", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP10–CP40", quality:"difficult", effects:["health","magicka"], ingredients:["Rye","Comberry","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Honeyhips Brown Ale", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP10–CP40", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Rose","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hunt-Wife's Grog", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP10–CP40", quality:"difficult", effects:["health","magicka"], ingredients:["Yeast","Bittergreen","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Blue Banekin Beer", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP50–CP90", quality:"difficult", effects:["health","magicka"], ingredients:["Yeast","Jasmine","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Breton Pint of Bitters", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP50–CP90", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Bittergreen","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Old Sweetheart Stout", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP50–CP90", quality:"difficult", effects:["health","magicka"], ingredients:["Wheat","Mint","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Clavicus Vines Chenin Blanc", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP100–CP140", quality:"difficult", effects:["health","magicka"], ingredients:["Surilie Grapes","Jasmine","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Saint Pelin's Tawny Port", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP100–CP140", quality:"difficult", effects:["health","magicka"], ingredients:["Yeast","Rose","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Yokudan Sorrow Bourbon", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP100–CP140", quality:"difficult", effects:["health","magicka"], ingredients:["Rye","Lotus","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Bravil Bitter Barley Beer", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP150–CP160", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Bittergreen","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Dragontail Blended Whisky", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP150–CP160", quality:"difficult", effects:["health","magicka"], ingredients:["Rye","Lotus","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Port Hunding Pinot Noir", type:"drink", category:"Liqueur", subcategory:"Liqueurs", level:"CP150–CP160", quality:"difficult", effects:["health","magicka"], ingredients:["Surilie Grapes","Mint","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── TINCTURES ──
+  { name:"Kaveh Stout", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"10–14", quality:"difficult", effects:["health","stamina"], ingredients:["Rye","Coffee"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stand-Me-Up Lager", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"10–14", quality:"difficult", effects:["health","stamina"], ingredients:["Wheat","Guarana"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Timber Mammoth Ale", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"10–14", quality:"difficult", effects:["health","stamina"], ingredients:["Barley","Ginseng"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Acai Dry Mazte", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"15–19", quality:"difficult", effects:["health","stamina"], ingredients:["Rice","Acai Berry"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ginkgo Lightning", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"15–19", quality:"difficult", effects:["health","stamina"], ingredients:["Yeast","Ginkgo"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Yerba Syrah Wine", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"15–19", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Yerba Mate"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Bravil Mead", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"20–24", quality:"difficult", effects:["health","stamina"], ingredients:["Rice","Yerba Mate","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Elinhir Qishr", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"20–24", quality:"difficult", effects:["health","stamina"], ingredients:["Yeast","Coffee","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"West Weald Wallop", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"20–24", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Acai Berry","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Drowned Sailor Ale", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"25–29", quality:"difficult", effects:["health","stamina"], ingredients:["Yeast","Ginseng","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ginger Port", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"25–29", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Yerba Mate","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ginkgo Double Brandy", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"25–29", quality:"difficult", effects:["health","stamina"], ingredients:["Rice","Ginkgo","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Fulmination Ale", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"30–34", quality:"difficult", effects:["health","stamina"], ingredients:["Yeast","Ginkgo","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sour Guar Shein", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"30–34", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Guarana","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Vvardenfell Flin", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"30–34", quality:"difficult", effects:["health","stamina"], ingredients:["Rye","Ginseng","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Imperial Stout", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"35–39", quality:"difficult", effects:["health","stamina"], ingredients:["Barley","Guarana","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pyandonea Merlot", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"35–39", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Ginseng","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Vigilance Gold Ale", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"35–39", quality:"difficult", effects:["health","stamina"], ingredients:["Wheat","Coffee","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Boethiah's Breath", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"40–44", quality:"difficult", effects:["health","stamina"], ingredients:["Rye","Guarana","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Dark Seducer", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"40–44", quality:"difficult", effects:["health","stamina"], ingredients:["Rice","Acai Berry","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stalwart Stout", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"40–44", quality:"difficult", effects:["health","stamina"], ingredients:["Barley","Yerba Mate","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Narsis Wickwheat Ale", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"45–49", quality:"difficult", effects:["health","stamina"], ingredients:["Wheat","Yerba Mate","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Spicy Wyress Wine", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"45–49", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Ginkgo","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"White-Eye Whiskey", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"45–49", quality:"difficult", effects:["health","stamina"], ingredients:["Rye","Acai Berry","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Blacklight Ginger Mazte", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP10–CP40", quality:"difficult", effects:["health","stamina"], ingredients:["Rice","Guarana","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Jephre's Earthbone Beer", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP10–CP40", quality:"difficult", effects:["health","stamina"], ingredients:["Wheat","Acai Berry","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Kvatch Watch Grenache", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP10–CP40", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Coffee","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Crow's Nest Rye", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP50–CP90", quality:"difficult", effects:["health","stamina"], ingredients:["Rye","Coffee","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Necrom Nights Mazte", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP50–CP90", quality:"difficult", effects:["health","stamina"], ingredients:["Rice","Ginseng","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Surilie Bros. White Merlot", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP50–CP90", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Ginkgo","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Happy Ogrim Amber Ale", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP100–CP140", quality:"difficult", effects:["health","stamina"], ingredients:["Wheat","Ginkgo","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Psijic Sage's Mazte", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP100–CP140", quality:"difficult", effects:["health","stamina"], ingredients:["Rice","Yerba Mate","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stendarr's Vigilance Ginger Ale", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP100–CP140", quality:"difficult", effects:["health","stamina"], ingredients:["Barley","Coffee","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Camlorn Sweet Brown Ale", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP150–CP160", quality:"difficult", effects:["health","stamina"], ingredients:["Barley","Acai Berry","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Flowing Bowl Green Port", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP150–CP160", quality:"difficult", effects:["health","stamina"], ingredients:["Surilie Grapes","Yerba Mate","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Wide-Eye Double Rye", type:"drink", category:"Tincture", subcategory:"Tinctures", level:"CP150–CP160", quality:"difficult", effects:["health","stamina"], ingredients:["Rye","Ginseng","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── CORDIALS ──
+  { name:"Blackwood Mint Chai", type:"drink", category:"Cordial", subcategory:"Cordials", level:"10–14", quality:"difficult", effects:["magicka","stamina"], ingredients:["Mint","Acai Berry"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Herbflower Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"10–14", quality:"difficult", effects:["magicka","stamina"], ingredients:["Rose","Yerba Mate"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Lillandril Tonic Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"10–14", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jasmine","Ginkgo"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Bitter Kaveh", type:"drink", category:"Cordial", subcategory:"Cordials", level:"15–19", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bittergreen","Coffee"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Comberry Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"15–19", quality:"difficult", effects:["magicka","stamina"], ingredients:["Comberry","Guarana"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tsaesci Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"15–19", quality:"difficult", effects:["magicka","stamina"], ingredients:["Lotus","Ginseng"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Dibella's Kiss Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"20–24", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bittergreen","Ginkgo","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Jasrana Tea Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"20–24", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jasmine","Guarana","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pondwater Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"20–24", quality:"difficult", effects:["magicka","stamina"], ingredients:["Lotus","Ginseng","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Azura's Rose Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"25–29", quality:"difficult", effects:["magicka","stamina"], ingredients:["Rose","Guarana","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Celestial Tonic Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"25–29", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jasmine","Acai Berry","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cornerclub Kaveh", type:"drink", category:"Cordial", subcategory:"Cordials", level:"25–29", quality:"difficult", effects:["magicka","stamina"], ingredients:["Comberry","Coffee","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mintmead Kaveh", type:"drink", category:"Cordial", subcategory:"Cordials", level:"30–34", quality:"difficult", effects:["magicka","stamina"], ingredients:["Mint","Coffee","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pink Wisdom Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"30–34", quality:"difficult", effects:["magicka","stamina"], ingredients:["Rose","Acai Berry","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweet Scented Infusion", type:"drink", category:"Cordial", subcategory:"Cordials", level:"30–34", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jasmine","Yerba Mate","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Jasminkgo Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"35–39", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jasmine","Ginkgo","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Silver Lotusberry Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"35–39", quality:"difficult", effects:["magicka","stamina"], ingredients:["Lotus","Acai Berry","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tingle Tonic Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"35–39", quality:"difficult", effects:["magicka","stamina"], ingredients:["Mint","Yerba Mate","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Chthonic Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"40–44", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jasmine","Ginseng","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Midnight Ritual Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"40–44", quality:"difficult", effects:["magicka","stamina"], ingredients:["Comberry","Ginkgo","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Serene Awareness", type:"drink", category:"Cordial", subcategory:"Cordials", level:"40–44", quality:"difficult", effects:["magicka","stamina"], ingredients:["Lotus","Coffee","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Centurion's Friend Kaveh", type:"drink", category:"Cordial", subcategory:"Cordials", level:"45–49", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jasmine","Coffee","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Elven Maiden Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"45–49", quality:"difficult", effects:["magicka","stamina"], ingredients:["Mint","Guarana","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Strapping Lad Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"45–49", quality:"difficult", effects:["magicka","stamina"], ingredients:["Rose","Ginseng","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"First Kiss Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP10–CP40", quality:"difficult", effects:["magicka","stamina"], ingredients:["Mint","Ginseng","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mage's Mead", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP10–CP40", quality:"difficult", effects:["magicka","stamina"], ingredients:["Lotus","Ginkgo","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Senchal Dancer Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP10–CP40", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jasmine","Yerba Mate","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ginger Guar Smoothie", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP50–CP90", quality:"difficult", effects:["magicka","stamina"], ingredients:["Comberry","Guarana","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Telvanni Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP50–CP90", quality:"difficult", effects:["magicka","stamina"], ingredients:["Lotus","Acai Berry","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ten Ogres Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP50–CP90", quality:"difficult", effects:["magicka","stamina"], ingredients:["Rose","Yerba Mate","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Balfiera Herbal Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP100–CP140", quality:"difficult", effects:["magicka","stamina"], ingredients:["Comberry","Ginseng","Lemon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mint Mudcrab Mojito", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP100–CP140", quality:"difficult", effects:["magicka","stamina"], ingredients:["Mint","Guarana","Seaweed"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tonal Architect Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP100–CP140", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bittergreen","Acai Berry","Metheglin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cloudrest Clarified Coffee", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP150–CP160", quality:"difficult", effects:["magicka","stamina"], ingredients:["Comberry","Coffee","Isinglass"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Honest Lassie Honey Tea", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP150–CP160", quality:"difficult", effects:["magicka","stamina"], ingredients:["Comberry","Ginseng","Honey"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rosy Disposition Tonic", type:"drink", category:"Cordial", subcategory:"Cordials", level:"CP150–CP160", quality:"difficult", effects:["magicka","stamina"], ingredients:["Rose","Acai Berry","Ginger"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── DISTILLATES ──
+  { name:"Greef", type:"drink", category:"Distillate", subcategory:"Distillates", level:"20–24", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Yeast","Mint","Guarana","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Red Queen's Eye-Opener", type:"drink", category:"Distillate", subcategory:"Distillates", level:"25–29", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Surilie Grapes","Jasmine","Coffee","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Aqua Vitae", type:"drink", category:"Distillate", subcategory:"Distillates", level:"30–34", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rye","Comberry","Yerba Mate","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Abecean Brandy", type:"drink", category:"Distillate", subcategory:"Distillates", level:"35–39", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Surilie Grapes","Mint","Acai Berry","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Enemies Explode", type:"drink", category:"Distillate", subcategory:"Distillates", level:"35–39", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Yeast","Comberry","Guarana","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Monkeypants Mazte", type:"drink", category:"Distillate", subcategory:"Distillates", level:"35–39", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rice","Jasmine","Yerba Mate","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Seven Year Beer", type:"drink", category:"Distillate", subcategory:"Distillates", level:"35–39", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Wheat","Bittergreen","Ginkgo","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hopscotch", type:"drink", category:"Distillate", subcategory:"Distillates", level:"40–44", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rye","Mint","Coffee","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ten-Foot Beer", type:"drink", category:"Distillate", subcategory:"Distillates", level:"40–44", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Yeast","Lotus","Guarana","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tranquility Pale Ale", type:"drink", category:"Distillate", subcategory:"Distillates", level:"40–44", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Barley","Lotus","Acai Berry","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Vaermina's Nightmare", type:"drink", category:"Distillate", subcategory:"Distillates", level:"40–44", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rye","Jasmine","Yerba Mate","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Berveza Vitae", type:"drink", category:"Distillate", subcategory:"Distillates", level:"45–49", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Wheat","Comberry","Yerba Mate","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Fifth Legion Porter", type:"drink", category:"Distillate", subcategory:"Distillates", level:"45–49", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Wheat","Rose","Ginseng","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Orsinium Pink Zinfandel", type:"drink", category:"Distillate", subcategory:"Distillates", level:"45–49", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Surilie Grapes","Rose","Guarana","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rude Awakening", type:"drink", category:"Distillate", subcategory:"Distillates", level:"45–49", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rice","Rose","Coffee","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Animate-the-Dead", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP10–CP40", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Yeast","Mint","Ginseng","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cardiac Arrest", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP10–CP40", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rice","Lotus","Coffee","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Qhalua Liqueur", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP10–CP40", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Barley","Jasmine","Coffee","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Xanmeer Brandy", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP10–CP40", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Surilie Grapes","Bittergreen","Ginkgo","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hello Handsome Porter", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP50–CP90", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Barley","Jasmine","Ginkgo","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"High Rock Rose and Rye", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP50–CP90", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rye","Rose","Ginseng","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Kagouti Kick Mazte", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP50–CP90", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rice","Jasmine","Guarana","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Malacath's Hammer", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP50–CP90", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Wheat","Bittergreen","Acai Berry","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Numidium Brandy", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP100–CP140", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rice","Lotus","Ginkgo","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rislav's Righteous Red Kvass", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP100–CP140", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rye","Rose","Acai Berry","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tears of Joy", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP100–CP140", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Yeast","Bittergreen","Ginseng","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ysgramor's Harbinger Lager", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP100–CP140", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Barley","Comberry","Guarana","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Lusty Argonian Maid Mazte", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP150–CP160", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rice","Jasmine","Ginkgo","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Orcrest Agony Pale Ale", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP150–CP160", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Barley","Lotus","Yerba Mate","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Senche-Tiger Single Malt", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP150–CP160", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Wheat","Bittergreen","Coffee","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Velothi View Vintage Malbec", type:"drink", category:"Distillate", subcategory:"Distillates", level:"CP150–CP160", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Surilie Grapes","Mint","Ginkgo","Bervez Juice"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── MEAT DISHES ──
+  { name:"Chicken Breast", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"1–4", quality:"standard", effects:["health"], ingredients:["Poultry"], obtain:"Containers. Chef/Brewer vendors.", lore:"A plain roasted chicken breast — the staple of every inn menu in Tamriel." },
+  { name:"Fishy Stick", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"1–4", quality:"standard", effects:["health"], ingredients:["Fish"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Roast Pig", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"1–4", quality:"standard", effects:["health"], ingredients:["White Meat"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Flank Steak", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"5–9", quality:"standard", effects:["health"], ingredients:["Red Meat"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Grilled Hare", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"5–9", quality:"standard", effects:["health"], ingredients:["Small Game"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Roast Venison", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"5–9", quality:"standard", effects:["health"], ingredients:["Game"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hunter's Pie", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"10–14", quality:"standard", effects:["health"], ingredients:["Game","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rabbit Pasty", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"10–14", quality:"standard", effects:["health"], ingredients:["Small Game","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tarragon Chicken", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"10–14", quality:"standard", effects:["health"], ingredients:["Poultry","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pan-Fried Trout", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"15–19", quality:"standard", effects:["health"], ingredients:["Fish","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rabbit Millet Pilaf", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"15–19", quality:"standard", effects:["health"], ingredients:["Small Game","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stir-Fried Garlic Beef", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"15–19", quality:"standard", effects:["health"], ingredients:["Red Meat","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Breton Pork Sausage", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"20–24", quality:"standard", effects:["health"], ingredients:["White Meat","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Venison Pasty", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"20–24", quality:"standard", effects:["health"], ingredients:["Game","Flour"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"A hearty pastry filled with minced venison — a favorite of hunters." },
+  { name:"Whiterun Cheese-Baked Trout", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"20–24", quality:"standard", effects:["health"], ingredients:["Fish","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cheese Pork Schnitzel", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"25–29", quality:"standard", effects:["health"], ingredients:["White Meat","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Chicken and Biscuits", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"25–29", quality:"standard", effects:["health"], ingredients:["Poultry","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Salted Cod", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"25–29", quality:"standard", effects:["health"], ingredients:["Fish","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Elinhir Roast Antelope", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"30–34", quality:"standard", effects:["health"], ingredients:["Game","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hare in Garlic Sauce", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"30–34", quality:"standard", effects:["health"], ingredients:["Small Game","Garlic"], obtain:"Containers. Guild Trader. Provisioning writs.", lore:"Slow-roasted rabbit in rich garlic sauce — a Breton country classic." },
+  { name:"Senchal Curry Fish and Rice", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"30–34", quality:"standard", effects:["health"], ingredients:["Fish","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Bruma Jugged Rabbit", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"35–39", quality:"standard", effects:["health"], ingredients:["Small Game","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Camlorn Pork Sausage", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"35–39", quality:"standard", effects:["health"], ingredients:["White Meat","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Crispy Cheddar Chicken", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"35–39", quality:"standard", effects:["health"], ingredients:["Poultry","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mammoth Snout Pie", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"40–44", quality:"standard", effects:["health"], ingredients:["Red Meat","Flour"], obtain:"Containers, especially Eastmarch and other Skyrim zones. Guild Trader.", lore:"A Nord delicacy of dubious appearance but satisfying taste." },
+  { name:"Rabbit Haunch with Cheese Grits", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"40–44", quality:"standard", effects:["health"], ingredients:["Small Game","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stros M'Kai Grilled Seagull", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"40–44", quality:"standard", effects:["health"], ingredients:["Poultry","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Akaviri Pork Fried Rice", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"45–49", quality:"standard", effects:["health"], ingredients:["White Meat","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Blacklight Oxen Meatballs", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"45–49", quality:"standard", effects:["health"], ingredients:["Red Meat","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Solstheim Elk and Scuttle", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"45–49", quality:"standard", effects:["health"], ingredients:["Game","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Curried Kwama Scrib Risotto", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP10–CP40", quality:"standard", effects:["health"], ingredients:["Poultry","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Grilled Timber Mammoth Kebabs", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP10–CP40", quality:"standard", effects:["health"], ingredients:["Red Meat","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Millet-Stuffed Pork Loin", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP10–CP40", quality:"standard", effects:["health"], ingredients:["White Meat","Millet"], obtain:"CP zone containers. Guild Trader. Provisioning writs.", lore:"A civilized Breton dish — pork stuffed with millet and herbs." },
+  { name:"Argonian Saddle-Cured Rabbit", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP50–CP90", quality:"standard", effects:["health"], ingredients:["Small Game","Saltrice"], obtain:"CP zone containers. Guild Trader.", lore:"Cured rabbit in the Argonian tradition — saltrice provides a distinctive Blackwood flavor." },
+  { name:"Dunmeri Jerked Horse Haunch", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP50–CP90", quality:"standard", effects:["health"], ingredients:["Game","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Kwama Egg Quiche", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP50–CP90", quality:"standard", effects:["health"], ingredients:["Poultry","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Crawdad Quiche", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP100–CP140", quality:"standard", effects:["health"], ingredients:["Fish","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Orcish Bratwurst on Bun", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP100–CP140", quality:"standard", effects:["health"], ingredients:["White Meat","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"The Skald-King's Patty Melt", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP100–CP140", quality:"standard", effects:["health"], ingredients:["Red Meat","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Garlic-and-Pepper Venison Steak", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP150–CP160", quality:"standard", effects:["health"], ingredients:["Game","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Lilmoth Garlic Hagfish", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP150–CP160", quality:"standard", effects:["health"], ingredients:["Fish","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Millet and Beef Stuffed Peppers", type:"food", category:"Meat Dish", subcategory:"Meat Dishes", level:"CP150–CP160", quality:"standard", effects:["health"], ingredients:["Red Meat","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── FRUIT DISHES ──
+  { name:"Baked Apples", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"1–4", quality:"standard", effects:["magicka"], ingredients:["Apples"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Banana Surprise", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"1–4", quality:"standard", effects:["magicka"], ingredients:["Bananas"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Grape Preserves", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"1–4", quality:"standard", effects:["magicka"], ingredients:["Jazbay Grapes"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"Sweet grape preserves — spread on bread or eaten by the spoonful." },
+  { name:"Melon Jelly", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"5–9", quality:"standard", effects:["magicka"], ingredients:["Melon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pumpkin Puree", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"5–9", quality:"standard", effects:["magicka"], ingredients:["Pumpkin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tomato Soup", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"5–9", quality:"standard", effects:["magicka"], ingredients:["Tomato"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Banana Millet Muffin", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"10–14", quality:"standard", effects:["magicka"], ingredients:["Bananas","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Bravil Melon Salad", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"10–14", quality:"standard", effects:["magicka"], ingredients:["Melon","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pumpkin Cheesecake", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"10–14", quality:"standard", effects:["magicka"], ingredients:["Pumpkin","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Deshaan Honeydew Hors D'oeuvres", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"15–19", quality:"standard", effects:["magicka"], ingredients:["Melon","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Fried Green Tomatoes", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"15–19", quality:"standard", effects:["magicka"], ingredients:["Tomato","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stuffed Grape Leaves", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"15–19", quality:"standard", effects:["magicka"], ingredients:["Jazbay Grapes","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Garlic Pumpkin Seeds", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"20–24", quality:"standard", effects:["magicka"], ingredients:["Pumpkin","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pellitine Tomato Rice", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"20–24", quality:"standard", effects:["magicka"], ingredients:["Tomato","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Redoran Peppered Melon", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"20–24", quality:"standard", effects:["magicka"], ingredients:["Melon","Seasoning"], obtain:"Containers, especially Morrowind. Guild Trader.", lore:"A Dunmeri snack — spiced melon as eaten in House Redoran territories." },
+  { name:"Cantaloupe Bread", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"25–29", quality:"standard", effects:["magicka"], ingredients:["Melon","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cinnamon Gorapples", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"25–29", quality:"standard", effects:["magicka"], ingredients:["Apples","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Green Bananas with Garlic", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"25–29", quality:"standard", effects:["magicka"], ingredients:["Bananas","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cinnamon Grape Jelly", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"30–34", quality:"standard", effects:["magicka"], ingredients:["Jazbay Grapes","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cyrodilic Pumpkin Fritters", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"30–34", quality:"standard", effects:["magicka"], ingredients:["Pumpkin","Millet"], obtain:"Containers in Cyrodiil. Guild Trader.", lore:"Golden fried pumpkin fritters — crispy outside, soft inside." },
+  { name:"Stormhold Baked Bananas", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"30–34", quality:"standard", effects:["magicka"], ingredients:["Bananas","Cheese"], obtain:"Containers, especially Shadowfen and other Argonian zones. Guild Trader.", lore:"A Black Marsh specialty — bananas baked in their skins with honey." },
+  { name:"Apple Cobbler Supreme", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"35–39", quality:"standard", effects:["magicka"], ingredients:["Apples","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Clan Mother's Banana Pilaf", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"35–39", quality:"standard", effects:["magicka"], ingredients:["Bananas","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rimmen Raisin Cookies", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"35–39", quality:"standard", effects:["magicka"], ingredients:["Jazbay Grapes","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Kragenmoor Pickled Pumpkin", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"40–44", quality:"standard", effects:["magicka"], ingredients:["Pumpkin","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Skyrim Jazbay Crostata", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"40–44", quality:"standard", effects:["magicka"], ingredients:["Jazbay Grapes","Saltrice"], obtain:"Containers, especially Eastmarch. Guild Trader. Provisioning writs.", lore:"An open fruit tart using Skyrim's native jazbay grapes — sweet and slightly tangy." },
+  { name:"Summer Sundas Soup", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"40–44", quality:"standard", effects:["magicka"], ingredients:["Tomato","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mage's Gorapple Porridge", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"45–49", quality:"standard", effects:["magicka"], ingredients:["Apples","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Melon-Chevre Salad", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"45–49", quality:"standard", effects:["magicka"], ingredients:["Melon","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mistral Banana Bread", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"45–49", quality:"standard", effects:["magicka"], ingredients:["Bananas","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hag Fen Pumpkin Pie", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP10–CP40", quality:"standard", effects:["magicka"], ingredients:["Pumpkin","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Orcrest Garlic Apple Jelly", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP10–CP40", quality:"standard", effects:["magicka"], ingredients:["Apples","Garlic"], obtain:"CP zone containers. Guild Trader.", lore:"A peculiar Khajiiti recipe from Orcrest — sweet, sharp, and surprisingly good." },
+  { name:"Ordinator's Beetle-Cheese Soup", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP10–CP40", quality:"standard", effects:["magicka"], ingredients:["Tomato","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Combwort Flatbread", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP50–CP90", quality:"standard", effects:["magicka"], ingredients:["Tomato","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Fresh Apples and Eidar Cheese", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP50–CP90", quality:"standard", effects:["magicka"], ingredients:["Apples","Cheese"], obtain:"CP zone containers. Guild Trader.", lore:"Simple perfection — crisp apples with aged Eidar cheese from Skyrim." },
+  { name:"Honey Nut Treat", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP50–CP90", quality:"standard", effects:["magicka"], ingredients:["Melon","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Bananas in Moon-Sugar Syrup", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP100–CP140", quality:"standard", effects:["magicka"], ingredients:["Bananas","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Garlic Guar Stuffed Grape Leaves", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP100–CP140", quality:"standard", effects:["magicka"], ingredients:["Jazbay Grapes","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"House Hlaalu Pumpkin Risotto", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP100–CP140", quality:"standard", effects:["magicka"], ingredients:["Pumpkin","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Firsthold Fruit and Cheese Plate", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP150–CP160", quality:"standard", effects:["magicka"], ingredients:["Jazbay Grapes","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Thrice-Baked Gorapple Pie", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP150–CP160", quality:"standard", effects:["magicka"], ingredients:["Apples","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tomato Garlic Chutney", type:"food", category:"Fruit Dish", subcategory:"Fruit Dishes", level:"CP150–CP160", quality:"standard", effects:["magicka"], ingredients:["Tomato","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── VEGETABLE DISHES ──
+  { name:"Baked Potato", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"1–4", quality:"standard", effects:["stamina"], ingredients:["Potato"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Carrot Soup", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"1–4", quality:"standard", effects:["stamina"], ingredients:["Carrots"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Roast Corn", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"1–4", quality:"standard", effects:["stamina"], ingredients:["Corn"], obtain:"Containers. Chef/Brewer vendors. Guild Trader.", lore:"Simple but filling — corn roasted over an open fire, charred at the edges." },
+  { name:"Borscht", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"5–9", quality:"standard", effects:["stamina"], ingredients:["Beets"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Green Salad", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"5–9", quality:"standard", effects:["stamina"], ingredients:["Greens"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Steamed Radishes", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"5–9", quality:"standard", effects:["stamina"], ingredients:["Radish"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Carrot Cheesecake", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"10–14", quality:"standard", effects:["stamina"], ingredients:["Carrots","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Gilane Garlicky Greens", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"10–14", quality:"standard", effects:["stamina"], ingredients:["Greens","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Radishes in Rice", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"10–14", quality:"standard", effects:["stamina"], ingredients:["Radish","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Balmora Cabbage Biscuits", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"15–19", quality:"standard", effects:["stamina"], ingredients:["Greens","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Port Hunding Cheese Fries", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"15–19", quality:"standard", effects:["stamina"], ingredients:["Potato","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Spicy Beet Salad", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"15–19", quality:"standard", effects:["stamina"], ingredients:["Beets","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Alik'r Beets with Goat Cheese", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"20–24", quality:"standard", effects:["stamina"], ingredients:["Beets","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Battaglir Chowder", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"20–24", quality:"standard", effects:["stamina"], ingredients:["Greens","Millet"], obtain:"Containers. Guild Trader.", lore:"A thick, creamy chowder from the Battaglir farmlands of Cyrodiil." },
+  { name:"Nibenese Garlic Carrots", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"20–24", quality:"standard", effects:["stamina"], ingredients:["Carrots","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Eidar Radish Salad", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"25–29", quality:"standard", effects:["stamina"], ingredients:["Radish","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Potato Rice Blintzes", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"25–29", quality:"standard", effects:["stamina"], ingredients:["Potato","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rihad Beet and Garlic Salad", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"25–29", quality:"standard", effects:["stamina"], ingredients:["Beets","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Chorrol Corn on the Cob", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"30–34", quality:"standard", effects:["stamina"], ingredients:["Corn","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Garlic Mashed Potatoes", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"30–34", quality:"standard", effects:["stamina"], ingredients:["Potato","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Jerall View Inn Carrot Cake", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"30–34", quality:"standard", effects:["stamina"], ingredients:["Carrots","Flour"], obtain:"Containers, especially Cyrodiil. Guild Trader. Provisioning writs.", lore:"The famous dessert of the Jerall View Inn in Bruma — a masterwork of Colovian baking." },
+  { name:"Indoril Radish Tartlets", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"35–39", quality:"standard", effects:["stamina"], ingredients:["Radish","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Roasted Beet and Millet Salad", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"35–39", quality:"standard", effects:["stamina"], ingredients:["Beets","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Twice-Baked Potatoes", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"35–39", quality:"standard", effects:["stamina"], ingredients:["Potato","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cheesemonger's Salad", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"40–44", quality:"standard", effects:["stamina"], ingredients:["Greens","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cyrodilic Cornbread", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"40–44", quality:"standard", effects:["stamina"], ingredients:["Corn","Flour"], obtain:"Containers, especially Cyrodiil zones. Guild Trader.", lore:"Dense, crumbly cornbread baked in the Imperial style — sustaining for long marches." },
+  { name:"Toasted Millet Salad", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"40–44", quality:"standard", effects:["stamina"], ingredients:["Radish","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Dragonstar Radish Kebabs", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"45–49", quality:"standard", effects:["stamina"], ingredients:["Radish","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Savory Thorn Cornbread", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"45–49", quality:"standard", effects:["stamina"], ingredients:["Corn","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Vvardenfell Ash Yam Loaf", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"45–49", quality:"standard", effects:["stamina"], ingredients:["Potato","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Baby Carrots in Moon-Sugar Glaze", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP10–CP40", quality:"standard", effects:["stamina"], ingredients:["Carrots","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Velothi Cabbage Soup", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP10–CP40", quality:"standard", effects:["stamina"], ingredients:["Greens","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"West Weald Corn Chowder", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP10–CP40", quality:"standard", effects:["stamina"], ingredients:["Corn","Millet"], obtain:"CP zone containers. Guild Trader. Provisioning writs.", lore:"Creamy corn soup from the farming villages of the West Weald in Cyrodiil." },
+  { name:"Garlic Radishes a la Kvatch", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP50–CP90", quality:"standard", effects:["stamina"], ingredients:["Radish","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pickled Carrot Slurry", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP50–CP90", quality:"standard", effects:["stamina"], ingredients:["Carrots","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Skingrad Cabbage Soup", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP50–CP90", quality:"standard", effects:["stamina"], ingredients:["Greens","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Nord Warrior Potato Porridge", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP100–CP140", quality:"standard", effects:["stamina"], ingredients:["Potato","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Taneth Chili Cheese Corn", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP100–CP140", quality:"standard", effects:["stamina"], ingredients:["Corn","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"The Secret Chef's Beet Crostata", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP100–CP140", quality:"standard", effects:["stamina"], ingredients:["Beets","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Bravil's Best Beet Risotto", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP150–CP160", quality:"standard", effects:["stamina"], ingredients:["Beets","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hearty Garlic Corn Chowder", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP150–CP160", quality:"standard", effects:["stamina"], ingredients:["Corn","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tenmar Millet-Carrot Couscous", type:"food", category:"Vegetable Dish", subcategory:"Vegetable Dishes", level:"CP150–CP160", quality:"standard", effects:["stamina"], ingredients:["Carrots","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── SAVOURIES ──
+  { name:"Melon Carpaccio", type:"food", category:"Savoury", subcategory:"Savouries", level:"10–14", quality:"difficult", effects:["health","magicka"], ingredients:["Red Meat","Melon"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Punkin Bunny", type:"food", category:"Savoury", subcategory:"Savouries", level:"10–14", quality:"difficult", effects:["health","magicka"], ingredients:["Small Game","Pumpkin"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Red Deer Stew", type:"food", category:"Savoury", subcategory:"Savouries", level:"10–14", quality:"difficult", effects:["health","magicka"], ingredients:["Game","Tomato"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Apple Baked Fish", type:"food", category:"Savoury", subcategory:"Savouries", level:"15–19", quality:"difficult", effects:["health","magicka"], ingredients:["Fish","Apples"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Grape-Glazed Bantam Guar", type:"food", category:"Savoury", subcategory:"Savouries", level:"15–19", quality:"difficult", effects:["health","magicka"], ingredients:["Poultry","Jazbay Grapes"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Monkeypig Cutlets", type:"food", category:"Savoury", subcategory:"Savouries", level:"15–19", quality:"difficult", effects:["health","magicka"], ingredients:["White Meat","Bananas"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Argonian Pumpkin Stew", type:"food", category:"Savoury", subcategory:"Savouries", level:"20–24", quality:"difficult", effects:["health","magicka"], ingredients:["Fish","Pumpkin","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Peacock Pie", type:"food", category:"Savoury", subcategory:"Savouries", level:"20–24", quality:"difficult", effects:["health","magicka"], ingredients:["Poultry","Jazbay Grapes","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Yellow Oxen Loaf", type:"food", category:"Savoury", subcategory:"Savouries", level:"20–24", quality:"difficult", effects:["health","magicka"], ingredients:["Red Meat","Bananas","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Baked Sole with Bananas", type:"food", category:"Savoury", subcategory:"Savouries", level:"25–29", quality:"difficult", effects:["health","magicka"], ingredients:["Fish","Bananas","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Colovian Roast Turkey", type:"food", category:"Savoury", subcategory:"Savouries", level:"25–29", quality:"difficult", effects:["health","magicka"], ingredients:["Poultry","Tomato","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pork and Bitter Melon", type:"food", category:"Savoury", subcategory:"Savouries", level:"25–29", quality:"difficult", effects:["health","magicka"], ingredients:["White Meat","Melon","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Parmesan Eels in Watermelon", type:"food", category:"Savoury", subcategory:"Savouries", level:"30–34", quality:"difficult", effects:["health","magicka"], ingredients:["Fish","Melon","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pumpkin-Stuffed Fellrunner", type:"food", category:"Savoury", subcategory:"Savouries", level:"30–34", quality:"difficult", effects:["health","magicka"], ingredients:["Poultry","Pumpkin","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Redguard Venison Pie", type:"food", category:"Savoury", subcategory:"Savouries", level:"30–34", quality:"difficult", effects:["health","magicka"], ingredients:["Game","Tomato","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Aunt Alessia's Pork Chops", type:"food", category:"Savoury", subcategory:"Savouries", level:"35–39", quality:"difficult", effects:["health","magicka"], ingredients:["White Meat","Tomato","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Minotaur Slumgullion", type:"food", category:"Savoury", subcategory:"Savouries", level:"35–39", quality:"difficult", effects:["health","magicka"], ingredients:["Red Meat","Pumpkin","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Venison Stuffed Grape Leaves", type:"food", category:"Savoury", subcategory:"Savouries", level:"35–39", quality:"difficult", effects:["health","magicka"], ingredients:["Game","Jazbay Grapes","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Black Marsh Wamasu Loin", type:"food", category:"Savoury", subcategory:"Savouries", level:"40–44", quality:"difficult", effects:["health","magicka"], ingredients:["White Meat","Jazbay Grapes","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Chicken-and-Banana Fried Rice", type:"food", category:"Savoury", subcategory:"Savouries", level:"40–44", quality:"difficult", effects:["health","magicka"], ingredients:["Poultry","Bananas","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mother Mara's Savory Rabbit Stew", type:"food", category:"Savoury", subcategory:"Savouries", level:"40–44", quality:"difficult", effects:["health","magicka"], ingredients:["Small Game","Tomato","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Elsweyr Fondue", type:"food", category:"Savoury", subcategory:"Savouries", level:"45–49", quality:"difficult", effects:["health","magicka"], ingredients:["Red Meat","Melon","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Gazelle Cutlet with Minced Pumpkin", type:"food", category:"Savoury", subcategory:"Savouries", level:"45–49", quality:"difficult", effects:["health","magicka"], ingredients:["Game","Pumpkin","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Oyster Tomato Orzo", type:"food", category:"Savoury", subcategory:"Savouries", level:"45–49", quality:"difficult", effects:["health","magicka"], ingredients:["Fish","Tomato","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ashlander Nix-Hound Chili", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP10–CP40", quality:"difficult", effects:["health","magicka"], ingredients:["White Meat","Pumpkin","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Colovian Beef Noodle Soup", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP10–CP40", quality:"difficult", effects:["health","magicka"], ingredients:["Red Meat","Tomato","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Seared Slaughterfish with Mammoth Cheese", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP10–CP40", quality:"difficult", effects:["health","magicka"], ingredients:["Fish","Jazbay Grapes","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Cloudy Dregs Inn Bouillabaisse", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP50–CP90", quality:"difficult", effects:["health","magicka"], ingredients:["Fish","Tomato","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Corinthean Roast Kagouti", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP50–CP90", quality:"difficult", effects:["health","magicka"], ingredients:["Red Meat","Apples","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Khajiiti Sweet-Stuffed Duck", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP50–CP90", quality:"difficult", effects:["health","magicka"], ingredients:["Poultry","Bananas","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Coldharbour Daedrat Snacks", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP100–CP140", quality:"difficult", effects:["health","magicka"], ingredients:["Small Game","Apples","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Lillandril Summer Sausage", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP100–CP140", quality:"difficult", effects:["health","magicka"], ingredients:["White Meat","Melon","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweet Horker Stew", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP100–CP140", quality:"difficult", effects:["health","magicka"], ingredients:["Red Meat","Jazbay Grapes","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Melon-Baked Parmesan Pork", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP150–CP160", quality:"difficult", effects:["health","magicka"], ingredients:["White Meat","Melon","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mistral Banana-Bunny Hash", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP150–CP160", quality:"difficult", effects:["health","magicka"], ingredients:["Small Game","Bananas","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Solitude Salmon-Millet Soup", type:"food", category:"Savoury", subcategory:"Savouries", level:"CP150–CP160", quality:"difficult", effects:["health","magicka"], ingredients:["Fish","Tomato","Millet"], obtain:"Frost Mirriam from writs/Hireling Mail. Salmon filleted at a Cooking Fire. Guild Trader.", lore:"A proud Nordic recipe from the city of Solitude — hearty, nourishing, and warming." },
+
+  // ── RAGOUT ──
+  { name:"Beet-Glazed Pork", type:"food", category:"Ragout", subcategory:"Ragout", level:"10–14", quality:"difficult", effects:["health","stamina"], ingredients:["White Meat","Beets"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Salmon with Radish Slaw", type:"food", category:"Ragout", subcategory:"Ragout", level:"10–14", quality:"difficult", effects:["health","stamina"], ingredients:["Fish","Radish"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stuffed Capon", type:"food", category:"Ragout", subcategory:"Ragout", level:"10–14", quality:"difficult", effects:["health","stamina"], ingredients:["Poultry","Corn"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Beef Stew", type:"food", category:"Ragout", subcategory:"Ragout", level:"15–19", quality:"difficult", effects:["health","stamina"], ingredients:["Red Meat","Carrots"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rabbit Loin with Bitter Greens", type:"food", category:"Ragout", subcategory:"Ragout", level:"15–19", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Greens"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Shepherd's Pie", type:"food", category:"Ragout", subcategory:"Ragout", level:"15–19", quality:"difficult", effects:["health","stamina"], ingredients:["Game","Potato"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Beef and Beets Pasty", type:"food", category:"Ragout", subcategory:"Ragout", level:"20–24", quality:"difficult", effects:["health","stamina"], ingredients:["Red Meat","Beets","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rabbit Gnocchi Ragu", type:"food", category:"Ragout", subcategory:"Ragout", level:"20–24", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Potato","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stuffed Venison Haunch", type:"food", category:"Ragout", subcategory:"Ragout", level:"20–24", quality:"difficult", effects:["health","stamina"], ingredients:["Game","Greens","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Falkreath Meat Loaf", type:"food", category:"Ragout", subcategory:"Ragout", level:"25–29", quality:"difficult", effects:["health","stamina"], ingredients:["Game","Carrots","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Highland Rabbit Stew", type:"food", category:"Ragout", subcategory:"Ragout", level:"25–29", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Greens","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hunt-Wife's Beef Radish Stew", type:"food", category:"Ragout", subcategory:"Ragout", level:"25–29", quality:"difficult", effects:["health","stamina"], ingredients:["Red Meat","Radish","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Frostfall Pork Roast", type:"food", category:"Ragout", subcategory:"Ragout", level:"30–34", quality:"difficult", effects:["health","stamina"], ingredients:["White Meat","Radish","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rabbit Corn Chowder", type:"food", category:"Ragout", subcategory:"Ragout", level:"30–34", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Corn","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Shornhelm Ox-Tail Soup", type:"food", category:"Ragout", subcategory:"Ragout", level:"30–34", quality:"difficult", effects:["health","stamina"], ingredients:["Red Meat","Carrots","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Fricasseed Rabbit with Radishes", type:"food", category:"Ragout", subcategory:"Ragout", level:"35–39", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Radish","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mudcrab Corn Fritters", type:"food", category:"Ragout", subcategory:"Ragout", level:"35–39", quality:"difficult", effects:["health","stamina"], ingredients:["Fish","Corn","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Narsis Bantam Guar Hash", type:"food", category:"Ragout", subcategory:"Ragout", level:"35–39", quality:"difficult", effects:["health","stamina"], ingredients:["Poultry","Beets","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Necrom Beetle-Cheese Poutine", type:"food", category:"Ragout", subcategory:"Ragout", level:"40–44", quality:"difficult", effects:["health","stamina"], ingredients:["Game","Potato","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Psijic Order Pigs-in-a-Blanket", type:"food", category:"Ragout", subcategory:"Ragout", level:"40–44", quality:"difficult", effects:["health","stamina"], ingredients:["White Meat","Corn","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Rumare Slaughterfish Pie", type:"food", category:"Ragout", subcategory:"Ragout", level:"40–44", quality:"difficult", effects:["health","stamina"], ingredients:["Fish","Greens","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ash-Hopper Dumplings on Scathecraw", type:"food", category:"Ragout", subcategory:"Ragout", level:"45–49", quality:"difficult", effects:["health","stamina"], ingredients:["Poultry","Greens","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Craglorn Skavenger Stew", type:"food", category:"Ragout", subcategory:"Ragout", level:"45–49", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Carrots","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Raven Rock Baked Ash Yams", type:"food", category:"Ragout", subcategory:"Ragout", level:"45–49", quality:"difficult", effects:["health","stamina"], ingredients:["White Meat","Potato","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Goblin-Style Grilled Rat", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP10–CP40", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Beets","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Grilled Camel on Cornbread", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP10–CP40", quality:"difficult", effects:["health","stamina"], ingredients:["Game","Corn","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Potato-Stuffed Roast Pheasant", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP10–CP40", quality:"difficult", effects:["health","stamina"], ingredients:["Poultry","Potato","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Grandmam's Roast Rabbit", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP50–CP90", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Carrots","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hammerfell Antelope Stew", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP50–CP90", quality:"difficult", effects:["health","stamina"], ingredients:["Game","Radish","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Wild-Boar-and-Beets", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP50–CP90", quality:"difficult", effects:["health","stamina"], ingredients:["White Meat","Beets","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Breton Bubble-and-Squeak", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP100–CP140", quality:"difficult", effects:["health","stamina"], ingredients:["Game","Greens","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Kwama Egg Omelet", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP100–CP140", quality:"difficult", effects:["health","stamina"], ingredients:["Poultry","Carrots","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Silverside Perch Pudding", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP100–CP140", quality:"difficult", effects:["health","stamina"], ingredients:["Fish","Beets","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Braised Rabbit with Spring Vegetables", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP150–CP160", quality:"difficult", effects:["health","stamina"], ingredients:["Small Game","Greens","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Garlic Cod with Potato Crust", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP150–CP160", quality:"difficult", effects:["health","stamina"], ingredients:["Fish","Potato","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sticky Pork and Radish Noodles", type:"food", category:"Ragout", subcategory:"Ragout", level:"CP150–CP160", quality:"difficult", effects:["health","stamina"], ingredients:["White Meat","Radish","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── ENTREMET ──
+  { name:"Last Seed Salad", type:"food", category:"Entremet", subcategory:"Entremet", level:"10–14", quality:"difficult", effects:["magicka","stamina"], ingredients:["Apples","Carrots"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mid Year Green Salad", type:"food", category:"Entremet", subcategory:"Entremet", level:"10–14", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jazbay Grapes","Greens"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweet Potatoes", type:"food", category:"Entremet", subcategory:"Entremet", level:"10–14", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bananas","Potato"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Melon-Radish Salad", type:"food", category:"Entremet", subcategory:"Entremet", level:"15–19", quality:"difficult", effects:["magicka","stamina"], ingredients:["Melon","Radish"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Pumpkin Corn Fritters", type:"food", category:"Entremet", subcategory:"Entremet", level:"15–19", quality:"difficult", effects:["magicka","stamina"], ingredients:["Pumpkin","Corn"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Tomato Borscht", type:"food", category:"Entremet", subcategory:"Entremet", level:"15–19", quality:"difficult", effects:["magicka","stamina"], ingredients:["Tomato","Beets"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Falinesti Forbidden Fruit", type:"food", category:"Entremet", subcategory:"Entremet", level:"20–24", quality:"difficult", effects:["magicka","stamina"], ingredients:["Melon","Radish","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hearthfire Harvest Pilaf", type:"food", category:"Entremet", subcategory:"Entremet", level:"20–24", quality:"difficult", effects:["magicka","stamina"], ingredients:["Apples","Corn","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hearty Sun's Dusk Soup", type:"food", category:"Entremet", subcategory:"Entremet", level:"20–24", quality:"difficult", effects:["magicka","stamina"], ingredients:["Tomato","Carrots","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Apple Mashed Potatoes", type:"food", category:"Entremet", subcategory:"Entremet", level:"25–29", quality:"difficult", effects:["magicka","stamina"], ingredients:["Apples","Potato","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Elsweyr Corn Fritters", type:"food", category:"Entremet", subcategory:"Entremet", level:"25–29", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jazbay Grapes","Corn","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hearthfire Vegetable Salad", type:"food", category:"Entremet", subcategory:"Entremet", level:"25–29", quality:"difficult", effects:["magicka","stamina"], ingredients:["Pumpkin","Beets","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Apple-Eidar Cheese Salad", type:"food", category:"Entremet", subcategory:"Entremet", level:"30–34", quality:"difficult", effects:["magicka","stamina"], ingredients:["Apples","Greens","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sun's Height Pudding", type:"food", category:"Entremet", subcategory:"Entremet", level:"30–34", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bananas","Beets","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweet Dune Gnocchi", type:"food", category:"Entremet", subcategory:"Entremet", level:"30–34", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jazbay Grapes","Potato","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Blackwood Stuffed Banana Leaves", type:"food", category:"Entremet", subcategory:"Entremet", level:"35–39", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bananas","Greens","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Creamcheese Frosted Gorapple Cake", type:"food", category:"Entremet", subcategory:"Entremet", level:"35–39", quality:"difficult", effects:["magicka","stamina"], ingredients:["Apples","Carrots","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Forge-Wife's Spudmelon Pie", type:"food", category:"Entremet", subcategory:"Entremet", level:"35–39", quality:"difficult", effects:["magicka","stamina"], ingredients:["Melon","Potato","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ashlander Ochre Mash", type:"food", category:"Entremet", subcategory:"Entremet", level:"40–44", quality:"difficult", effects:["magicka","stamina"], ingredients:["Pumpkin","Carrots","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Orcish No-Rhubarb Salad", type:"food", category:"Entremet", subcategory:"Entremet", level:"40–44", quality:"difficult", effects:["magicka","stamina"], ingredients:["Apples","Radish","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Spinner's Taboo Salad", type:"food", category:"Entremet", subcategory:"Entremet", level:"40–44", quality:"difficult", effects:["magicka","stamina"], ingredients:["Melon","Beets","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Drunken Goat Cheese with Radishes", type:"food", category:"Entremet", subcategory:"Entremet", level:"45–49", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jazbay Grapes","Radish","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Savory Banana Cornbread", type:"food", category:"Entremet", subcategory:"Entremet", level:"45–49", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bananas","Corn","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sun-Dried Caravan Provisions", type:"food", category:"Entremet", subcategory:"Entremet", level:"45–49", quality:"difficult", effects:["magicka","stamina"], ingredients:["Apples","Beets","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Eidar Banana-Radish Vichyssoise", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP10–CP40", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bananas","Radish","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Khajiiti Apple Spanakopita", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP10–CP40", quality:"difficult", effects:["magicka","stamina"], ingredients:["Apples","Greens","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Savory Mid Year Preserves", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP10–CP40", quality:"difficult", effects:["magicka","stamina"], ingredients:["Melon","Carrots","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Every-Morndas Casserole", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP50–CP90", quality:"difficult", effects:["magicka","stamina"], ingredients:["Melon","Potato","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Late-Summer Corn Slaw", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP50–CP90", quality:"difficult", effects:["magicka","stamina"], ingredients:["Pumpkin","Corn","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Savory-Sweet Fried Kale", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP50–CP90", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jazbay Grapes","Greens","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Arenthia's Empty Tankard Frittata", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP100–CP140", quality:"difficult", effects:["magicka","stamina"], ingredients:["Tomato","Potato","Garlic"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Boiled Creme Treat", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP100–CP140", quality:"difficult", effects:["magicka","stamina"], ingredients:["Pumpkin","Radish","Saltrice"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweetroll", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP100–CP140", quality:"difficult", effects:["magicka","stamina"], ingredients:["Bananas","Corn","Seasoning"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Chevre-Radish Salad with Pumpkin Seeds", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP150–CP160", quality:"difficult", effects:["magicka","stamina"], ingredients:["Pumpkin","Radish","Cheese"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Grapes and Ash Yam Falafel", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP150–CP160", quality:"difficult", effects:["magicka","stamina"], ingredients:["Jazbay Grapes","Potato","Millet"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Late Hearthfire Vegetable Tart", type:"food", category:"Entremet", subcategory:"Entremet", level:"CP150–CP160", quality:"difficult", effects:["magicka","stamina"], ingredients:["Pumpkin","Beets","Flour"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── GOURMET ──
+  { name:"Corinthe Corn Beef", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"20–24", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Red Meat","Bananas","Corn","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Sweet Skeever Gumbo", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"25–29", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Small Game","Apples","Beets","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Riekling Suckling Bristleback", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"30–34", quality:"complex", effects:["health","magicka","stamina"], ingredients:["White Meat","Pumpkin","Greens","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Dawnstar Sun's Dusk Chowder", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"35–39", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Red Meat","Pumpkin","Corn","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Nibenese Fricasseed Fawn", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"35–39", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Game","Apples","Greens","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Summerset Rainbow Pie", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"35–39", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Small Game","Bananas","Beets","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Vvardenfell Cliff Racer Ragout", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"35–39", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Poultry","Tomato","Carrots","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Gold Coast Mudcrab Fries", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"40–44", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Fish","Melon","Potato","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Horker Loaf", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"40–44", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Red Meat","Melon","Corn","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Stirk Pork-and-Beets", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"40–44", quality:"complex", effects:["health","magicka","stamina"], ingredients:["White Meat","Bananas","Beets","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Twenty-Four-Raven Pie", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"40–44", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Poultry","Jazbay Grapes","Greens","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Caramelized Goat Nibbles", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"45–49", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Game","Jazbay Grapes","Radish","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Direnni Hundred-Year Rabbit Bisque", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"45–49", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Small Game","Jazbay Grapes","Corn","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Markarth Short Pig", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"45–49", quality:"complex", effects:["health","magicka","stamina"], ingredients:["White Meat","Apples","Potato","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Parrot-and-Pumpkin Salad", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"45–49", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Poultry","Pumpkin","Greens","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Braised Sweetmeats", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP10–CP40", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Red Meat","Bananas","Radish","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Goatherd's Pie", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP10–CP40", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Game","Melon","Beets","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Planked Abecean Longfin", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP10–CP40", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Fish","Apples","Beets","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Slow-Simmered Rabbit Goulash", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP10–CP40", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Small Game","Tomato","Carrots","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Duck Soup", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP50–CP90", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Poultry","Tomato","Potato","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Hircine's Meat Loaf", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP50–CP90", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Game","Apples","Corn","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Imperial Stuffed Piglet", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP50–CP90", quality:"complex", effects:["health","magicka","stamina"], ingredients:["White Meat","Jazbay Grapes","Radish","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Salmon Steak Supreme", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP50–CP90", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Fish","Apples","Carrots","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Potentate's Supreme Cioppino", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP100–CP140", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Fish","Pumpkin","Corn","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"The Emperor's Venison Fricassee", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP100–CP140", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Game","Melon","Carrots","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"The Secret Chef's Pork Roast", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP100–CP140", quality:"complex", effects:["health","magicka","stamina"], ingredients:["White Meat","Jazbay Grapes","Potato","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Ultimate Riverhold Beef Pasty", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP100–CP140", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Red Meat","Tomato","Radish","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Capon Tomato-Beet Casserole", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP150–CP160", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Poultry","Tomato","Beets","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Jugged Rabbit in Preserves", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP150–CP160", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Small Game","Bananas","Carrots","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Longfin Pasty with Melon Sauce", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP150–CP160", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Fish","Melon","Greens","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Withered Tree Inn Venison Pot Roast", type:"food", category:"Gourmet", subcategory:"Gourmet", level:"CP150–CP160", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Game","Apples","Carrots","Frost Mirriam"], obtain:"Containers. Guild Trader.", lore:"" },
+
+  // ── EVENT RECIPES ──
+  { name:"Alcaire Festival Sword-Pie", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"standard", effects:["health"], ingredients:["Red Meat","Seasoning","Flour"], obtain:"New Life Festival — recipe found in New Life Gift Boxes during the event.", lore:"" },
+  { name:"Artaeum Pickled Fish Bowl", type:"special", category:"Summerset DLC", subcategory:"Event Recipes", level:"All", quality:"complex", effects:["health","magicka"], ingredients:["Fish","Rice","Clam Gall","Honey"], obtain:"Perfect Roe: rare drop from filleting fish at a Cooking Fire. Frost Mirriam from writs. Guild Trader for Perfect Roe (expensive). Must fish extensively to obtain roe.", lore:"A refined Psijic delicacy from the isle of Artaeum, served cold in a ceremonial bowl." },
+  { name:"Artaeum Takeaway Broth", type:"special", category:"Summerset DLC", subcategory:"Event Recipes", level:"All", quality:"legendary", effects:["health","stamina"], ingredients:["Fish","Melon","Torchbug Thorax","Powdered Mother of Pearl"], obtain:"Summerset DLC. Fishing in Artaeum (the Psijic Order's island) — recipe scrolls found only while fishing on Artaeum.", lore:"The Psijic Order offers takeaway broth for weary travelers visiting Artaeum — a profound gesture for such a secretive group." },
+  { name:"Bergama Warning Fire", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","stamina"], ingredients:["Coffee","Yerba Mate","Dragonthorn","Lotus"], obtain:"New Life Festival — recipe found in New Life Gift Boxes during the event.", lore:"" },
+  { name:"Betnikh Twice-Spiked Ale", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","magicka"], ingredients:["Barley","Yeast","Rice","Honey"], obtain:"New Life Festival — recipe found in New Life Gift Boxes during the event.", lore:"" },
+  { name:"Bewitched Sugar Skulls", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"legendary", effects:["health","magicka","stamina"], ingredients:["Scrib Jelly","Flour","Columbine","Bervez Juice","Honey"], obtain:"Witches Festival — recipe found in Dremora Plunder Skulls during the event.", lore:"" },
+  { name:"Bowl of \"Peeled Eyeballs\"", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","magicka"], ingredients:["Jazbay Grapes","Seasoning","Flour","Surilie Grapes"], obtain:"Witches Festival — recipe found in Plunder Skulls during the event.", lore:"" },
+  { name:"Candied Jester's Coins", type:"special", category:"Jester's Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["magicka","stamina"], ingredients:["Flour","Coffee","Imp Stool","Bervez Juice"], obtain:"Jester's Festival — recipe found in Jester's Festival Boxes during the event.", lore:"" },
+  { name:"Clockwork Citrus Filet", type:"special", category:"Clockwork City DLC", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","magicka"], ingredients:["Red Meat","Lemon","Frost Mirriam","Perfect Roe"], obtain:"Clockwork City DLC (Brass Fortress area). Containers in Clockwork City. Sotha Sil's factotum vendors. Rare recipe drop.", lore:"A precisely calculated fish dish from Sotha Sil's Clockwork City — every ingredient measured to the tenth decimal." },
+  { name:"Corrupting Bloody Mara", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"legendary", effects:["health","magicka"], ingredients:["Nightshade","Daedra Heart","Dragon's Blood","Frost Mirriam"], obtain:"Witches Festival — recipe found in Dremora Plunder Skulls during the event.", lore:"" },
+  { name:"Crisp and Crunchy Pumpkin Snack Skewer", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["magicka","stamina"], ingredients:["Pumpkin","Potato","Flour","Small Game"], obtain:"Witches Festival — recipe found in Plunder Skulls during the event.", lore:"" },
+  { name:"Crunchy Spider Skewer", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["magicka","stamina"], ingredients:["Spider Egg","Crawlers","Acai Berry","Seasoning"], obtain:"Witches Festival — recipe found in Plunder Skulls during the event.", lore:"" },
+  { name:"Deregulated Mushroom Stew", type:"special", category:"Clockwork City DLC", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","stamina"], ingredients:["Namira's Rot","Small Game","Imp Stool"], obtain:"Clockwork City DLC.", lore:"" },
+  { name:"Dubious Camoran Throne", type:"special", category:"Jester's Festival", subcategory:"Event Recipes", level:"All", quality:"complex", effects:["health","stamina"], ingredients:["White Meat","Beetle Scuttle","Insect Parts","Guts"], obtain:"Jester's Festival — recipe found in Jester's Festival Boxes during the event.", lore:"" },
+  { name:"Frosted Brains", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","magicka"], ingredients:["White Meat","Honey","Stinkhorn","Yeast"], obtain:"Witches Festival — recipe found in Plunder Skulls during the event.", lore:"" },
+  { name:"Ghastly Eye Bowl", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["magicka"], ingredients:["Worms","Fleshfly Larva","Bananas","Rose"], obtain:"Witches Festival — recipe found in Plunder Skulls during the event.", lore:"" },
+  { name:"Hissmir Fish-Eye Rye", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"legendary", effects:["magicka","stamina"], ingredients:["Fish","Rye","Corn Flower","Lemon","Bervez Juice"], obtain:"New Life Festival — recipe found in New Life Gift Boxes during the event.", lore:"" },
+  { name:"Jagga-Drenched \"Mud Ball\"", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["magicka","stamina"], ingredients:["Coffee","Flour","Seasoning","Cheese"], obtain:"New Life Festival — recipe found in New Life Gift Boxes during the event.", lore:"" },
+  { name:"Jewels of Misrule", type:"special", category:"Jester's Festival", subcategory:"Event Recipes", level:"All", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Rose","Mint","Lotus","Columbine","Bervez Juice"], obtain:"Jester's Festival event. Purchased from the Impresario during the Jester's Festival event period using Event Tickets.", lore:"A kaleidoscopic confection of clashing ingredients — eating it feels like wearing a Jester's mask on your tongue." },
+  { name:"Lava Foot Soup-and-Saltrice", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["stamina"], ingredients:["Saltrice","Flour","Potato","Scrib Jelly"], obtain:"Frost Mirriam from provisioning writs/Hireling Mail. Rare. Guild Trader.", lore:"A Dunmeri peasant recipe elevated to gourmet status — lava-spiced saltrice broth with roasted poultry." },
+  { name:"Old Aldmeri Orphan Gruel", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"standard", effects:["magicka"], ingredients:["Barley","Rose","Pumpkin"], obtain:"New Life Festival — recipe found in New Life Gift Boxes during the event.", lore:"" },
+  { name:"Orzorga's Blood Price Pie", type:"special", category:"Orsinium DLC", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health"], ingredients:["Red Meat","Potato","Violet Coprinus","Guts"], obtain:"Orsinium DLC.", lore:"" },
+  { name:"Orzorga's Red Frothgar", type:"special", category:"Orsinium DLC", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","magicka"], ingredients:["Clear Water","Comberry","Honey","Mint"], obtain:"Orsinium DLC.", lore:"" },
+  { name:"Orzorga's Smoked Bear Haunch", type:"special", category:"Orsinium DLC", subcategory:"Event Recipes", level:"All", quality:"legendary", effects:["health","magicka","stamina"], ingredients:["Red Meat","Tomato","White Cap","Frost Mirriam","Perfect Roe"], obtain:"Orsinium DLC.", lore:"" },
+  { name:"Orzorga's Tripe Trifle Pocket", type:"special", category:"Orsinium DLC", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","stamina"], ingredients:["Guts","Columbine","Beets","White Meat"], obtain:"Orsinium DLC.", lore:"" },
+  { name:"Pack Leader's Bone Broth", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"legendary", effects:["health","stamina"], ingredients:["Dragon Bone","Red Meat","Bone","Frost Mirriam"], obtain:"Witches Festival — recipe found in Dremora Plunder Skulls during the event.", lore:"" },
+  { name:"Princess's Delight", type:"special", category:"Jester's Festival", subcategory:"Event Recipes", level:"All", quality:"standard", effects:["magicka"], ingredients:["Flour","Apples","Butterfly Wing"], obtain:"Jester's Festival — recipe found in Jester's Festival Boxes during the event.", lore:"" },
+  { name:"Purifying Bloody Mara", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"legendary", effects:["health","magicka"], ingredients:["Nirnroot","Tomato","Daedra Heart","Frost Mirriam"], obtain:"Witches Festival — recipe found in Plunder Skulls during the event.", lore:"" },
+  { name:"Rajhin's Sugar Claws", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"standard", effects:["stamina"], ingredients:["Honey","Corn","Flour"], obtain:"New Life Festival — recipe found in New Life Gift Boxes during the event.", lore:"" },
+  { name:"Snow Bear Glow-Wine", type:"special", category:"New Life Festival", subcategory:"Event Recipes", level:"All", quality:"standard", effects:["stamina"], ingredients:["Jazbay Grapes","Yeast","Honey"], obtain:"New Life Festival — recipe found in New Life Gift Boxes during the event.", lore:"" },
+  { name:"Spring-Loaded Infusion", type:"special", category:"Clockwork City DLC", subcategory:"Event Recipes", level:"All", quality:"difficult", effects:["health","magicka","stamina"], ingredients:["Dwarven Oil","Fish","Bervez Juice","Water Hyacinth"], obtain:"Clockwork City DLC.", lore:"" },
+  { name:"Sweet Sanguine Apples", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"standard", effects:["magicka"], ingredients:["Apples","Honey"], obtain:"Witches Festival — recipe found in Plunder Skulls during the event.", lore:"" },
+  { name:"Witchmother's Party Punch", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"complex", effects:["health","magicka","stamina"], ingredients:["Bervez Juice","Rye","Lotus","Lemon"], obtain:"Witches Festival event. Found in Plunder Skulls (containers that drop during the Witches Festival event) or from the Impresario.", lore:"A punch that makes eyes glow and laughter echo through haunted cemeteries." },
+  { name:"Witchmother's Potent Brew", type:"special", category:"Witches Festival", subcategory:"Event Recipes", level:"All", quality:"complex", effects:["health","magicka"], ingredients:["Nightshade","Bervez Juice","Rice","Small Game"], obtain:"Witches Festival annual event (late October). Purchased from the Impresario vendor using Event Tickets during the event period. Recipe scroll is the reward.", lore:"Brewed by Witchmothers in the deepest Reachman traditions — a foul-smelling concoction of extraordinary power." },
+
+  // ── SPECIAL RECIPES ──
+  { name:"Aetherial Ambrosia", type:"special", category:"Psijic Special", subcategory:"Special Recipes", level:"All", quality:"legendary", effects:["xp"], ingredients:["Psijic Ambrosia","Diminished Aetherial Dust"], obtain:"Craft from a Psijic Ambrosia and Diminished Aetherial Dust.", lore:"" },
+  { name:"Colovian War Torte", type:"special", category:"Alliance War", subcategory:"Special Recipes", level:"All", quality:"legendary", effects:["special"], ingredients:["Cyrodiil Citrus","Frost Mirriam","Honey","Flour","Carrots"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Granny's Eel Pie", type:"special", category:"Bilsa's Delivery", subcategory:"Special Recipes", level:"All", quality:"standard", effects:["health"], ingredients:["Yeast","Flour","Fish","Red Lichen"], obtain:"Bilsa's Delivery daily quest.", lore:"" },
+  { name:"Molten War Torte", type:"special", category:"Alliance War", subcategory:"Special Recipes", level:"All", quality:"legendary", effects:["special"], ingredients:["Colovian War Torte","Rubyblossom Extract"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"Mythic Aetherial Ambrosia", type:"special", category:"Psijic Special", subcategory:"Special Recipes", level:"All", quality:"legendary", effects:["xp"], ingredients:["Psijic Ambrosia","Aetherial Dust"], obtain:"Obtain the Aetheric Cipher and use it on a Psijic Ambrosia Recipe Scroll. Aetherial Dust is ultra-rare from resource nodes in specific zones (Alik'r Desert, Bangkorai, etc.). Aetheric Cipher: bought from Rolis Hlaalu (Master Writ Vendor) for Writ Vouchers.", lore:"An impossibly rare upgrade to Psijic Ambrosia — grants +150% Experience gain. Stacks with other food/drink buffs." },
+  { name:"Psijic Ambrosia", type:"special", category:"Psijic Special", subcategory:"Special Recipes", level:"All", quality:"legendary", effects:["xp"], ingredients:["Perfect Roe","Frost Mirriam","Bervez Juice"], obtain:"Craft by combining 7 Psijic Ambrosia Recipe Scrolls (I–VII) found as RARE drops from high-quality provisioning writs. Perfect Roe obtained by filleting fish. Recipe fragments are Bind-on-Pickup.", lore:"A mythical drink brewed by Psijic monks that temporarily accelerates the flow of time, granting +50% Experience gain for 30 minutes." },
+  { name:"Tonic of Portent Favor", type:"special", category:"Night Market", subcategory:"Special Recipes", level:"All", quality:"legendary", effects:["special"], ingredients:["Portent of Curiosity","Portent of Survival","Portent of Wealth"], obtain:"Containers. Guild Trader.", lore:"" },
+  { name:"White-Gold War Torte", type:"special", category:"Alliance War", subcategory:"Special Recipes", level:"All", quality:"legendary", effects:["special"], ingredients:["Molten War Torte","Mourning Dew"], obtain:"Containers. Guild Trader.", lore:"" },
+];;
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let activeTab = 'all';
+let activeFilter = 'all';
+let activeQuality = 'all';
+let activeIngredient = 'all';
+let activeLevel = 'all';
+let activeSort = 'default';
+let searchTerm = '';
+
+const LEVEL_ORDER = { '1–4':1,'5–9':2,'10–14':3,'15–19':4,'20–24':5,'25–29':6,'30–34':7,'35–39':8,'40–44':9,'45–49':10,'CP10–CP40':11,'CP50–CP90':12,'CP100–CP140':13,'CP150–CP160':14,'All':99 };
+const QUALITY_ORDER = { standard:1, difficult:2, complex:3, legendary:4 };
+
+function sortGroup(recs) {
+  if (activeSort === 'name') return [...recs].sort((a,b) => a.name.localeCompare(b.name));
+  if (activeSort === 'level') return [...recs].sort((a,b) => (LEVEL_ORDER[a.level]-LEVEL_ORDER[b.level]) || a.name.localeCompare(b.name));
+  if (activeSort === 'quality') return [...recs].sort((a,b) => (QUALITY_ORDER[a.quality]-QUALITY_ORDER[b.quality]) || a.name.localeCompare(b.name));
+  return recs;
+}
+
+function populateIngredientSelect() {
+  const counts = {};
+  RECIPES.forEach(r => r.ingredients.forEach(i => { counts[i] = (counts[i]||0)+1; }));
+  const sel = document.getElementById('ingredientSelect');
+  Object.keys(counts).sort((a,b) => a.localeCompare(b)).forEach(ing => {
+    const opt = document.createElement('option');
+    opt.value = ing;
+    opt.textContent = `${ing} (${counts[ing]})`;
+    sel.appendChild(opt);
+  });
+}
+
+// ══════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════
+
+function qualityLabel(q) {
+  return { standard:'Standard', difficult:'Difficult', complex:'Complex', legendary:'Legendary' }[q] || q;
+}
+
+function qualityGradient(q) {
+  return { standard:'linear-gradient(90deg,#5a8a5a,transparent)', difficult:'linear-gradient(90deg,#3a6ab0,transparent)', complex:'linear-gradient(90deg,#8840c0,transparent)', legendary:'linear-gradient(90deg,#c8a84b,#e8d060,transparent)' }[q] || '';
+}
+
+function effectTag(e) {
+  const map = { health:'❤ Health', magicka:'💙 Magicka', stamina:'💚 Stamina', xp:'⭐ XP Boost', special:'✨ Special' };
+  return `<span class="effect-tag effect-${e}">${map[e]||e}</span>`;
+}
+
+function getCategories(recipes) {
+  const seen = new Set();
+  const cats = [];
+  recipes.forEach(r => { if (!seen.has(r.subcategory)) { seen.add(r.subcategory); cats.push(r.subcategory); }});
+  return cats;
+}
+
+function filteredRecipes() {
+  return RECIPES.filter(r => {
+    const tabOk = activeTab === 'all' || r.type === activeTab || (activeTab==='special' && r.type==='special') || (activeTab==='food' && r.type==='food') || (activeTab==='drinks' && r.type==='drink');
+    const filterOk = activeFilter === 'all' || r.effects.includes(activeFilter);
+    const qualityOk = activeQuality === 'all' || r.quality === activeQuality;
+    const ingredientOk = activeIngredient === 'all' || r.ingredients.includes(activeIngredient);
+    const levelOk = activeLevel === 'all' || r.level === activeLevel;
+    const searchOk = !searchTerm || r.name.toLowerCase().includes(searchTerm) || r.category.toLowerCase().includes(searchTerm) || r.effects.join(' ').includes(searchTerm) || r.ingredients.join(' ').toLowerCase().includes(searchTerm);
+    return tabOk && filterOk && qualityOk && ingredientOk && levelOk && searchOk;
+  });
+}
+
+function renderRecipes() {
+  const container = document.getElementById('mainContent');
+  const recipes = filteredRecipes();
+  document.getElementById('resultCount').textContent = `${recipes.length} recipe${recipes.length!==1?'s':''} found`;
+
+  if (!recipes.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🍽</div><div class="empty-state-text">No recipes match your search, traveler.</div></div>`;
+    return;
+  }
+
+  // Group by subcategory
+  const grouped = {};
+  recipes.forEach(r => {
+    if (!grouped[r.subcategory]) grouped[r.subcategory] = [];
+    grouped[r.subcategory].push(r);
+  });
+
+  const catIcons = {
+    'Alcoholic Drinks':'🍺','Tea':'🍵','Tonics':'⚗','Liqueurs':'🥃','Tinctures':'🫙','Cordial Teas':'🫖','Cordials':'🫖','Distillates':'🏺',
+    'Meat Dishes':'🍖','Fruit Dishes':'🍎','Vegetable Dishes':'🥕','Savouries':'🥧','Ragout':'🫕','Entremet':'🐟','Gourmet':'👑',
+    'Special Recipes':'✨','Event Recipes':'🎉','Psijic Special':'🔮','Witches Festival':'🎃','New Life Festival':'🎄','Jester\'s Festival':'🃏',
+    'Orsinium DLC':'⚒','Clockwork City DLC':'⚙','Summerset DLC':'🌊','Holiday':'🎁','Distillates':'🏺'
+  };
+
+  const catDesc = {
+    'Alcoholic Drinks':'Restores Health Recovery — brewed at a Cooking Fire',
+    'Tea':'Restores Magicka Recovery — brewed at a Cooking Fire',
+    'Tonics':'Restores Stamina Recovery — brewed at a Cooking Fire',
+    'Liqueurs':'Restores Health & Magicka Recovery',
+    'Tinctures':'Restores Health & Stamina Recovery',
+    'Cordial Teas':'Restores Magicka & Stamina Recovery',
+    'Cordials':'Restores Magicka & Stamina Recovery',
+    'Distillates':'Restores All Three Stats — Recovery',
+    'Meat Dishes':'Increases Maximum Health',
+    'Fruit Dishes':'Increases Maximum Magicka',
+    'Vegetable Dishes':'Increases Maximum Stamina',
+    'Savouries':'Increases Max Health & Magicka',
+    'Ragout':'Increases Max Health & Stamina',
+    'Entremet':'Increases Max Magicka & Stamina',
+    'Gourmet':'Increases All Three Maximum Stats',
+    'Special Recipes':'Unique bonuses — rare and precious',
+    'Event Recipes':'Seasonal event recipes — limited availability',
+    'Psijic Special':'Experience boost — Psijic Order secrets',
+    'Witches Festival':'Witches Festival event recipes',
+    'New Life Festival':'New Life Festival event recipes',
+    "Jester's Festival":"Jester's Festival event recipes",
+    'Orsinium DLC':'Wrothgar provisioning recipes',
+    'Clockwork City DLC':'Brass Fortress provisioning recipes',
+    'Summerset DLC':'Summerset & Artaeum special recipes',
+    'Holiday':'Seasonal and holiday special recipes',
+  };
+
+  let html = '';
+  for (const [subcat, recs] of Object.entries(grouped)) {
+    html += `<div class="category-block">
+      <div class="category-header">
+        <span class="category-icon">${catIcons[subcat]||'📜'}</span>
+        <span class="category-title">${subcat}</span>
+        <span class="category-desc">${catDesc[subcat]||''}</span>
+      </div>
+      <div class="recipe-grid">`;
+    sortGroup(recs).forEach((r, i) => {
+      html += `<div class="recipe-card q-${r.quality}" onclick="openModal(${RECIPES.indexOf(r)})">
+        <div class="card-top">
+          <div class="card-quality-gem"></div>
+          <div class="card-name">${r.name}</div>
+          <div class="card-level">Lvl ${r.level}</div>
+        </div>
+        <div class="card-effects">${r.effects.map(effectTag).join('')}</div>
+        <div class="card-ingredients">Ingredients: <span>${r.ingredients.join(', ')}</span></div>
+        <div class="card-obtain"><span class="card-obtain-label">Obtain</span>${r.obtain.length > 90 ? r.obtain.substring(0,90)+'…' : r.obtain}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════
+function openModal(idx) {
+  const r = RECIPES[idx];
+  document.getElementById('modalTitle').textContent = r.name;
+  document.getElementById('modalCategory').textContent = `${r.subcategory}  •  Level ${r.level}  •  ${qualityLabel(r.quality)}`;
+  document.getElementById('modalQualityBar').style.background = qualityGradient(r.quality);
+  document.getElementById('modalEffects').innerHTML = r.effects.map(effectTag).join('');
+  document.getElementById('modalIngredients').innerHTML = r.ingredients.map(i => `<div class="modal-ingredient">${i}</div>`).join('');
+  document.getElementById('modalObtain').innerHTML = r.obtain;
+  if (r.lore) {
+    document.getElementById('modalLoreSection').style.display = '';
+    document.getElementById('modalLore').textContent = r.lore;
+  } else {
+    document.getElementById('modalLoreSection').style.display = 'none';
+  }
+  document.getElementById('modalOverlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+// ══════════════════════════════════════════
+//  EVENT LISTENERS
+// ══════════════════════════════════════════
+
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeTab = tab.dataset.tab;
+    renderRecipes();
+  });
+});
+
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderRecipes();
+  });
+});
+
+document.querySelectorAll('[data-quality]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-quality]').forEach(b => b.classList.remove('active-q'));
+    btn.classList.add('active-q');
+    activeQuality = btn.dataset.quality;
+    renderRecipes();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchTerm = e.target.value.toLowerCase().trim();
+  renderRecipes();
+});
+
+document.getElementById('ingredientSelect').addEventListener('change', e => {
+  activeIngredient = e.target.value;
+  renderRecipes();
+});
+
+document.getElementById('levelSelect').addEventListener('change', e => {
+  activeLevel = e.target.value;
+  renderRecipes();
+});
+
+document.getElementById('sortSelect').addEventListener('change', e => {
+  activeSort = e.target.value;
+  renderRecipes();
+});
+
+// Initial render
+populateIngredientSelect();
+renderRecipes();
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Apps</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #000;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px 64px;
+  }
+  .page { max-width: 720px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    font-size: 34px;
+    margin: 12px 0 6px;
+    background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #00e676, #00cfff, #b967ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+  }
+  .intro {
+    text-align: center;
+    color: #9ff5ff;
+    font-size: 17px;
+    margin-bottom: 28px;
+    text-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+  }
+  .card {
+    border-radius: 16px;
+    padding: 2px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ff004c, #ff8a00, #ffee00, #00e676, #00cfff, #b967ff, #ff004c);
+    background-size: 300% 300%;
+    animation: pipe 8s linear infinite;
+  }
+  @keyframes pipe {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .card-inner {
+    background: #0a0a12;
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .card h2 {
+    font-size: 21px;
+    margin-bottom: 8px;
+    color: #00e5ff;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+  }
+  .card p {
+    color: #ddd;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .app-note {
+    font-size: 13px;
+    color: #b6ffb6;
+    background: rgba(0, 230, 118, 0.08);
+    border: 1px solid rgba(0, 230, 118, 0.35);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .btn.open {
+    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    color: #fff;
+    box-shadow: 0 0 14px rgba(0, 212, 255, 0.5);
+  }
+  .btn.save {
+    background: transparent;
+    color: #00e5ff;
+    border-color: #00e5ff;
+  }
+  .btn.android {
+    background: linear-gradient(135deg, #00e676, #00b248);
+    color: #04140a;
+    box-shadow: 0 0 14px rgba(0, 230, 118, 0.5);
+  }
+  .footer {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    margin-top: 32px;
+    line-height: 1.6;
+  }
+  .footer a { color: #00e5ff; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>HTML Apps</h1>
+  <p class="intro">A collection of web apps.</p>
+
+  <div class="card"><div class="card-inner">
+    <h2>Drunken Chef v2</h2>
+    <p>ESO provisioning compendium — 572 real recipes (food, drink &amp; special), verified against UESP, with filters by effect, ingredient, level and quality.</p>
+    <div class="buttons">
+      <a class="btn open" href="drunken-chef.html" target="_blank" rel="noopener">Open app</a>
+      <a class="btn save" href="drunken-chef.html" download="drunken-chef.html">Save file</a>
+    </div>
+  </div></div>
+
+  <div class="card"><div class="card-inner">
+    <h2>Alchemical Workings</h2>
+    <p>ESO alchemy — all 38 reagents with correct traits, all 34 effects searchable, potion &amp; poison brewing with solvents.</p>
+    <div class="buttons">
+      <a class="btn open" href="alchemical-workings.html" target="_blank" rel="noopener">Open app</a>
+      <a class="btn save" href="alchemical-workings.html" download="alchemical-workings.html">Save file</a>
+    </div>
+  </div></div>
+
+  <div class="card"><div class="card-inner">
+    <h2>Scrying Helper</h2>
+    <p>ESO scrying — 259 verified leads and 36 mythics, with found-tracking, expiry countdowns and zone progress.</p>
+    <div class="buttons">
+      <a class="btn open" href="scrying-helper.html" target="_blank" rel="noopener">Open app</a>
+      <a class="btn save" href="scrying-helper.html" download="scrying-helper.html">Save file</a>
+    </div>
+  </div></div>
+
+  <div class="card"><div class="card-inner">
+    <h2>Subliminal Blaster Pro</h2>
+    <p>Flash your affirmations on a schedule, with spoken audio that keeps going while you use other apps. Same presets, sliders and audio as the web version — plus a real Android app.</p>
+    <div class="app-note">
+      <strong>Android app:</strong> the native app draws its flashes over any other app you are using, so a session keeps running while you do anything else on your phone — the web version can only flash while its page is open. When Android asks, allow &ldquo;Draw over other apps&rdquo;.
+    </div>
+    <div class="buttons">
+      <a class="btn open" href="subliminal-blaster-pro.html" target="_blank" rel="noopener">Open app</a>
+      <a class="btn save" href="subliminal-blaster-pro.html" download="subliminal-blaster-pro.html">Save file</a>
+      <a class="btn android" href="subliminal-blaster-pro.apk" download="subliminal-blaster-pro.apk">Android app</a>
+    </div>
+  </div></div>
+
+  <div class="card"><div class="card-inner">
+    <h2>Fireworks</h2>
+    <p>Interactive fireworks generator — launch a show right in your browser.</p>
+    <div class="buttons">
+      <a class="btn open" href="fireworks.html" target="_blank" rel="noopener">Open app</a>
+      <a class="btn save" href="fireworks.html" download="fireworks.html">Save file</a>
+    </div>
+  </div></div>
+
+  <p class="footer">
+    Every app is a single standalone file — open it in any browser, or save it to your phone.<br>
+    Source: <a href="https://github.com/hutch2k-jpg/html-apps">github.com/hutch2k-jpg/html-apps</a>
+  </p>
+</div>
+</body>
+</html>

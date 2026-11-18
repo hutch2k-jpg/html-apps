@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Subliminal Blaster Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "▶";
+            font-size: 12px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            font-size: 16px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        textarea::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .help-text {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 40px;
+            -webkit-appearance: none;
+            background: transparent;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,212,255,0.5);
+            margin-top: -8px;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+        }
+
+        .range-value {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-top: 5px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .toggle {
+            width: 60px;
+            height: 30px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+        .toggle.active {
+            background: #00d4ff;
+        }
+
+        .toggle::after {
+            content: "";
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s;
+        }
+
+        .toggle.active::after {
+            left: 32px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,212,255,0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,212,255,0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(0,212,255,0.6);
+            color: #00d4ff;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0,212,255,0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4757 0%, #cc0033 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255,71,87,0.4);
+            display: none;
+        }
+
+        .btn-danger.active {
+            display: block;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            display: flex;
+        }
+
+        .overlay.dim {
+            background: rgba(0,0,0,0.55);
+        }
+
+        .subliminal-text {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 20px rgba(255,255,255,0.8);
+            opacity: 0;
+            /* No transition: a flash must appear instantly. A fade-in longer
+               than the flash duration would mean the text never becomes visible. */
+            transition: none;
+            padding: 20px;
+            max-width: 90%;
+        }
+
+        .subliminal-text.visible {
+            opacity: 1;
+        }
+
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            z-index: 100;
+        }
+
+        .status-bar.error {
+            color: #ffb3ba;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preset-btn {
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0,212,255,0.3);
+        }
+
+        @media (max-width: 480px) {
+            .subliminal-text {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Subliminal Blaster Pro</h1>
+        <p class="subtitle">Reprogram your subconscious mind</p>
+
+        <div class="section">
+            <div class="section-title">Your Affirmations</div>
+            <textarea id="affirmations" placeholder="Enter your affirmations here, one per line...
+
+Example:
+I am confident and successful
+I attract wealth and abundance
+I am healthy and energetic
+I radiate positive energy"></textarea>
+            <p class="help-text">💡 One affirmation per line. The app will cycle through them randomly.</p>
+
+            <div class="preset-buttons">
+                <button class="preset-btn" id="presetConfidence">💪 Confidence</button>
+                <button class="preset-btn" id="presetWealth">💰 Wealth</button>
+                <button class="preset-btn" id="presetHealth">❤️ Health</button>
+                <button class="preset-btn" id="presetLove">💕 Love</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Settings</div>
+
+            <div class="control-group">
+                <label>Flash Duration: <span id="durationValue" class="range-value">33ms</span></label>
+                <input type="range" id="duration" min="10" max="100" value="33">
+                <p class="help-text">How long each message appears (10-100ms). Lower = more subliminal.</p>
+            </div>
+
+            <div class="control-group">
+                <label>Interval: <span id="intervalValue" class="range-value">2000ms</span></label>
+                <input type="range" id="interval" min="500" max="5000" step="100" value="2000">
+                <p class="help-text">Time between flashes (0.5-5 seconds)</p>
+            </div>
+
+            <div class="toggle-container">
+                <label>Dim screen between flashes</label>
+                <div class="toggle" id="dimToggle" role="switch" aria-checked="false" tabindex="0"></div>
+            </div>
+            <p class="help-text">When ON, the screen stays dimmed inside this app between flashes. It does not overlay other apps.</p>
+
+            <div class="toggle-container">
+                <label>Audio Affirmations</label>
+                <div class="toggle" id="audioToggle" role="switch" aria-checked="false" tabindex="0"></div>
+            </div>
+            <p class="help-text">Speaks affirmations at low volume (text-to-speech) — keeps speaking while you use other apps. The visual flashes only show while this app is open on screen.</p>
+        </div>
+
+        <button class="btn btn-primary" id="startBtn">▶ Start Subliminal Session</button>
+        <button class="btn btn-secondary" id="testBtn">✦ Test Flash</button>
+        <button class="btn btn-danger" id="stopBtn">⏹ Stop Session</button>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="subliminal-text" id="subliminalText"></div>
+    </div>
+
+    <div class="status-bar" id="statusBar">Ready to start</div>
+
+    <script>
+        'use strict';
+
+        var STORAGE_KEY = 'sbp_v2_settings';
+
+        var isRunning = false;
+        var flashTimerId = null;
+        var hideTimerId = null;
+        var clockTimerId = null;
+        var affirmationsList = [];
+        var audioEnabled = false;
+        var dimBetween = false;
+        var flashCount = 0;
+        var sessionStart = 0;
+        var flashToken = 0;
+        var wakeLock = null;
+
+        // Presets (same texts as the original app)
+        var presets = {
+            confidence: [
+                "I am confident and powerful",
+                "I believe in myself completely",
+                "I am worthy of success",
+                "I radiate self-assurance",
+                "I am capable of anything"
+            ],
+            wealth: [
+                "Money flows to me easily",
+                "I am a magnet for abundance",
+                "Wealth comes to me naturally",
+                "I deserve financial freedom",
+                "I attract lucrative opportunities"
+            ],
+            health: [
+                "I am healthy and vibrant",
+                "My body heals itself perfectly",
+                "I am full of energy",
+                "I make healthy choices easily",
+                "My mind and body are in harmony"
+            ],
+            love: [
+                "I am worthy of love",
+                "Love flows to me effortlessly",
+                "I attract positive relationships",
+                "I am surrounded by love",
+                "I give and receive love freely"
+            ]
+        };
+
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+        function updateStatus(msg, isError) {
+            var bar = $('statusBar');
+            bar.textContent = msg;
+            if (isError) {
+                bar.classList.add('error');
+            } else {
+                bar.classList.remove('error');
+            }
+        }
+
+        function formatElapsed(ms) {
+            var totalSeconds = Math.floor(ms / 1000);
+            var minutes = Math.floor(totalSeconds / 60);
+            var seconds = totalSeconds % 60;
+            return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        }
+
+        function updateRunningStatus() {
+            if (!isRunning) return;
+            var elapsed = Date.now() - sessionStart;
+            var interval = parseInt($('interval').value, 10);
+            if (document.hidden && audioEnabled) {
+                // Background audio indicator: the session is still speaking
+                // even though the app is not on screen.
+                updateStatus('🔊 Background audio — still speaking while you use other apps · Flashes: ' + flashCount +
+                    ' · Elapsed: ' + formatElapsed(elapsed));
+            } else {
+                updateStatus('Session running — Flashes: ' + flashCount +
+                    ' · Elapsed: ' + formatElapsed(elapsed) +
+                    ' · Every ' + interval + 'ms');
+            }
+        }
+
+        // ---- Persistence (affirmations + settings survive across sessions) ----
+
+        function saveSettings() {
+            try {
+                var data = {
+                    affirmations: $('affirmations').value,
+                    duration: $('duration').value,
+                    interval: $('interval').value,
+                    audio: audioEnabled,
+                    dim: dimBetween
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                // Storage unavailable (private mode, etc.) — app still works.
+            }
+        }
+
+        function loadSettings() {
+            var raw = null;
+            try {
+                raw = localStorage.getItem(STORAGE_KEY);
+            } catch (e) {
+                raw = null;
+            }
+            if (!raw) return false;
+            try {
+                var data = JSON.parse(raw);
+                if (typeof data.affirmations === 'string') {
+                    $('affirmations').value = data.affirmations;
+                }
+                if (data.duration) {
+                    $('duration').value = data.duration;
+                    $('durationValue').textContent = data.duration + 'ms';
+                }
+                if (data.interval) {
+                    $('interval').value = data.interval;
+                    $('intervalValue').textContent = data.interval + 'ms';
+                }
+                if (data.audio) {
+                    audioEnabled = true;
+                    $('audioToggle').classList.add('active');
+                    $('audioToggle').setAttribute('aria-checked', 'true');
+                }
+                if (data.dim) {
+                    dimBetween = true;
+                    $('dimToggle').classList.add('active');
+                    $('dimToggle').setAttribute('aria-checked', 'true');
+                }
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function loadPreset(type) {
+            $('affirmations').value = presets[type].join('\n');
+            saveSettings();
+        }
+
+        function parseAffirmations() {
+            var text = $('affirmations').value.trim();
+            if (!text) return [];
+            return text.split('\n').map(function (line) {
+                return line.trim();
+            }).filter(function (line) {
+                return line !== '';
+            });
+        }
+
+        // ---- Wake Lock (keeps the screen on; best-effort, never fatal) ----
+
+        function requestWakeLock() {
+            if (!('wakeLock' in navigator)) return;
+            try {
+                var p = navigator.wakeLock.request('screen');
+                if (p && typeof p.then === 'function') {
+                    p.then(function (lock) {
+                        wakeLock = lock;
+                    }).catch(function () {
+                        wakeLock = null;
+                    });
+                }
+            } catch (e) {
+                wakeLock = null;
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock && typeof wakeLock.release === 'function') {
+                try {
+                    var p = wakeLock.release();
+                    if (p && typeof p.catch === 'function') p.catch(function () {});
+                } catch (e) {}
+            }
+            wakeLock = null;
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            // A wake lock is released when the page is hidden; re-request it
+            // when the user comes back, only while a session is running.
+            if (!isRunning) return;
+            if (document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
+            updateRunningStatus();
+        });
+
+        // ---- Flashing ----
+
+        // Speak one affirmation. Returns true if an utterance was queued.
+        // `onEnd` (optional) runs when the utterance finishes speaking.
+        function speak(text, onEnd) {
+            if (!audioEnabled || !('speechSynthesis' in window)) return false;
+            try {
+                var utterance = new SpeechSynthesisUtterance(text);
+                utterance.volume = 0.3;
+                utterance.rate = 1.2;
+                utterance.pitch = 1;
+                if (typeof onEnd === 'function') {
+                    utterance.onend = onEnd;
+                    utterance.onerror = onEnd;
+                }
+                window.speechSynthesis.speak(utterance);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Show one flash instantly (no fade-in) for `duration` ms.
+        // Returns immediately; the hide is guarded by a token so a later
+        // flash can never be hidden early by an earlier flash's timer.
+        function flashOnce(text, duration) {
+            var token = ++flashToken;
+            var overlay = $('overlay');
+            var subText = $('subliminalText');
+
+            if (dimBetween) {
+                overlay.classList.add('dim');
+            } else {
+                overlay.classList.remove('dim');
+            }
+
+            subText.textContent = text;
+            overlay.classList.add('active');
+            // Instant appearance: no transition on .subliminal-text.
+            subText.classList.add('visible');
+
+            // Speak the flashed text only while the app is on screen; when
+            // the page is hidden the background audio scheduler does the
+            // speaking, so the same affirmation is never spoken twice.
+            if (!document.hidden) {
+                speak(text);
+            }
+
+            if (hideTimerId !== null) {
+                clearTimeout(hideTimerId);
+            }
+            hideTimerId = setTimeout(function () {
+                if (token !== flashToken) return;
+                subText.classList.remove('visible');
+                if (!dimBetween) {
+                    overlay.classList.remove('active');
+                }
+            }, duration);
+        }
+
+        function showSubliminal() {
+            if (!isRunning) return;
+            var text = affirmationsList[Math.floor(Math.random() * affirmationsList.length)];
+            var duration = parseInt($('duration').value, 10);
+            flashCount++;
+            flashOnce(text, duration);
+            updateRunningStatus();
+        }
+
+        // ---- Background audio ----
+        // Browsers throttle setInterval hard in background tabs, so the
+        // flash timer alone cannot keep audio going while the user is in
+        // other apps. This scheduler chains off each utterance's 'end'
+        // event instead (speech keeps running in the background), with a
+        // watchdog timer as a fallback if 'end' never fires. It only
+        // speaks while the page is hidden; in the foreground the flash
+        // timer speaks the flashed affirmation (same text, same cadence).
+        var audioTimerId = null;
+        var audioWatchdogId = null;
+        var audioCycleToken = 0;
+
+        function scheduleAudioCycle(delay) {
+            if (audioTimerId !== null) clearTimeout(audioTimerId);
+            audioTimerId = setTimeout(runAudioCycle, delay);
+        }
+
+        function runAudioCycle() {
+            audioTimerId = null;
+            if (!isRunning || !audioEnabled) return;
+            if (!document.hidden) {
+                // Foreground: flashes handle the speaking. Poll so we can
+                // take over the moment the page is hidden.
+                scheduleAudioCycle(1000);
+                return;
+            }
+            var token = ++audioCycleToken;
+            var text = affirmationsList[Math.floor(Math.random() * affirmationsList.length)];
+            var interval = parseInt($('interval').value, 10);
+            var spoken = speak(text, function () {
+                if (token !== audioCycleToken) return;
+                if (audioWatchdogId !== null) {
+                    clearTimeout(audioWatchdogId);
+                    audioWatchdogId = null;
+                }
+                updateRunningStatus();
+                scheduleAudioCycle(interval);
+            });
+            if (spoken) {
+                if (audioWatchdogId !== null) clearTimeout(audioWatchdogId);
+                audioWatchdogId = setTimeout(function () {
+                    if (token !== audioCycleToken) return;
+                    runAudioCycle();
+                }, interval + 20000);
+            } else {
+                scheduleAudioCycle(interval);
+            }
+            updateRunningStatus();
+        }
+
+        function stopAudioScheduler() {
+            if (audioTimerId !== null) {
+                clearTimeout(audioTimerId);
+                audioTimerId = null;
+            }
+            if (audioWatchdogId !== null) {
+                clearTimeout(audioWatchdogId);
+                audioWatchdogId = null;
+            }
+            audioCycleToken++;
+        }
+
+        // ---- Session control ----
+
+        function startSubliminal() {
+            affirmationsList = parseAffirmations();
+            if (affirmationsList.length === 0) {
+                updateStatus('Please enter some affirmations first!', true);
+                return;
+            }
+
+            isRunning = true;
+            flashCount = 0;
+            sessionStart = Date.now();
+
+            $('startBtn').classList.add('hidden');
+            $('testBtn').classList.add('hidden');
+            $('stopBtn').classList.add('active');
+
+            // Wake lock: best-effort, never blocks starting.
+            requestWakeLock();
+
+            // Fullscreen: best-effort, never blocks starting.
+            try {
+                if (document.documentElement && document.documentElement.requestFullscreen) {
+                    var fp = document.documentElement.requestFullscreen();
+                    if (fp && typeof fp.catch === 'function') {
+                        fp.catch(function () {});
+                    }
+                }
+            } catch (e) {}
+
+            showSubliminal();
+
+            var interval = parseInt($('interval').value, 10);
+            flashTimerId = setInterval(showSubliminal, interval);
+            clockTimerId = setInterval(updateRunningStatus, 500);
+
+            // Background audio scheduler: takes over speaking the moment
+            // the page is hidden, and stays dormant while it is visible.
+            if (audioEnabled) {
+                scheduleAudioCycle(1000);
+            }
+
+            updateRunningStatus();
+        }
+
+        function stopSubliminal() {
+            isRunning = false;
+
+            if (flashTimerId !== null) {
+                clearInterval(flashTimerId);
+                flashTimerId = null;
+            }
+            if (clockTimerId !== null) {
+                clearInterval(clockTimerId);
+                clockTimerId = null;
+            }
+            if (hideTimerId !== null) {
+                clearTimeout(hideTimerId);
+                hideTimerId = null;
+            }
+            // Stop the background audio chain and invalidate any pending
+            // utterance callbacks so nothing speaks after Stop.
+            stopAudioScheduler();
+            // Invalidate any pending hide so it cannot touch the UI later.
+            flashToken++;
+
+            if ('speechSynthesis' in window) {
+                try { window.speechSynthesis.cancel(); } catch (e) {}
+            }
+
+            $('overlay').classList.remove('active');
+            $('subliminalText').classList.remove('visible');
+
+            releaseWakeLock();
+
+            // Exit fullscreen: best-effort only.
+            try {
+                if (document.exitFullscreen) {
+                    var ep = document.exitFullscreen();
+                    if (ep && typeof ep.catch === 'function') {
+                        ep.catch(function () {});
+                    }
+                }
+            } catch (e) {}
+
+            var elapsed = Date.now() - sessionStart;
+            $('startBtn').classList.remove('hidden');
+            $('testBtn').classList.remove('hidden');
+            $('stopBtn').classList.remove('active');
+
+            updateStatus('Session stopped — ' + flashCount + ' flashes in ' +
+                formatElapsed(elapsed) + '. Ready to start again.');
+        }
+
+        function testFlash() {
+            if (isRunning) {
+                updateStatus('A session is already running — stop it to test a single flash.', true);
+                return;
+            }
+            var list = parseAffirmations();
+            if (list.length === 0) {
+                updateStatus('Please enter some affirmations first!', true);
+                return;
+            }
+            var text = list[Math.floor(Math.random() * list.length)];
+            var duration = parseInt($('duration').value, 10);
+            flashOnce(text, duration);
+            updateStatus('Test flash shown: "' + text + '"');
+        }
+
+        // ---- Wiring ----
+
+        $('presetConfidence').addEventListener('click', function () { loadPreset('confidence'); });
+        $('presetWealth').addEventListener('click', function () { loadPreset('wealth'); });
+        $('presetHealth').addEventListener('click', function () { loadPreset('health'); });
+        $('presetLove').addEventListener('click', function () { loadPreset('love'); });
+
+        $('duration').addEventListener('input', function () {
+            $('durationValue').textContent = this.value + 'ms';
+            saveSettings();
+        });
+
+        $('interval').addEventListener('input', function () {
+            $('intervalValue').textContent = this.value + 'ms';
+            saveSettings();
+        });
+
+        $('affirmations').addEventListener('input', saveSettings);
+
+        $('dimToggle').addEventListener('click', function () {
+            dimBetween = !dimBetween;
+            $('dimToggle').classList.toggle('active', dimBetween);
+            $('dimToggle').setAttribute('aria-checked', dimBetween ? 'true' : 'false');
+            saveSettings();
+        });
+
+        $('audioToggle').addEventListener('click', function () {
+            audioEnabled = !audioEnabled;
+            $('audioToggle').classList.toggle('active', audioEnabled);
+            $('audioToggle').setAttribute('aria-checked', audioEnabled ? 'true' : 'false');
+            saveSettings();
+        });
+
+        $('startBtn').addEventListener('click', startSubliminal);
+        $('stopBtn').addEventListener('click', stopSubliminal);
+        $('testBtn').addEventListener('click', testFlash);
+
+        // Load saved affirmations + settings; fall back to the Confidence
+        // preset only when nothing was ever saved.
+        window.onload = function () {
+            if (!loadSettings()) {
+                loadPreset('confidence');
+            }
+        };
+    </script>
+</body>
+</html>

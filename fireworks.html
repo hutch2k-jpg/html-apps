@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fireworks Generator</title>
+    <!-- Use Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS for styling the UI elements -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Basic reset and canvas styling */
+        body {
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars */
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Canvas fills the entire screen */
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1; /* Canvas behind the controls */
+        }
+
+        /* Controls container */
+        .controls {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 0.75rem; /* rounded-xl */
+            z-index: 10;
+            color: white;
+            max-width: 300px;
+            /* Added position relative for the hide button */
+            position: relative; 
+        }
+
+        .control-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* medium */
+            margin-bottom: 0.25rem;
+        }
+
+        /* Style range sliders */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #4a5568; /* gray-700 */
+            border-radius: 9999px; /* rounded-full */
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #4299e1; /* blue-500 */
+            border-radius: 9999px; /* rounded-full */
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #4299e1; /* blue-500 */
+            border-radius: 9999px; /* rounded-full */
+            cursor: pointer;
+        }
+
+        /* Style buttons */
+        .btn {
+            background-color: #4299e1; /* blue-500 */
+            color: white;
+            font-weight: 700; /* bold */
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: #3182ce; /* blue-600 */
+        }
+
+        /* Tailwind 'hidden' class */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- The canvas for our fireworks -->
+    <canvas id="fireworksCanvas"></canvas>
+
+    <!-- Button to show the menu when it's hidden -->
+    <button id="showMenuBtn" class="btn hidden fixed top-4 left-4 z-20 w-auto px-4 py-2 text-sm !bg-gray-700 hover:!bg-gray-600">
+        Show Menu
+    </button>
+
+    <!-- UI Controls -->
+    <div id="controlsContainer" class="controls shadow-lg">
+        <!-- New Hide Button -->
+        <button id="hideMenuBtn" class="btn !absolute !top-2 !right-2 !w-auto !py-1 !px-2 !text-xs !m-0 !bg-gray-600 hover:!bg-gray-700">
+            Hide
+        </button>
+
+        <h1 class="text-lg font-bold mb-4">Fireworks Controls</h1>
+        
+        <div class="control-group">
+            <label for="autoLaunchRate">Auto-Launch (delay ms)</label>
+            <!-- A higher value means slower launches -->
+            <input type="range" id="autoLaunchRate" min="200" max="2000" value="800" step="100">
+        </div>
+
+        <div class="control-group">
+            <label for="particleCount">Explosion Size (particles)</label>
+            <input type="range" id="particleCount" min="20" max="200" value="100" step="10">
+        </div>
+
+        <div class="control-group">
+            <label for="trailOpacity">Trail Effect (opacity)</label>
+            <input type="range" id="trailOpacity" min="1" max="50" value="10" step="1">
+        </div>
+        
+        <button id="clearCanvasBtn" class="btn">Clear Canvas</button>
+    </div>
+
+    <script>
+        // Get canvas and context
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Arrays to store fireworks and particles
+        let fireworks = [];
+        let particles = [];
+
+        // --- Control Variables ---
+        let particleCount = 100; // Number of particles per explosion
+        let autoLaunchRate = 800; // Time in ms between auto-launches
+        let trailOpacity = 0.1; // Alpha for the canvas clear (creates trails)
+        let lastLaunchTime = 0;
+
+        // --- UI Element Listeners ---
+        const particleCountSlider = document.getElementById('particleCount');
+        const autoLaunchRateSlider = document.getElementById('autoLaunchRate');
+        const trailOpacitySlider = document.getElementById('trailOpacity');
+        const clearCanvasBtn = document.getElementById('clearCanvasBtn');
+        
+        // --- New Menu Toggle Elements ---
+        const controlsContainer = document.getElementById('controlsContainer');
+        const hideMenuBtn = document.getElementById('hideMenuBtn');
+        const showMenuBtn = document.getElementById('showMenuBtn');
+
+        particleCountSlider.addEventListener('input', (e) => {
+            particleCount = parseInt(e.target.value);
+        });
+
+        autoLaunchRateSlider.addEventListener('input', (e) => {
+            // Slider value is delay, so we use it directly
+            autoLaunchRate = parseInt(e.target.value);
+        });
+
+        trailOpacitySlider.addEventListener('input', (e) => {
+            // Slider gives 1-50, we need 0.01 to 0.5
+            trailOpacity = parseInt(e.target.value) / 100;
+        });
+
+        clearCanvasBtn.addEventListener('click', () => {
+            // Clear everything
+            fireworks = [];
+            particles = [];
+            // Immediately clear canvas fully
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // --- New Menu Toggle Logic ---
+        hideMenuBtn.addEventListener('click', () => {
+            controlsContainer.classList.add('hidden');
+            showMenuBtn.classList.remove('hidden');
+        });
+
+        showMenuBtn.addEventListener('click', () => {
+            controlsContainer.classList.remove('hidden');
+            showMenuBtn.classList.add('hidden');
+        });
+
+
+        // --- Utility Functions ---
+
+        // Set canvas dimensions to fill window
+        function setCanvasSize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        // Get random number in a range
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        // Calculate distance
+        function distance(x1, y1, x2, y2) {
+            const xDist = x1 - x2;
+            const yDist = y1 - y2;
+            return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        }
+
+        // --- Particle Class ---
+        // A single spark from an explosion
+        class Particle {
+            constructor(x, y, color, velocity) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                // Use provided velocity or create a random one
+                this.velocity = velocity || {
+                    x: random(-2, 2),
+                    y: random(-2, 2)
+                };
+                this.alpha = 1; // Full opacity
+                this.friction = 0.98; // Slows down particle
+                this.gravity = 0.05; // Pulls particle down
+                this.size = random(1, 3); // Particle size
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+                ctx.restore();
+            }
+
+            update() {
+                // Apply friction
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                
+                // Apply gravity
+                this.velocity.y += this.gravity;
+                
+                // Update position
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                
+                // Fade out
+                this.alpha -= 0.02;
+
+                this.draw();
+            }
+        }
+
+        // --- Firework Class ---
+        // The initial rocket that flies up
+        class Firework {
+            constructor(startX, startY, targetX, targetY) {
+                this.x = startX;
+                this.y = startY;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                
+                // Calculate angle and velocity
+                const angle = Math.atan2(targetY - startY, targetX - startX);
+                const speed = random(5, 8); // Speed of the rocket
+                
+                this.velocity = {
+                    x: Math.cos(angle) * speed,
+                    y: Math.sin(angle) * speed
+                };
+                
+                // Bright white/yellow color for the rocket
+                this.color = 'hsl(60, 100%, 90%)'; 
+                this.explosionColor = `hsl(${random(0, 360)}, 100%, 60%)`; // Color of the burst
+                this.exploded = false;
+                this.size = 2;
+
+                // Create a trail of particles
+                this.trail = [];
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = 1;
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+                ctx.restore();
+            }
+
+            update() {
+                // Draw and update trail particles
+                this.trail.forEach((p, index) => {
+                    p.update();
+                    if (p.alpha <= 0) {
+                        this.trail.splice(index, 1);
+                    }
+                });
+
+                if (!this.exploded) {
+                    this.draw();
+
+                    // Add a new particle to the trail
+                    // Give it a small, opposing velocity to look like a spark
+                    this.trail.push(new Particle(this.x, this.y, this.color, {
+                        x: -this.velocity.x * 0.1,
+                        y: -this.velocity.y * 0.1
+                    }));
+
+                    // Rockets are affected by gravity too
+                    this.velocity.y += 0.02; 
+                    
+                    this.x += this.velocity.x;
+                    this.y += this.velocity.y;
+
+                    // Explode if the rocket starts to fall (velocity.y is positive)
+                    // or if it gets close to its target (more realistic for user clicks)
+                    const distToTarget = distance(this.x, this.y, this.targetX, this.targetY);
+
+                    if (this.velocity.y >= 0.5 || distToTarget < 50) {
+                        this.explode();
+                        this.exploded = true;
+                    }
+                }
+            }
+
+            explode() {
+                // Get the particle count from the slider
+                const count = particleCount; 
+                
+                for (let i = 0; i < count; i++) {
+                    // Create particles radiating outwards
+                    const angle = Math.random() * Math.PI * 2; // Random angle
+                    const speed = random(0.5, 4.5); // Random explosion speed
+                    
+                    const velocity = {
+                        x: Math.cos(angle) * speed,
+                        y: Math.sin(angle) * speed
+                    };
+                    
+                    particles.push(new Particle(this.x, this.y, this.explosionColor, velocity));
+                }
+            }
+        }
+
+        // --- Main Animation Loop ---
+        function animate(timestamp) {
+            // 1. Create a semi-transparent overlay for the trail effect
+            // Use the trailOpacity from the slider
+            ctx.fillStyle = `rgba(0, 0, 0, ${trailOpacity})`; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 2. Auto-launch fireworks
+            // Use autoLaunchRate from the slider
+            if (timestamp - lastLaunchTime > autoLaunchRate) {
+                const startX = canvas.width / 2;
+                const startY = canvas.height;
+                const targetX = random(canvas.width * 0.2, canvas.width * 0.8);
+                const targetY = random(canvas.height * 0.1, canvas.height * 0.4);
+                
+                fireworks.push(new Firework(startX, startY, targetX, targetY));
+                lastLaunchTime = timestamp;
+            }
+
+            // 3. Update and draw all active fireworks
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                // Remove if exploded AND trail is gone
+                if (firework.exploded && firework.trail.length === 0) {
+                    fireworks.splice(index, 1);
+                }
+            });
+
+            // 4. Update and draw all active particles
+            particles.forEach((particle, index) => {
+                particle.update();
+                // Remove if faded
+                if (particle.alpha <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+            
+            // 5. Request next frame
+            requestAnimationFrame(animate);
+        }
+
+        // --- Event Listeners ---
+
+        // Handle window resizing
+        window.addEventListener('resize', setCanvasSize);
+
+        // Handle clicks/taps to launch a firework
+        function launchAt(x, y) {
+             fireworks.push(new Firework(
+                canvas.width / 2, // Start from bottom center
+                canvas.height,
+                x, // Target the click/touch x
+                y  // Target the click/touch y
+            ));
+        }
+
+        window.addEventListener('click', (e) => {
+            launchAt(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('touchstart', (e) => {
+            // Prevent click event from firing too
+            e.preventDefault(); 
+            // Use the first touch point
+            if (e.touches.length > 0) {
+                launchAt(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        });
+
+        // --- Start ---
+        setCanvasSize();
+        // Start the animation loop, passing an initial timestamp
+        animate(0); 
+
+    </script>
+</body>
+</html>
+
+
